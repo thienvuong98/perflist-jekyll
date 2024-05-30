@@ -36,18 +36,17 @@ picked up later when the list is re-generated.
   could be transpose 1/2 or 1 tone lower then use transpose to switch -
   that will keep the playing simpler and allow for better solos[^1].
 
-[^1]: We should encourage singer to use simpler base key (w/o transposition).
-Only top-notch professional singers need to be at the exact key.  Most others
-could drop 1/2 tone without any impact.
+[^1]: Encourage singer to use simpler base key (w/o transposition). Only top-notch professional singers need to be at the exact key.  Most others could drop 1/2 tone without any impact.
 
 ### Music and Play Loops
 
-When available, the youtube video of a performance will be shown here.
+When available, the youtube video[^2a] of a performance will be shown here.
 Clicking on the headphone icon opens up a mini-player playing the song.
 In addition, some segments (intro, mid, ending) are also presented.
-Clicking on any of these will just play loops[^2] of that particular segments
+Clicking on any of these plays loops[^2] of that particular segments
 
 [^2]: This is used for practice to memorize the playing style.
+[^2a]: Many youtube videos, especially English songs, would block being embedded in the mini-player.  A warning message would be shown in the video frame.  You may click through to play full screen, but loop playing would not work in that case.
 
 ### Lyric Page
 
@@ -57,8 +56,7 @@ distracting details, larger / bold font, and pre-transposed to the
 playing key. Essentially after the song is selected, this page could
 be used for playing or singing.[^3]
 
-[^3]: We could also add additional notes on the lyrics.  For example, how to
-sing, intro chords, voice setup, etc ...
+[^3]: We could also add additional notes on the lyrics.  For example, how to sing, intro chords, voice setup, etc ...
 
 * On top of page, there is an intro play/stop to play the song or loop
   the intro to help remind musicians
@@ -74,8 +72,4 @@ sing, intro chords, voice setup, etc ...
 
 ### Issues
 
-* When open hopamviet on a different tab, the tab may not come up in
-foreground, and you may have to look up the tab and manually switch to.
-* Many youtube videos, especially English songs, would block being embedded
-in the mini-player.  You may click through to play full screen, but loop
-playing would not work in that case.
+---

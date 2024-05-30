@@ -1,0 +1,1851 @@
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="PlayList" name="Playlist - Program" />
+    <link href="/smulelist.png?version=0" rel="shortcut icon" type="image/x-icon" />
+    <title>Music Program: 2024-05-UF</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/rowreorder/1.5.0/css/rowReorder.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://www.smule.com" rel="preconnect" />
+    <link href="https://c-cl.cdn.smule.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&amp;family=Edu+SA+Beginner" rel="stylesheet" />
+    <style>
+      a:link {
+        text-decoration: none;
+      }
+      .loopstyle {
+        font-size: 70%;
+      }
+      .transpose {
+        font-size:        90%;
+        background-color: #ccc;
+        padding-left:     4px;
+        padding-right:    4px;
+      }
+      #list-select {
+        position: absolute;
+        top:      10;
+        right:    10;
+        width:  150;
+      }
+      #youtube {
+        border:   1px solid #aaa;
+        display:  none;
+        z-index:  9999;
+        position: fixed;
+        top:      0;
+        left:     0;
+      }
+      .hidden {
+        color:     #fff;
+        font-size: 10%;
+      }
+    </style><style>
+      #youtube-player {
+        width:    250;
+        height:   140;
+        opacity:  0.75;
+      }
+      #youtube-closer {
+        position: absolute;
+        top:      0;
+        right:    0;
+        z-index:  99;
+      }
+    </style><style>
+      .chord {
+        color:            #aa5;
+        vertical-align:   12px;
+        font-family:      monospace;
+        font-weight:      800;
+        padding:          2px;
+        border-left:      1px solid #888;
+        border-bottom:    1px solid #888;
+        font-size:        80%;
+        background-color: #ffc;
+      }
+      #lybox-title {
+        font-size: 50%;
+      }
+      #lybox-debug {
+        font-size: 50%;
+      }
+    </style>
+    <style>
+      .vsmall {
+        font-size: 60%;
+      }
+      .notice {
+        width: 50%;
+        text-align: center;
+        border: 4px solid #ccc;
+        background-color: hsl(20,50%,85%)
+      }
+      body {
+        font-size:   16pt
+      }
+      .srow td {
+        font-size: small;
+      }
+      tr:nth-child(even) td {
+        background-color: #eee;
+        border-top: 1px solid;
+      }
+      .player {
+        border:     5px #888;
+        width:      200px;
+        z-index:    9;
+        opacity:    1;
+        padding:    3px;
+        background: #fff;
+        position:   fixed;
+        bottom:     0;
+        right:      0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <!--============================================================ --><!--Generates program / practice content page--><!--============================================================ -->
+      <!--Select different playlist--><!--Video player - hidden until brought up-->
+      <div id="youtube">
+        <div>
+          <a href="#" id="youtube-closer" onClick="cancel_play(); return false"><i class="fa fa-window-close"></i></a><span id="youtube-title" style="font-size:60%"></span>
+        </div>
+        <div id="youtube-player"></div>
+      </div><!--Allow language accent, etc -->
+      <!--Lyric modal - hidden until brought up-->
+      <div class="modal fade" id="lybox" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" style="max-width:100%; max-height:100%">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="small" id="lybox-header"></div>
+              <div class="small" id="lybox-debug"></div>
+              <div id="lybox-vctl">
+                <button class="btn btn-secondary" onClick="play_song()" title="Play full video" type="button"><i class="fa-solid fa-headphones"></i></button><button class="btn btn-secondary" onClick="play_intro()" title="Play intro" type="button"><i class="fa-solid fa-undo"></i></button><button class="btn btn-secondary" onClick="cancel_play()" title="Stop plauing" type="button"><i class="fa-solid fa-stop"></i></button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div id="lybox-content"></div>
+            </div>
+            <div class="modal-footer">
+              <div id="lybox-title"></div><button class="btn btn-secondary" onClick="singer_toggle()" title="Toogle chord" type="button"><i class="fa fa-music"></i></button><button class="btn btn-warning" data-bs-dismiss="modal" title="Close" type="button"><i class="fa fa-sign-out"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        function singer_toggle() {
+          $('.chord').toggle()
+          $('#lybox .modal-header').toggle()
+        }
+        
+        function dblog(msg) {
+          console.log(msg)
+          // var dbhandle = $('#lybox-debug')
+          // dbhandle.html(dbhandle.html() + ` - ${msg}`)
+        }
+        
+        function load_lyric(async = true, offset = 0) {
+          var olist = current_order()
+        
+          var cur_ofs = olist.indexOf(myModal.item.toString())
+          var new_ofs = cur_ofs + offset
+        
+          if ((new_ofs < 0) || (new_ofs >= olist.length)) {
+            return
+          }
+          get_lyric(myModal.program, olist[new_ofs], async)
+        }
+        function play_intro() {
+          var lvideo = $('#lybox-vctl')
+          var video  = lvideo.attr('my_video')
+          var stime  = parseInt(lvideo.attr('my_vstart'))
+          var etime  = parseInt(lvideo.attr('my_vend'))
+          var title  = lvideo.attr('my_title')
+          play_on_youtube(video, title, stime, etime)
+        }
+        function play_song() {
+          var lvideo = $('#lybox-vctl')
+          var video = lvideo.attr('my_video')
+          var title = lvideo.attr('my_title')
+          play_on_youtube(video, title, 0, 0)
+        }
+        function get_lyric(program, item, async = true) {
+          myModal.program = program
+          myModal.item    = item
+        
+          dblog(`Getting item # ${myModal.item}`)
+        
+          if (async) {
+            var url = `/playlist/lyric/${program}/${item}?type=list`
+            jQuery.ajax({
+              url:      url,
+              async:    true,
+              dataType: 'json',
+              success:  show_lyric,
+            });
+          } else {
+            var content  = extra[item]
+            if (content != null) {
+              show_lyric(content)
+            }
+          }
+        }
+        function show_lyric(content) {
+          console.log('content ', content)
+          var lvideo = $('#lybox-vctl')
+        
+          // If vintro exist - create button for play/stop intro
+          lvideo.attr('my_video',  content['video'])
+          lvideo.attr('my_title',  content['title'])
+          lvideo.attr('my_item',   content['item_no'])
+        
+          if (content['vintro'] != null) {
+            lvideo.attr('my_vstart', content['vintro'][0])
+            lvideo.attr('my_vend',   content['vintro'][1])
+          }
+          lvideo.show()
+        
+          var lyric = content['lyric'].replaceAll('\n', '<br>')
+          $('#lybox-content').html('<center><b>' + lyric)
+          $('#lybox-header').html(`Key: ${content['tokey']}.${content['transpose']}#${content['tempo']} - Intro: ${content['intro']}`)
+          $('#lybox-title').html(content['title'].substring(0, 19))
+          $('.modal-header').show()
+          myModal.show()
+        }
+      </script><select class="form-select" id="list-select" onchange="window.location.href = &#39;/playlist/list/&#39; + this.options[this.selectedIndex].value">
+        <option value="2024-03-TH">
+          2024-03-TH
+        </option>
+        <option value="2024-04-TH">
+          2024-04-TH
+        </option>
+        <option value="2024-05-AM">
+          2024-05-AM
+        </option>
+        <option value="2024-05-TH">
+          2024-05-TH
+        </option>
+        <option value="2024-05-TS">
+          2024-05-TS
+        </option>
+        <option selected="" value="2024-05-UF">
+          2024-05-UF
+        </option>
+        <option value="2024-06-VH">
+          2024-06-VH
+        </option>
+        <option value="thien">
+          thien
+        </option>
+        <option value="thu-suong">
+          thu-suong
+        </option>
+      </select>
+      <h1>
+        Dinner 5/25/2004
+      </h1>
+      <h4>
+        <a href="https://docs.google.com/spreadsheets/d/1mv4POk8YEfezNYqjIEGN7wAhwIgNvDufjAsj7Wjrsj8/edit#gid=1775891206" target="sheet">Frank &amp; Uyen&#39;s Residence, Alamo  - 05/04/2024</a>
+      </h4>
+      <table class="cell-border compact display dt-responsive" id="main_table" style="width:100%">
+        <thead>
+          <tr>
+            <th>
+              S-Title
+            </th>
+            <th>
+              No.
+            </th>
+            <th>
+              Title
+            </th>
+            <th>
+              Singer
+            </th>
+            <th>
+              Beat.Tm
+            </th>
+            <th>
+              Key.Tr
+            </th>
+            <th>
+              Perf Video/Loops
+            </th>
+            <th>
+              Note
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Con Chut Gi De Nho
+            </td>
+            <td>
+              2
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/1969/con-chut-gi-de-nho" title="Source lyrics">Con Chut Gi De Nho</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Frank&#39;)">Frank</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;SlowRock&#39;)">SlowRock</button><span class="transpose text-right" title="Tempo">62</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 0, false)" title="Show Lyric Pane"><b>C</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;6a6pA7vfgxk&#39;, &#39;Con Chut Gi De Nho&#39;, 0, 0)" title="Playing 6a6pA7vfgxk"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;6a6pA7vfgxk&#39;, &#39;Con Chut Gi De Nho&#39;, 0, 36)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.36
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                0
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Sans Elle
+            </td>
+            <td>
+              3
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/6394/xa-em-roi-sans-elle/thienv" title="Source lyrics">Sans Elle</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Chacha&#39;)">Chacha</button><span class="transpose text-right" title="Tempo">115</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 1, false)" title="Show Lyric Pane"><b>A</b><span> (Ngon)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;arCmdzElN5M&#39;, &#39;Sans Elle&#39;, 0, 0)" title="Playing arCmdzElN5M"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;arCmdzElN5M&#39;, &#39;Sans Elle&#39;, 0, 16)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.16
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;arCmdzElN5M&#39;, &#39;Sans Elle&#39;, 88, 105)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  88.17
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;arCmdzElN5M&#39;, &#39;Sans Elle&#39;, 249, 274)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  249.25
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                1
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Em Cung Can Mot Bo Vai
+            </td>
+            <td>
+              4
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/27461/em-cung-can-mot-bo-vai" title="Source lyrics">Em Cung Can Mot Bo Vai</a>&nbsp;<i class="fa fa-guitar"></i>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Mai&#39;)">Mai</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button><span class="transpose text-right" title="Tempo">85</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 2, false)" title="Show Lyric Pane"><b>Bm</b><span> (Ngon)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;eCv_W95q5n0&#39;, &#39;Em Cung Can Mot Bo Vai&#39;, 0, 0)" title="Playing eCv_W95q5n0"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;eCv_W95q5n0&#39;, &#39;Em Cung Can Mot Bo Vai&#39;, 0, 31)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.31
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                2
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Tinh Chap Nhan
+            </td>
+            <td>
+              5
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/12359/tinh-chap-nhan" title="Source lyrics">Tinh Chap Nhan</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Mai&#39;)">Mai</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button><span class="transpose text-right" title="Tempo">72</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 3, false)" title="Show Lyric Pane"><b>Am</b><span> (Ngon)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;AyD6IgWKc38&#39;, &#39;Tinh Chap Nhan&#39;, 0, 0)" title="Playing AyD6IgWKc38"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;AyD6IgWKc38&#39;, &#39;Tinh Chap Nhan&#39;, 0, 25)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.25
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                3
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Crazy Little Thing Called Love
+            </td>
+            <td>
+              6
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/11417/crazy-little-thing-called-love" title="Source lyrics">Crazy Little Thing Called Love</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Anh Tam&#39;)">Anh Tam</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Swing&#39;)">Swing</button><span class="transpose text-right" title="Tempo">140</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 4, false)" title="Show Lyric Pane"><b>C?</b><span> (Karaoke-T)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;zO6D_BAuYCI&#39;, &#39;Crazy Little Thing Called Love&#39;, 0, 0)" title="Playing zO6D_BAuYCI"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;zO6D_BAuYCI&#39;, &#39;Crazy Little Thing Called Love&#39;, 0, 10)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.10
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                4
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Youre My Heart Youre My Soul
+            </td>
+            <td>
+              7
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/5838/you-re-my-heart-you-re-my-soul" title="Source lyrics">You&#39;re My Heart, You&#39;re My Soul</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Trinh Pham&#39;)">Trinh Pham</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Techno&#39;)">Techno</button><span class="transpose text-right" title="Tempo">120</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 5, false)" title="Show Lyric Pane"><b>Cm?</b><span> (Karaoke-T)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;4kHl4FoK1Ys&#39;, &#39;Youre My Heart, Youre My Soul&#39;, 0, 0)" title="Playing 4kHl4FoK1Ys"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;4kHl4FoK1Ys&#39;, &#39;Youre My Heart, Youre My Soul&#39;, 0, 22)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.22
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                5
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Vet Son Tren Ao
+            </td>
+            <td>
+              8
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/6581/vet-son-tren-co-ao" title="Source lyrics">Vet Son Tren Ao</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Twist&#39;)">Twist</button><span class="transpose text-right" title="Tempo">140</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 6, false)" title="Show Lyric Pane"><b>C</b><span> (Ngon)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;62S8K_4ZBE0&#39;, &#39;Vet Son Tren Ao&#39;, 0, 0)" title="Playing 62S8K_4ZBE0"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;62S8K_4ZBE0&#39;, &#39;Vet Son Tren Ao&#39;, 0, 17)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.17
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;62S8K_4ZBE0&#39;, &#39;Vet Son Tren Ao&#39;, 67, 86)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  67.19
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;62S8K_4ZBE0&#39;, &#39;Vet Son Tren Ao&#39;, 236, 253)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  236.17
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                6
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Giu Doi Cho Nhau
+            </td>
+            <td>
+              9
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/12674/giu-doi-cho-nhau-on-em" title="Source lyrics">Giu Doi Cho Nhau</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phong&#39;)">Phong</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button><span class="transpose text-right" title="Tempo">66</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 7, false)" title="Show Lyric Pane"><b>Bb</b><span> (Ngon)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;qpRnQB36Z8g&#39;, &#39;Giu Doi Cho Nhau&#39;, 0, 0)" title="Playing qpRnQB36Z8g"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;qpRnQB36Z8g&#39;, &#39;Giu Doi Cho Nhau&#39;, 7, 23)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  7.16
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                7
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Mot Dem Say
+            </td>
+            <td>
+              10
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/23907/mot-dem-say" title="Source lyrics">Mot Dem Say</a>&nbsp;<i class="fa fa-guitar"></i>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phuong&#39;)">Phuong</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Bebop&#39;)">Bebop</button><span class="transpose text-right" title="Tempo">116</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 8, false)" title="Show Lyric Pane"><b>C</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;iIh41nqpnQE&#39;, &#39;Mot Dem Say&#39;, 0, 0)" title="Playing iIh41nqpnQE"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;iIh41nqpnQE&#39;, &#39;Mot Dem Say&#39;, 0, 29)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.29
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;iIh41nqpnQE&#39;, &#39;Mot Dem Say&#39;, 128, 157)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  128.29
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;iIh41nqpnQE&#39;, &#39;Mot Dem Say&#39;, 268, 284)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  268.16
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                8
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Canh Hong Phai
+            </td>
+            <td>
+              11
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/7055/canh-hong-phai/thienv" title="Source lyrics">Canh Hong Phai</a>&nbsp;<i class="fa fa-guitar"></i>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phi&#39;)">Phi</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button><span class="transpose text-right" title="Tempo">130</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 9, false)" title="Show Lyric Pane"><b>Am</b><span class="transpose" title="Transpose">1</span><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;PdSGm6eFAhQ&#39;, &#39;Canh Hong Phai&#39;, 0, 0)" title="Playing PdSGm6eFAhQ"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;PdSGm6eFAhQ&#39;, &#39;Canh Hong Phai&#39;, 0, 59)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.59
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;PdSGm6eFAhQ&#39;, &#39;Canh Hong Phai&#39;, 120, 179)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  120.59
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;PdSGm6eFAhQ&#39;, &#39;Canh Hong Phai&#39;, 271, 330)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  271.59
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                9
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Youre A Man Im a Woman
+            </td>
+            <td>
+              12
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/22957/you-re-a-woman-you-re-a-woman-i-m-a-man" title="Source lyrics">You&#39;re A Man, I&#39;m a Woman</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phi&#39;)">Phi</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Techno&#39;)">Techno</button><span class="transpose text-right" title="Tempo">118</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 10, false)" title="Show Lyric Pane"><b>?</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;1PxDhnI7QNc&#39;, &#39;Youre A Man, Im a Woman&#39;, 0, 0)" title="Playing 1PxDhnI7QNc"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;1PxDhnI7QNc&#39;, &#39;Youre A Man, Im a Woman&#39;, 0, 32)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.32
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                10
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Hippy Shake
+            </td>
+            <td>
+              13
+            </td>
+            <td>
+              <a href="https://tabs.ultimate-guitar.com/tab/the-swinging-blue-jeans/hippy-hippy-shake-chords-605881" title="Source lyrics">Hippy Shake</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Djane&#39;)">Djane</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Twist&#39;)">Twist</button><span class="transpose text-right" title="Tempo">138</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 11, false)" title="Show Lyric Pane"><b>E?</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;1Ke8mzgex4U&#39;, &#39;Hippy Shake&#39;, 0, 0)" title="Playing 1Ke8mzgex4U"><i class="fa-solid fa-video"></i></button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                11
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Ao Lua Ha Dong
+            </td>
+            <td>
+              14
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/1228/ao-lua-ha-dong/thienv" title="Source lyrics">Ao Lua Ha Dong</a>&nbsp;<i class="fa fa-guitar"></i>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Minh&#39;)">Minh</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button><span class="transpose text-right" title="Tempo">64</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 12, false)" title="Show Lyric Pane"><b>Dm?</b><span> (Karaoke-N)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;xZ4myr0lOdA&#39;, &#39;Ao Lua Ha Dong&#39;, 0, 0)" title="Playing xZ4myr0lOdA"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;xZ4myr0lOdA&#39;, &#39;Ao Lua Ha Dong&#39;, 0, 23)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.23
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                12
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Ai Chung Tinh Duoc Mai
+            </td>
+            <td>
+              15
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/50998/ai-chung-tinh-duoc-mai" title="Source lyrics">Ai Chung Tinh Duoc Mai</a>&nbsp;<i class="fa fa-guitar"></i>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Chrystine Dai&#39;)">Chrystine Dai</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Ballad&#39;)">Ballad</button><span class="transpose text-right" title="Tempo">65</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 13, false)" title="Show Lyric Pane"><b>Em?</b><span> (Karaoke-T)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;1ZVdCxuZUsM&#39;, &#39;Ai Chung Tinh Duoc Mai&#39;, 0, 0)" title="Playing 1ZVdCxuZUsM"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;1ZVdCxuZUsM&#39;, &#39;Ai Chung Tinh Duoc Mai&#39;, 0, 19)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.19
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                13
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Mua Xuan Dau Tien
+            </td>
+            <td>
+              16
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/2306/mua-xuan-dau-tien" title="Source lyrics">Mua Xuan Dau Tien</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Dai&#39;)">Dai</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Bolero&#39;)">Bolero</button><span class="transpose text-right" title="Tempo">80</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 14, false)" title="Show Lyric Pane"><b>F?</b><span> (Karaoke-T)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;ip3Wkm6kEWo&#39;, &#39;Mua Xuan Dau Tien&#39;, 0, 0)" title="Playing ip3Wkm6kEWo"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;ip3Wkm6kEWo&#39;, &#39;Mua Xuan Dau Tien&#39;, 0, 27)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.27
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                14
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Celebration
+            </td>
+            <td>
+              17
+            </td>
+            <td>
+              <a href="local://celebrate" title="Source lyrics">Celebration</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Band&#39;)">Band</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Techno&#39;)">Techno</button>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 15, false)" title="Show Lyric Pane"><b>G</b><span> (Karaoke)</span></button>
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                15
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Ngo
+            </td>
+            <td>
+              18
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/529/ngo" title="Source lyrics">Ngo</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phuong&#39;)">Phuong</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Techno&#39;)">Techno</button><span class="transpose text-right" title="Tempo">140</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 16, false)" title="Show Lyric Pane"><b>Gm</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;4kkZcReXVec&#39;, &#39;Ngo&#39;, 0, 0)" title="Playing 4kkZcReXVec"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;4kkZcReXVec&#39;, &#39;Ngo&#39;, 0, 30)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.30
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                16
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Tinh Vong
+            </td>
+            <td>
+              19
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/8302/tinh-vong/thienv" title="Source lyrics">Tinh Vong</a>&nbsp;<i class="fa fa-guitar"></i>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phong&#39;)">Phong</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;SlowRock&#39;)">SlowRock</button><span class="transpose text-right" title="Tempo">66</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 17, false)" title="Show Lyric Pane"><b>Bm</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;gA-XFUOabOc&#39;, &#39;Tinh Vong&#39;, 0, 0)" title="Playing gA-XFUOabOc"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;gA-XFUOabOc&#39;, &#39;Tinh Vong&#39;, 15, 36)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  15.21
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                17
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              How Can I Tell Her About You
+            </td>
+            <td>
+              20
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/2794/how-can-i-tell-her-about-you/thienv" title="Source lyrics">How Can I Tell Her About You</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Anh Tam&#39;)">Anh Tam</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button><span class="transpose text-right" title="Tempo">78</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 18, false)" title="Show Lyric Pane"><b>D?</b><span> (Karaoke-N)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;pFZ3vr4Eh6A&#39;, &#39;How Can I Tell Her About You&#39;, 0, 0)" title="Playing pFZ3vr4Eh6A"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;pFZ3vr4Eh6A&#39;, &#39;How Can I Tell Her About You&#39;, 0, 13)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.13
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                18
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Co Don
+            </td>
+            <td>
+              21
+            </td>
+            <td>
+              <a href="https://hopamviet.vn/chord/song/co-don/W8IUIIZ8.html" title="Source lyrics">Co Don</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Lily&#39;)">Lily</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Bossa&#39;)">Bossa</button><span class="transpose text-right" title="Tempo">93</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 19, false)" title="Show Lyric Pane"><b>G?</b><span> (Karaoke-T)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;oZ_pOkjCCpk&#39;, &#39;Co Don&#39;, 0, 0)" title="Playing oZ_pOkjCCpk"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;oZ_pOkjCCpk&#39;, &#39;Co Don&#39;, 2, 24)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  2.22
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                19
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Yeu Em Dat Do
+            </td>
+            <td>
+              22
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/5932/yeu-em-dat-do/thienv" title="Source lyrics">Yeu Em Dat Do</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Anh Hai&#39;)">Anh Hai</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;SlowRock&#39;)">SlowRock</button><span class="transpose text-right" title="Tempo">64</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 20, false)" title="Show Lyric Pane"><b>Bb?</b><span> (Karaoke-N)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;3rGWvCtQdU8&#39;, &#39;Yeu Em Dat Do&#39;, 0, 0)" title="Playing 3rGWvCtQdU8"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;3rGWvCtQdU8&#39;, &#39;Yeu Em Dat Do&#39;, 0, 33)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.33
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                20
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Xin Hay Roi Xa
+            </td>
+            <td>
+              23
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/1737/xin-hay-roi-xa" title="Source lyrics">Xin Hay Roi Xa</a>&nbsp;<i class="fa fa-guitar"></i>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Suong&#39;)">Suong</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Rhumba&#39;)">Rhumba</button><span class="transpose text-right" title="Tempo">83</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 21, false)" title="Show Lyric Pane"><b>Em</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;DDaK1AssrrI&#39;, &#39;Xin Hay Roi Xa&#39;, 0, 0)" title="Playing DDaK1AssrrI"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;DDaK1AssrrI&#39;, &#39;Xin Hay Roi Xa&#39;, 18, 54)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  18.36
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;DDaK1AssrrI&#39;, &#39;Xin Hay Roi Xa&#39;, 230, 283)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  230.53
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;DDaK1AssrrI&#39;, &#39;Xin Hay Roi Xa&#39;, 421, 439)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  421.18
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                21
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Tri Ky
+            </td>
+            <td>
+              24
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/40162/tri-ky" title="Source lyrics">Tri Ky</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Chrystine&#39;)">Chrystine</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Ballad&#39;)">Ballad</button><span class="transpose text-right" title="Tempo">60</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 22, false)" title="Show Lyric Pane"><b>Bb?</b><span> (Karaoke-N)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;k33ERskYrpk&#39;, &#39;Tri Ky&#39;, 0, 0)" title="Playing k33ERskYrpk"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;k33ERskYrpk&#39;, &#39;Tri Ky&#39;, 0, 17)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.17
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                22
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Nang Thuy Tinh
+            </td>
+            <td>
+              25
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/55438/nang-thuy-tinh" title="Source lyrics">Nang Thuy Tinh</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Chi Linh&#39;)">Chi Linh</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button><span class="transpose text-right" title="Tempo">67</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 23, false)" title="Show Lyric Pane"><b>D</b><span> (Karaoke)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;PNw8He0XSag&#39;, &#39;Nang Thuy Tinh&#39;, 0, 0)" title="Playing PNw8He0XSag"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;PNw8He0XSag&#39;, &#39;Nang Thuy Tinh&#39;, 0, 28)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.28
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                23
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              
+            </td>
+            <td>
+              26
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/1587/boi-vi-anh-yeu-emUF" title="Source lyrics">Boi Vi Anh Yeu Em</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phi&#39;)">Phi</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button>
+            </td>
+            <td>
+              <div class="d-grid gap-2">Am
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                24
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Wholl Stop The Rain
+            </td>
+            <td>
+              27
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/34520/who-ll-stop-the-rain" title="Source lyrics">Who&#39;ll Stop The Rain</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Djane&#39;)">Djane</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Bebop&#39;)">Bebop</button><span class="transpose text-right" title="Tempo">120</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 25, false)" title="Show Lyric Pane"><b>G</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;lIPan-rEQJA&#39;, &#39;Wholl Stop The Rain&#39;, 0, 0)" title="Playing lIPan-rEQJA"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;lIPan-rEQJA&#39;, &#39;Wholl Stop The Rain&#39;, 2, 14)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  2.12
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                25
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Have You Ever Seen The Rain
+            </td>
+            <td>
+              28
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/18557/have-you-ever-seen-the-rain" title="Source lyrics">Have You Ever Seen The Rain</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Djane&#39;)">Djane</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Bebob&#39;)">Bebob</button><span class="transpose text-right" title="Tempo">115</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 26, false)" title="Show Lyric Pane"><b>C</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;u1V8YRJnr4Q&#39;, &#39;Have You Ever Seen The Rain&#39;, 0, 0)" title="Playing u1V8YRJnr4Q"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;u1V8YRJnr4Q&#39;, &#39;Have You Ever Seen The Rain&#39;, 17, 30)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  17.13
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                26
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Nho ve em
+            </td>
+            <td>
+              29
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/967/nho-ve-em" title="Source lyrics">Nhớ ve em</a>&nbsp;<i class="fa fa-guitar"></i>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Mai&#39;)">Mai</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Ballad&#39;)">Ballad</button><span class="transpose text-right" title="Tempo">72</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 27, false)" title="Show Lyric Pane"><b>Fm</b><span> (Ngon)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;wcvD2HBiZfo&#39;, &#39;Nhớ ve em&#39;, 0, 0)" title="Playing wcvD2HBiZfo"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;wcvD2HBiZfo&#39;, &#39;Nhớ ve em&#39;, 2, 34)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  2.32
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                27
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              I Started A Joke
+            </td>
+            <td>
+              30
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/4122/i-started-a-joke/thienv" title="Source lyrics">I Started A Joke</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Dai&#39;)">Dai</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Slow&#39;)">Slow</button><span class="transpose text-right" title="Tempo">76</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 28, false)" title="Show Lyric Pane"><b>G</b><span> (Karaoke-T)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;XYb-w39sGlY&#39;, &#39;I Started A Joke&#39;, 0, 0)" title="Playing XYb-w39sGlY"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;XYb-w39sGlY&#39;, &#39;I Started A Joke&#39;, 0, 14)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.14
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                28
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              De Quen Con Tim
+            </td>
+            <td>
+              31
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/851/de-quen-con-tim" title="Source lyrics">De Quen Con Tim</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phuong&#39;)">Phuong</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Rhumba&#39;)">Rhumba</button><span class="transpose text-right" title="Tempo">100</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 29, false)" title="Show Lyric Pane"><b>D</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;_08DmYck4is&#39;, &#39;De Quen Con Tim&#39;, 0, 0)" title="Playing _08DmYck4is"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;_08DmYck4is&#39;, &#39;De Quen Con Tim&#39;, 0, 21)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.21
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                29
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Hay Cho Toi
+            </td>
+            <td>
+              32
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/4621/hay-cho-toi/thienv" title="Source lyrics">Hay Cho Toi</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Ai Hoa&#39;)">Ai Hoa</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Chacha&#39;)">Chacha</button><span class="transpose text-right" title="Tempo">135</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 30, false)" title="Show Lyric Pane"><b>Dm</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;tR5LtRcGRpk&#39;, &#39;Hay Cho Toi&#39;, 0, 0)" title="Playing tR5LtRcGRpk"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;tR5LtRcGRpk&#39;, &#39;Hay Cho Toi&#39;, 0, 40)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.40
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;tR5LtRcGRpk&#39;, &#39;Hay Cho Toi&#39;, 182, 200)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  182.18
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                30
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              
+            </td>
+            <td>
+              33
+            </td>
+            <td>Lien Khuc Twist
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Phi&#39;)">Phi</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Twist&#39;)">Twist</button>
+            </td>
+            <td>
+              <div class="d-grid gap-2">C
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                31
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Nuoi Tiec
+            </td>
+            <td>
+              34
+            </td>
+            <td>
+              <a href="https://hopamviet.vn/chord/song/nuoi-tiec/W8IUI609.html" title="Source lyrics">Nuoi Tiec</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Anh HaiLily&#39;)">Anh HaiLily</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;-SlowRock&#39;)">-SlowRock</button><span class="transpose text-right" title="Tempo">80</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 32, false)" title="Show Lyric Pane"><b>A?</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;Qi7vNeeCqcI&#39;, &#39;Nuoi Tiec&#39;, 0, 0)" title="Playing Qi7vNeeCqcI"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;Qi7vNeeCqcI&#39;, &#39;Nuoi Tiec&#39;, 0, 16)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.16
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;Qi7vNeeCqcI&#39;, &#39;Nuoi Tiec&#39;, 157, 183)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  157.26
+                </div>
+              </button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;Qi7vNeeCqcI&#39;, &#39;Nuoi Tiec&#39;, 310, 320)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  310.10
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                32
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              I Started A Joke
+            </td>
+            <td>
+              35
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/4122/i-started-a-joke/thienv" title="Source lyrics">I Started A Joke</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Ngon&#39;)">Ngon</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;-Slow&#39;)">-Slow</button><span class="transpose text-right" title="Tempo">76</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 33, false)" title="Show Lyric Pane"><b>G?</b><span> (Thien)</span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;XYb-w39sGlY&#39;, &#39;I Started A Joke&#39;, 0, 0)" title="Playing XYb-w39sGlY"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;XYb-w39sGlY&#39;, &#39;I Started A Joke&#39;, 0, 14)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.14
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                33
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Crazy
+            </td>
+            <td>
+              36
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/4795/crazy-patsy-cline/nguyen-bau-studio" title="Source lyrics">Crazy</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Lily&#39;)">Lily</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;-jazzy&#39;)">-jazzy</button><span class="transpose text-right" title="Tempo">72</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 34, false)" title="Show Lyric Pane"><b>Bb</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;CKTOvHw8qFM&#39;, &#39;Crazy&#39;, 0, 0)" title="Playing CKTOvHw8qFM"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;CKTOvHw8qFM&#39;, &#39;Crazy&#39;, 0, 32)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.32
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                34
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Khi
+            </td>
+            <td>
+              37
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/12015/khi" title="Source lyrics">Khi</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Tu&#39;)">Tu</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;-Ballad&#39;)">-Ballad</button><span class="transpose text-right" title="Tempo">68</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-05-UF&#39;, 35, false)" title="Show Lyric Pane"><b>Cm?</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;6oiSp9qV8Q0&#39;, &#39;Khi&#39;, 0, 0)" title="Playing 6oiSp9qV8Q0"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;6oiSp9qV8Q0&#39;, &#39;Khi&#39;, 0, 32)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.32
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                35
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-sm btn-outline-secondary" onClick="reset_order()">Reset Order </button>
+      <script>
+        extra = [{"item_no":0,"title":"Con Chut Gi De Nho","tokey":"C","transpose":0,"intro":"","lyric":"Capo 2\nPhố núi cao <span class=\"chord\">C</span>cao phố núi đầy sương\nPhố núi cây <span class=\"chord\">F</span>xanh trời thấp thật <span class=\"chord\">C</span>buồn\nAnh khách <span class=\"chord\">Am</span>lạ đi lên đi <span class=\"chord\">Dm</span>xuống\nMay mà có <span class=\"chord\">G7</span>em đời còn dễ thương\nEm Plei-<span class=\"chord\">C</span>ku má đỏ môi <span class=\"chord\">Em</span>hồng\nỞ đây buổi <span class=\"chord\">C</span>chiều quanh năm mùa đông\nNên tóc em <span class=\"chord\">Em</span>ướt và mắt em <span class=\"chord\">G</span>ướt\nNên em mềm <span class=\"chord\">F</span>như mây chiều <span class=\"chord\">C</span>trong\nPhố núi <span class=\"chord\">C</span>cao phố núi trời gần\nPhố xá không <span class=\"chord\">F</span>xa nên phố tình <span class=\"chord\">C</span>thân\nĐi dăm <span class=\"chord\">F</span>phút đã về chốn <span class=\"chord\">Dm</span>cũ\nMột buổi chiều <span class=\"chord\">G</span>nao lòng bỗng bâng <span class=\"chord\">G7</span>khuâng\nXin cảm <span class=\"chord\">C</span>ơn thành phố có <span class=\"chord\">Am</span>em\nXin cảm <span class=\"chord\">Em</span>ơn một mái tóc <span class=\"chord\">C</span>mềm\nMai xa <span class=\"chord\">F</span>lắc trên đồn biên <span class=\"chord\">Dm</span>giới\nCòn một chút <span class=\"chord\">G7</span>gì để nhớ để <span class=\"chord\">C</span>quên\n \nHát tăng lên 1 ½ cung lên <span class=\"chord\">D#</span>---------\n \n* Xin cảm <span class=\"chord\">D#</span>ơn thành phố có <span class=\"chord\">Cm</span>em\nXin cảm <span class=\"chord\">Gm</span>ơn một mái tóc <span class=\"chord\">D#</span>mềm\nMai xa <span class=\"chord\">G#</span>lắc trên đồn biên <span class=\"chord\">Fm</span>giới\nCòn một chút <span class=\"chord\">A#7</span>gì để nhớ để <span class=\"chord\">D#</span>quên\nCòn một chút <span class=\"chord\">A#7</span>gì để nhớ để <span class=\"chord\">D#</span><span class='none'>quên</span>","video":"6a6pA7vfgxk","vintro":[0,36],"tempo":62},{"item_no":1,"title":"Sans Elle","tokey":"A","transpose":0,"intro":"(<span class=\"chord\">A</span> <span class=\"chord\">F#m</span> <span class=\"chord\">D</span> <span class=\"chord\">E7</span><span class='none'>)\n</span>","lyric":"<span class=\"chord\">A</span> <span class=\"chord\">F#m</span> <span class=\"chord\">D</span> <span class=\"chord\">E</span> - <span class=\"chord\">A</span> <span class=\"chord\">F#m</span> <span class=\"chord\">D</span> <span class=\"chord\">E</span>\n \n<span class=\"chord\">A</span> Je la connais depuis <span class=\"chord\">F#m</span> longtemps, <span class=\"chord\">D</span> et moi je <span class=\"chord\">E</span> l'aime\n<span class=\"chord\">A</span> Mais elle est encore <span class=\"chord\">F#m</span> enfant, <span class=\"chord\">D</span> c'est mon pro- <span class=\"chord\">E</span> bléme\n<span class=\"chord\">C#7</span> Pourtant elle a dit <span class=\"chord\">F#m</span> un jour, <span class=\"chord\">B7</span> que j'étais son premier <span class=\"chord\">E</span> amour\n<span class=\"chord\">C#7</span> Oui mais elle que dix <span class=\"chord\">F#m</span> sept ans, <span class=\"chord\">B7</span> elle est plus douce qu'un <span class=\"chord\">E</span> printemps\n \nDK: Sans <span class=\"chord\">A</span> elle, mon <span class=\"chord\">Bm</span> coeur s'ennuie, prés <span class=\"chord\">E</span> d'elle, louf <span class=\"chord\">A</span> me sourit\nSans <span class=\"chord\">F#m</span> elle, mes <span class=\"chord\">D</span> jours sont gris, C'est <span class=\"chord\">E</span> elle, qui <span class=\"chord\">D</span> est ma <span class=\"chord\">A</span> vie\nSans elle, jai <span class=\"chord\">Bm</span> le coeur lourd , je <span class=\"chord\">E</span> l'aime, elle <span class=\"chord\">A</span> pour Toujours\nPrés <span class=\"chord\">F#m</span> d'elle, je <span class=\"chord\">D</span> suis si bien, sans <span class=\"chord\">E</span> elle, je <span class=\"chord\">D</span> ne suis <span class=\"chord\">A</span> rien\n \n<span class=\"chord\">A</span> Từ mãi kiếp trước khi tôi <span class=\"chord\">F#m</span> quen em, <span class=\"chord\">D</span> và tôi đã <span class=\"chord\">E</span> trót yêu\n<span class=\"chord\">A</span> Nhớ đến những lúc trong em <span class=\"chord\">F#m</span> ngây thơ, <span class=\"chord\">D</span> nhìn tôi qua <span class=\"chord\">E</span> giấc mơ\n<span class=\"chord\">C#7</span> Một ngày cuộc tình đầu sẽ <span class=\"chord\">F#m</span> cho em\n<span class=\"chord\">B7</span> Nghe câu yêu đương lòng vương <span class=\"chord\">E</span> thương nhớ\n<span class=\"chord\">C#7</span> Và dù Người tình là gió <span class=\"chord\">F#m</span> ngây thơ\n<span class=\"chord\">B7</span> Nhưng nghe như Xuân tươi thắm <span class=\"chord\">E</span> trong mơ\n \nDK: Xa <span class=\"chord\">A</span> em rồi, tim <span class=\"chord\">Bm</span> tôi sầu nhớ, bên <span class=\"chord\">E</span> em chiều nắng <span class=\"chord\">A</span> tươi rực rỡ\nXa <span class=\"chord\">F#m</span> em rồi không <span class=\"chord\">D</span> gian mù tối, em như <span class=\"chord\">E</span> vì sao <span class=\"chord\">D</span> trên bầu <span class=\"chord\">A</span> trời\nXa <span class=\"chord\">A</span> em rồi tim <span class=\"chord\">Bm</span> tôi rạn vỡ, ôi <span class=\"chord\">E</span> muôn đời sống <span class=\"chord\">A</span> trong niềm nhớ\nBên <span class=\"chord\">F#m</span> em thời gian <span class=\"chord\">D</span> như rực sáng, xa em <span class=\"chord\">E</span> rồi không <span class=\"chord\">D</span> gian ly <span class=\"chord\">A</span> tan\n \n<span class=\"chord\">Music</span> DK Viet (1/2) DK Phap + Out\n\n<span class=\"chord\">A</span> Je voudrai parfois lui <span class=\"chord\">F#m</span> parler, <span class=\"chord\">D</span> mais que se <span class=\"chord\">E</span> dire\n<span class=\"chord\">A</span> Que je veux vivre a ses <span class=\"chord\">F#m</span> cụtes, <span class=\"chord\">D</span> en voie <span class=\"chord\">E</span> sourire\n<span class=\"chord\">C#7</span> Lui chanter des chansons <span class=\"chord\">F#m</span> d'amour, <span class=\"chord\">B7</span> dire que je t'aimerai <span class=\"chord\">E</span> Toujours\n<span class=\"chord\">C#7</span> Ces mots que j'ai pensé <span class=\"chord\">F#m</span> cent fois. <span class=\"chord\">B7</span> Et que garde aufond <span class=\"chord\">E</span><span class='none'> de moi</span>","video":"arCmdzElN5M","vintro":[0,16],"tempo":115},{"item_no":2,"title":"Em Cung Can Mot Bo Vai","tokey":"Bm","transpose":0,"intro":"","lyric":"1. Đừng <span class=\"chord\">Bm</span> yêu ai anh nhé đừng bỏ <span class=\"chord\">F#m</span> em một mình\nĐừng <span class=\"chord\">G</span> nói lời ong bướm mật <span class=\"chord\">A</span> ngọt đầu <span class=\"chord\">D</span> môi\nĐừng <span class=\"chord\">Em</span> yêu ai anh nhé hãy dìu <span class=\"chord\">Bm</span> em chung đường\nHãy nói dùm <span class=\"chord\">C#7</span> em hai tiếng yêu <span class=\"chord\">F#7</span> đương.\n \n2. Đừng <span class=\"chord\">Bm</span> yêu ai anh nhé đừng quên <span class=\"chord\">F#m</span> bao kỷ niệm\nCuộc <span class=\"chord\">G</span> đời nhiều sóng gió em cũng <span class=\"chord\">A</span> cần một bờ <span class=\"chord\">D</span> vai\nVề <span class=\"chord\">Em</span> bên em anh nhé nói với <span class=\"chord\">Bm</span> em một lời\nRằng  <span class=\"chord\">A</span>anh <span class=\"chord\">F#7</span>chỉ yêu mình <span class=\"chord\">Bm</span> em.\n \nĐK:\nĐừng <span class=\"chord\">Em</span> yêu ai anh ơi cho nước <span class=\"chord\">Bm</span> mắt đêm lệ rơi\nTừng <span class=\"chord\">A</span> đêm cô đơn từng đêm nhớ mong người <span class=\"chord\">Bm</span> ơi\nVề <span class=\"chord\">Em</span> bên em anh ơi cho cây <span class=\"chord\">Bm</span> lá còn xanh\nCho <span class=\"chord\">A</span> mái đầu em <span class=\"chord\">F#7</span> được tựa vào vai <span class=\"chord\">Bm</span> anh\nCho <span class=\"chord\">A</span> mái đầu em <span class=\"chord\">F#7</span> được tựa vào vai <span class=\"chord\">Bm</span><span class='none'> anh.</span>","video":"eCv_W95q5n0","vintro":[0,31],"tempo":85},{"item_no":3,"title":"Tinh Chap Nhan","tokey":"Am","transpose":0,"intro":"","lyric":"Còn bao nhiêu giấc mơ ta <span class=\"chord\">Am</span> vẫn mơ về.\nCòn bao nhiêu khát khao  ta <span class=\"chord\">Dm</span>vẫn chờ mong,\nmà thời gian đâu có <span class=\"chord\">Am</span> đợi <span class=\"chord\">G</span>\nđể giờ<span class=\"chord\">F</span> đây ta đang còn <span class=\"chord\">Bdim</span> gì,\nkhi vẫn chơi vơi trong <span class=\"chord\">E7</span> tình đời.\n \nThử hỏi lòng ta ta đang <span class=\"chord\">Am</span> muốn gì ?\nThử hỏi lòng ta đã <span class=\"chord\">Dm</span> thực sự yêu chưa ?\nĐể cho nhau mãi tiếng yêu <span class=\"chord\">Am</span> đương <span class=\"chord\">G</span>\nđể<span class=\"chord\">F</span> rồi mãi không ân <span class=\"chord\">Bdim</span> hận,\nthì xin cho nhau ta cùng <span class=\"chord\">E7</span> đến.\n \nTình chỉ <span class=\"chord\">Am</span> cần hai đứa chấp <span class=\"chord\">Dm</span> nhận mà thôi.\n<span class=\"chord\">G</span>Cùng nhìn về nơi ánh sáng <span class=\"chord\">C</span> của tình yêu.\n<span class=\"chord\">F</span>Là sự hy sinh đến cho <span class=\"chord\">Bdim</span> nhau một đời.\nVà <span class=\"chord\">E7</span> cùng giấc mơ ngày <span class=\"chord\">Am</span> mai.\nTình chỉ cần hai đứa vui <span class=\"chord\">Dm</span> trọn vẹn mà thôi.\n<span class=\"chord\">G</span>Đừng nhìn về nơi dĩ vãng <span class=\"chord\">C</span> của ngày qua.\n<span class=\"chord\">F</span> Dù không như ý ta mong <span class=\"chord\">Bdim</span> đợi.\nVà <span class=\"chord\">E7</span> cùng bắt đầu từ <span class=\"chord\">Am</span><span class='none'> đây.\n \n </span>","video":"AyD6IgWKc38","vintro":[0,25],"tempo":72},{"item_no":4,"title":"Crazy Little Thing Called Love","tokey":"C?","transpose":0,"intro":"","lyric":" \nVerse 1\nThis <span class=\"chord\">C</span>thing called love, I <span class=\"chord\">F</span>just can't <span class=\"chord\">A#</span>handle <span class=\"chord\">F</span>it.\nThis <span class=\"chord\">C</span>thing called love, I <span class=\"chord\">F</span>must get <span class=\"chord\">A#</span>round to <span class=\"chord\">F</span>it.\nI ain't <span class=\"chord\">C</span>ready.\n<span class=\"chord\">G#</span>Crazy little <span class=\"chord\">A#</span>thing called <span class=\"chord\">C</span>love.\n \nVerse 2\nThis <span class=\"chord\">C</span>thing (this thing) called love (called love)\nit <span class=\"chord\">F</span>cries (like a baby) in a <span class=\"chord\">A#</span>cradle all <span class=\"chord\">F</span>night.\nIt <span class=\"chord\">C</span>swings, it jives, it <span class=\"chord\">F</span>shakes all over like a\n<span class=\"chord\">A#</span>jelly <span class=\"chord\">F</span>fish.\nI kinda <span class=\"chord\">C</span>like <span class=\"chord\">G#</span>it..crazy little <span class=\"chord\">A#</span>thing called <span class=\"chord\">C</span>love.\n \nChorus\nThere goes my <span class=\"chord\">F</span>baby..she <span class=\"chord\">A#</span>knows how to <span class=\"chord\">F</span>Rock n' Roll.\nShe drives me <span class=\"chord\">G#</span>crazy..she gives me <span class=\"chord\">D</span>hot and cold <span class=\"chord\">G</span>fever..\nthen she <span class=\"chord\">D#</span>leaves me in a cool, cool <span class=\"chord\">D</span>sweat. <span class=\"chord\">G</span>\n \nVerse 3\nI gotta be <span class=\"chord\">C</span>cool, relax, get <span class=\"chord\">F</span>hip, get <span class=\"chord\">A#</span>on my <span class=\"chord\">F</span>tracks.\nTake a <span class=\"chord\">C</span>back seat, hitch-hike, and <span class=\"chord\">F</span>take a long ride\non my <span class=\"chord\">A#</span>motor <span class=\"chord\">F</span>bike..\nUntil I'm <span class=\"chord\">C</span>ready.. <span class=\"chord\">G#</span>crazy little <span class=\"chord\">A#</span>thing called <span class=\"chord\">C</span>love.\n \nInterlude\n<span class=\"chord\">G#</span> <span class=\"chord\">C</span> <span class=\"chord\">G#</span> <span class=\"chord\">D</span> <span class=\"chord\">D#</span> <span class=\"chord\">D</span> <span class=\"chord\">G</span>\n \nVerse 4\n(A Capella)\nI gotta be <span class=\"chord\">C</span>cool, relax, get <span class=\"chord\">F</span>hip, get <span class=\"chord\">A#</span>on my <span class=\"chord\">F</span>tracks.\nTake a <span class=\"chord\">C</span>back seat, hitch-hike, and <span class=\"chord\">F</span>take a long ride\non my <span class=\"chord\">A#</span>motor <span class=\"chord\">F</span>bike..\nUntil I'm <span class=\"chord\">C</span> <span class=\"chord\">G#</span>ready..crazy little <span class=\"chord\">A#</span>thing called <span class=\"chord\">C</span>love.\n \nVerse 5\nThis <span class=\"chord\">C</span>thing called love, I <span class=\"chord\">F</span>just can't <span class=\"chord\">A#</span>handle <span class=\"chord\">F</span>it.\nThis <span class=\"chord\">C</span>thing called love, I <span class=\"chord\">F</span>must get <span class=\"chord\">A#</span>round to <span class=\"chord\">F</span>it.\nI ain't <span class=\"chord\">C</span>ready.\n<span class=\"chord\">G#</span>Crazy little <span class=\"chord\">A#</span>thing called <span class=\"chord\">C</span>love.\n \nOutro\n<span class=\"chord\">G#</span>Crazy little <span class=\"chord\">A#</span>thing called <span class=\"chord\">C</span><span class='none'>love. (x6)</span>","video":"zO6D_BAuYCI","vintro":[0,10],"tempo":140},{"item_no":5,"title":"You're My Heart, You're My Soul","tokey":"Cm?","transpose":0,"intro":"","lyric":"<span class=\"chord\">Cm</span>Deep in my heart there's a fire burning <span class=\"chord\">A#</span>hard\n<span class=\"chord\">Cm</span>Deep in my heart there's desire for a <span class=\"chord\">A#</span>start\nI'm <span class=\"chord\">Fm</span>dying in emotion. It's my word in <span class=\"chord\">Cm</span>fantasy\nI'm <span class=\"chord\">G#</span>living in my <span class=\"chord\">Fm</span>living in my <span class=\"chord\">A#</span>dreams\n.\nYou're my <span class=\"chord\">Cm</span>heart you're my <span class=\"chord\">Fm</span>soul\nI'm keep it <span class=\"chord\">A#</span>shining every where I <span class=\"chord\">Cm</span>go\nYou're my heart you're my <span class=\"chord\">Fm</span>soul\nI'll be <span class=\"chord\">A#</span>holding you forever\n<span class=\"chord\">A#</span>Staying with you together\n.\nYou're my <span class=\"chord\">Cm</span>heart you're my <span class=\"chord\">Fm</span>soul\nYeah I <span class=\"chord\">A#</span>feel that our love will <span class=\"chord\">Cm</span>grow\nYou're my heart you're my <span class=\"chord\">Fm</span>soul\nThat's the <span class=\"chord\">A#</span>only thing I really <span class=\"chord\">Cm</span>know\n.\n<span class=\"chord\">Cm</span>Let's look for a star and believe my burning <span class=\"chord\">A#</span>heart\n<span class=\"chord\">Cm</span>Feeling all right come and open up your <span class=\"chord\">A#</span>heart\nI <span class=\"chord\">Fm</span>keep the candle burning let your body melt in <span class=\"chord\">Cm</span>mine\nI'm <span class=\"chord\">G#</span>living in my <span class=\"chord\">Fm</span>living in my <span class=\"chord\">A#</span><span class='none'>dream</span>","video":"4kHl4FoK1Ys","vintro":[0,22],"tempo":120},{"item_no":6,"title":"Vet Son Tren Ao","tokey":"C","transpose":0,"intro":"(<span class=\"chord\">C7</span> <span class=\"chord\">C7</span> <span class=\"chord\">F7</span> <span class=\"chord\">F7</span> <span class=\"chord\">C7</span> <span class=\"chord\">C7</span> <span class=\"chord\">G7</span> <span class=\"chord\">F7</span> <span class=\"chord\">C7</span> <span class=\"chord\">G7</span><span class='none'>)x2\n</span>","lyric":"<span class=\"chord\">C</span> yeah, yeah, yeah, yeah, <span class=\"chord\">Am</span> yeah, yeah <span class=\"chord\">F</span> <span class=\"chord\">G7</span>\n<span class=\"chord\">C</span> yeah, yeah, yeah, yeah, <span class=\"chord\">Am</span> yeah, yeah <span class=\"chord\">F</span> <span class=\"chord\">G7</span>\n \n<span class=\"chord\">C</span> Khi đang ngồi chơi <span class=\"chord\">Am</span> trong quan trong <span class=\"chord\">Dm7</span> anh kêu rằng anh <span class=\"chord\">G7</span> muốn đi\n<span class=\"chord\">C</span> Ði mua một bao thuốc lá <span class=\"chord\">Am</span> thơm, <span class=\"chord\">Dm7</span> trong ngôi chợ ngay <span class=\"chord\">G7</span> góc đường\n<span class=\"chord\">C</span> Anh ra đi sao <span class=\"chord\">C7</span> thấy hơi lâu, <span class=\"chord\">F</span> đi quá 30 phút hơn\n<span class=\"chord\">D7</span> Khi anh vô trong mắt anh sao, <span class=\"chord\">G7</span> thấy có những nét dối gian\n \n<span class=\"chord\">C</span> Kìa son môi trên áo anh, <span class=\"chord\">F</span> thì ra anh đã dối em\n<span class=\"chord\">C</span> Kìa son môi trên áo anh, <span class=\"chord\">F</span> nhìn xem em không nói thêm\n<span class=\"chord\">C</span> Ðã biết thế trách <span class=\"chord\">E7</span> sao, <span class=\"chord\">Am</span> em không yêu anh <span class=\"chord\">Em</span> dâu\nVết <span class=\"chord\">F</span> son môi in trên <span class=\"chord\">C</span> cổ áo, <span class=\"chord\">G7</span> chẳng thèm anh nữa <span class=\"chord\">C</span> đâu, yeah\n \n<span class=\"chord\">C</span> Anh kêu rằng son <span class=\"chord\">Am</span> kia của em, <span class=\"chord\">Dm7</span> em chao mày thêm tức thêm <span class=\"chord\">G7</span> giận\n<span class=\"chord\">C</span> Son em màu hồng <span class=\"chord\">Am</span> tươi hãy xem, <span class=\"chord\">Dm7</span> son kia màu đỏ thẫm như <span class=\"chord\">G7</span> mận\n<span class=\"chord\">C</span> Anh vô sao? cô <span class=\"chord\">C7</span> đó theo sau, <span class=\"chord\">F</span> son môi lem nhem thấy ghê\n<span class=\"chord\">D7</span> Anh đưa cô ta tới nơi đâu, <span class=\"chord\">G7</span> bao lâu nay anh đã đi?\n \n<span class=\"chord\">C</span> Kìa son môi trên áo anh, <span class=\"chord\">F</span> thì ra anh đã dối em\n<span class=\"chord\">C</span> Kìa son môi trên áo anh, <span class=\"chord\">F</span> nhìn xem em không nói thêm\n<span class=\"chord\">C</span> Ðã biết thế trách <span class=\"chord\">E7</span> sao, <span class=\"chord\">Am</span> em không yêu anh <span class=\"chord\">Em</span> dâu\nVết <span class=\"chord\">F</span> son môi in trên <span class=\"chord\">C</span> cổ áo, <span class=\"chord\">G7</span> chẳng thèm anh nữa <span class=\"chord\">C</span> đâu, yeah\n \n<span class=\"chord\">G7</span> chẳng thèm anh nữa <span class=\"chord\">C</span> đâu, yeah\n<span class=\"chord\">G7</span> chẳng thèm anh nữa <span class=\"chord\">C</span><span class='none'> đâu, yeah\n </span>","video":"62S8K_4ZBE0","vintro":[0,17],"tempo":140},{"item_no":7,"title":"Giu Doi Cho Nhau","tokey":"Bb","transpose":0,"intro":"","lyric":"Ơn <span class=\"chord\">Bb</span> em thơ dại từ <span class=\"chord\">Gm</span> trời\nTheo ta <span class=\"chord\">Dm</span> xuống biển vớt đời ta <span class=\"chord\">Cm</span> trôi.\nƠn <span class=\"chord\">Eb6</span>em dáng mỏng mưa <span class=\"chord\">F7</span> vời\nTheo ta lên <span class=\"chord\">Cm7</span> núi <span class=\"chord\">F7</span> về đồi yêu <span class=\"chord\">Bb</span> thương.\nTạ <span class=\"chord\">Cm</span> ơn em <span class=\"chord\">F7</span> tạ ơn <span class=\"chord\">Gb</span> em. <span class=\"chord\">Bb</span>\n \nƠn <span class=\"chord\">Eb</span> em ngực ngải môi <span class=\"chord\">Dm</span> trầm\nCho ta cỏ <span class=\"chord\">Gm</span> mặn trăm lần lá <span class=\"chord\">Cm</span> ngoan.\nƠn <span class=\"chord\">Cm7</span> em hơi thoảng chỗ <span class=\"chord\">F7</span> nằm\nDấu quanh dấu <span class=\"chord\">Dm</span> quẩn <span class=\"chord\">F7</span> nỗi buồn một <span class=\"chord\">Bb</span> nơi.\nTạ <span class=\"chord\">Cm</span> ơn em <span class=\"chord\">F7</span> tạ ơn <span class=\"chord\">Gb</span> em.  <span class=\"chord\">Bb</span>\n \nƠn <span class=\"chord\">Gm</span> em tình những mù <span class=\"chord\">Cm</span> lòa\nNhư con sâu <span class=\"chord\">F7</span> nhỏ bò qua giấc <span class=\"chord\">Bb</span> mùi.\nƠn <span class=\"chord\">Cm</span> em hồn sớm ngậm <span class=\"chord\">F7</span> ngùi\nKiếp sau xin <span class=\"chord\">Cm</span> giữ <span class=\"chord\">F7</span> lại đời cho <span class=\"chord\">Bb</span> nhau.\nTạ <span class=\"chord\">Cm</span> ơn em <span class=\"chord\">F7</span> tạ ơn <span class=\"chord\">Bb</span> em <span class=\"chord\">Cm</span> <span class=\"chord\">F</span> <span class=\"chord\">Gb</span> <span class=\"chord\">Bb</span><span class='none'></span>","video":"qpRnQB36Z8g","vintro":[7,23],"tempo":66},{"item_no":8,"title":"Mot Dem Say","tokey":"C","transpose":0,"intro":"","lyric":" \nVerse 1 :\nKhi đôi môi em còn <span class=\"chord\">C</span> đỏ mọng, em muốn nói “em <span class=\"chord\">Am</span>yêu anh” ?\nKhi men còn trong <span class=\"chord\">F</span>hơi thở, lại gần hôn anh <span class=\"chord\">C</span>đi.\nKhi con tim không còn trên<span class=\"chord\">C</span> đầu, khi hai má em hây hây<span class=\"chord\">Am</span>\nEm nói em say tiếng<span class=\"chord\">F</span> đàn, vậy lại gần hôn anh đi. <span class=\"chord\">C</span>\n \nChorus :\nLại gần hôn<span class=\"chord\">C</span> anh, anh sẽ để em mặt trời<span class=\"chord\">Am</span>\nLại gần hôn<span class=\"chord\">F</span> anh, hay em để anh chơi vơi<span class=\"chord\">C</span>\nGiờ còn đôi ta<span class=\"chord\">C</span>, kia là núi đây là nhà <span class=\"chord\">Am</span>\nGiờ còn đôi<span class=\"chord\">F</span> ta, em có muốn đi thật<span class=\"chord\">C</span> xa?\n \nVerse 2 :\nTa chỉ sống một lần trên <span class=\"chord\">C</span>đời, suy nghĩ lắm chi em<span class=\"chord\">Am</span> ơi…\nBao nhiêu yêu thương<span class=\"chord\">F</span> trên đời, là vị ngọt trên<span class=\"chord\">C</span> đôi môi\n \nChorus :\nLại gần hôn<span class=\"chord\">C</span> anh, anh sẽ để em mặt trời<span class=\"chord\">Am</span>\nLại gần hôn<span class=\"chord\">F</span> anh, hay em để anh chơi vơi<span class=\"chord\">C</span>\nGiờ còn đôi ta<span class=\"chord\">C</span>, kia là núi đây là nhà <span class=\"chord\">Am</span>\nGiờ còn đôi<span class=\"chord\">F</span> ta, em có muốn đi thật<span class=\"chord\">C</span> xa?\n \nOutro :\nKhi đôi môi em còn đỏ<span class=\"chord\">C</span> mọng, khi anh nói “ anh yêu em “ <span class=\"chord\">Am</span>\nKhi anh ta còn<span class=\"chord\">F</span> say giấc nồng, lại gần hôn <span class=\"chord\">C</span><span class='none'>anh đi….</span>","video":"iIh41nqpnQE","vintro":[0,29],"tempo":116},{"item_no":9,"title":"Canh Hong Phai","tokey":"Am","transpose":1,"intro":"(<span class=\"chord\">Am</span> <span class=\"chord\">Am</span> <span class=\"chord\">Em</span> <span class=\"chord\">Em</span> <span class=\"chord\">G</span> <span class=\"chord\">G</span> <span class=\"chord\">Dm</span> <span class=\"chord\">Dm</span><span class='none'>)x2\n</span>","lyric":"Nàng như một <span class=\"chord\">Am</span>đóa hồng <span class=\"chord\">Dm</span>phai\nHương sắc héo <span class=\"chord\">G</span>hon theo những ngày <span class=\"chord\">Cmaj7</span>dài\nCuộc tình đi <span class=\"chord\">Fmaj7</span>qua trong em,\nMang <span class=\"chord\">Dm</span>bao tiếc nuối trái <span class=\"chord\">Esus4</span>tim vỡ <span class=\"chord\">E</span>tan.\n \nNhặt lại từng <span class=\"chord\">Am</span>cánh rụng rơi <span class=\"chord\">Dm</span>\nNàng vẫn sót <span class=\"chord\">G</span>xa cho chính đời <span class=\"chord\">Cmaj7</span>mình\nVì người em <span class=\"chord\">Fmaj7</span>yêu đã nói\nDung <span class=\"chord\">Dm</span>nhan tuyệt vời nhất thế <span class=\"chord\">Esus4</span>gian\nLà <span class=\"chord\">E</span>em\n \nDK:\nKhi em như <span class=\"chord\">Am</span>hoa nhạt màu\nAnh quên khi <span class=\"chord\">Dm</span>ta có nhau\nNhững phút ân <span class=\"chord\">G</span>ái lần đầu\nCho tim càng <span class=\"chord\">C</span>thêm nhói đau\nCánh hoa <span class=\"chord\">Fmaj7</span>tàn, dưới chân <span class=\"chord\">Dm</span>nàng\nLà cả tuổi <span class=\"chord\">E7</span>xuân rơi theo mối tình <span class=\"chord\">E</span>(ngày tháng)\n(Nàng khóc cho mình!)\n \nSương rơi trên <span class=\"chord\">Am</span>cánh lụa hồng\nHay nước mắt <span class=\"chord\">Dm</span>em ngóng trông\nMong tình sẽ <span class=\"chord\">G</span>đến một lần\nBên em để <span class=\"chord\">C</span>thôi nhớ mong\nCánh hoa <span class=\"chord\">Fmaj7</span>tàn, dưới chân <span class=\"chord\">Dm</span>nàng\nLà cả tuổi <span class=\"chord\">E7</span>xuân mang theo mối tình <span class=\"chord\">E</span>\nNàng khóc cho <span class=\"chord\">Am</span>mình\n<span class=\"chord\">Am</span>\n \n2. Chẳng còn lại <span class=\"chord\">Am</span>chút hồn <span class=\"chord\">Dm</span>nhiên\nÁnh mắt của <span class=\"chord\">G</span>nàng chất chứa muộn <span class=\"chord\">Cmaj7</span>phiền\nCuộc tình đi <span class=\"chord\">Fmaj7</span>qua trong em,\nMang <span class=\"chord\">Dm</span>bao tiếc nuối trái <span class=\"chord\">Esus4</span>tim vỡ tan. <span class=\"chord\">E7</span>\n \nHẹn nhau nơi <span class=\"chord\">Am</span>cuối cuộc đời <span class=\"chord\">Dm</span>\nSẽ có với <span class=\"chord\">G</span>nhau giay phút tuyệt <span class=\"chord\">Cmaj7</span>vời\nMà đời đâu <span class=\"chord\">Fmaj7</span>như trong mơ\nĐể <span class=\"chord\">Dm</span>lại bơ vơ nỗi <span class=\"chord\">Esus4</span>đau mình <span class=\"chord\">E</span>em\n \n(ĐK)\n..\nNàng khóc cho <span class=\"chord\">Fmaj7</span>mình <span class=\"chord\">Dm</span> <span class=\"chord\">Bm</span> <span class=\"chord\">Esus4</span> <span class=\"chord\">E</span>\n<span class=\"chord\">Fmaj7</span> <span class=\"chord\">Dm</span> <span class=\"chord\">B7</span> <span class=\"chord\">E</span> <span class=\"chord\">F</span><span class='none'>\n \n(Len 1/2 tone) (ĐK)</span>","video":"PdSGm6eFAhQ","vintro":[0,59],"tempo":130},{"item_no":10,"title":"You're A Man, I'm a Woman","tokey":"Cm","transpose":0,"intro":"","lyric":"Verse 1:\n<span class=\"chord\">Cm</span>Tonight, <span class=\"chord\">A#</span>there be no darkness <span class=\"chord\">Cm</span>tonight <span class=\"chord\">Gm</span>\n<span class=\"chord\">Cm</span>Hold tight, <span class=\"chord\">A#</span>let your lovelight shine <span class=\"chord\">Cm</span>bright<span class=\"chord\">Gm</span>\n<span class=\"chord\">G#</span>Listen to my heart and lay your <span class=\"chord\">D#</span>body next to mine\n<span class=\"chord\">G#</span>Let me fill your <span class=\"chord\">Fm</span>soul with all my <span class=\"chord\">Gsus4</span>dreams <span class=\"chord\">G</span>\n \nRefrein:\nYou're a wo<span class=\"chord\">Cm</span>man, I'm a <span class=\"chord\">Fm</span>man\nThis is <span class=\"chord\">A#</span>more than just a <span class=\"chord\">D#</span>game\nI can <span class=\"chord\">Cm</span>make you feel so <span class=\"chord\">Fm</span>right\nbe my <span class=\"chord\">G</span>lady of the <span class=\"chord\">Cm</span>night\n \nYou're a <span class=\"chord\">Cm</span>woman I'm a <span class=\"chord\">Fm</span>man\nyou're my <span class=\"chord\">A#</span>fortune I'm your <span class=\"chord\">D#</span>fame\nthese are <span class=\"chord\">Cm</span>things we can't <span class=\"chord\">Fm</span>disguise\nbe my <span class=\"chord\">G#</span>lady <span class=\"chord\">G</span>of the <span class=\"chord\">Cm</span>night\n \n \nInterlude:\n<span class=\"chord\">Cm</span>  <span class=\"chord\">F</span> <span class=\"chord\">Cm</span>\n<span class=\"chord\">Cm</span>  <span class=\"chord\">F</span>  <span class=\"chord\">Cm</span>\n \nVerse 2:\n<span class=\"chord\">Cm</span>Lay back, <span class=\"chord\">A#</span>back in my tenderness <span class=\"chord\">Cm</span> <span class=\"chord\">Gm</span>\n<span class=\"chord\">Cm</span>And take, <span class=\"chord\">A#</span>take all of my sweet caress <span class=\"chord\">Cm</span> <span class=\"chord\">Gm</span>\n<span class=\"chord\">G#</span>You've got all of me, It can't go <span class=\"chord\">D#</span>wrong if you agree\n<span class=\"chord\">G#</span>Soon two hearts will <span class=\"chord\">Fm</span>beat in <span class=\"chord\">Gsus4</span>extasy <span class=\"chord\">G</span><span class='none'></span>","video":"1PxDhnI7QNc","vintro":[0,32],"tempo":118},{"item_no":11,"title":"Hippy Shake","tokey":"E?","transpose":0,"intro":"","lyric":"#1.\n             <span class=\"chord\">A</span>                           <span class=\"chord\">E</span>\nFor goodness sake, I got the hippy hippy shake,\n                <span class=\"chord\">A</span>                            <span class=\"chord\">B</span>      N.C.\nyeah, I got the shake, I got the hippy hippy shake, oh!\n            <span class=\"chord\">E</span>\nI can't sit still, with the hippy hippy shake,\n               <span class=\"chord\">A</span>                              <span class=\"chord\">E</span>\nyeah, I get my fill now, with the hippy hippy shake.\n                  <span class=\"chord\">B</span>    <span class=\"chord\">A</span>  N.C.                <span class=\"chord\">E</span> <span class=\"chord\">B</span>\nYeah, it's in the bag,    Oh! the hippy hippy shake.\n\nCHORUS:\n              <span class=\"chord\">E</span>     N.C.                <span class=\"chord\">E</span>     N.C.\nWell now, you shake it to the left, you shake it to the right,\n    <span class=\"chord\">E</span>  N.C.                       <span class=\"chord\">E7</span>\nyou do the hippy shake shake with all of your might.\n    <span class=\"chord\">A</span>                       <span class=\"chord\">E</span>\nOh, baby, yeah, come on and shake,\n                <span class=\"chord\">B</span>    <span class=\"chord\">A</span>  N.C.                <span class=\"chord\">E</span> <span class=\"chord\">B</span>\noh, it's in the bag,    Oh! the hippy hippy shake.\n\nGuitar Instrumental:\n<span class=\"chord\">E</span>   <span class=\"chord\">E</span>   <span class=\"chord\">E</span>   <span class=\"chord\">E</span>\n<span class=\"chord\">A</span>   <span class=\"chord\">A</span>   <span class=\"chord\">E</span>   <span class=\"chord\">E</span>\n<span class=\"chord\">B</span>   <span class=\"chord\">A</span>   <span class=\"chord\">E</span>   <span class=\"chord\">B</span>\n\nCHORUS:\n              <span class=\"chord\">E</span>     N.C.                <span class=\"chord\">E</span>     N.C.\nWell now, you shake it to the left, you shake it to the right,\n    <span class=\"chord\">E</span>  N.C.                       <span class=\"chord\">E7</span>\nyou do the hippy shake shake with all of your might.\n    <span class=\"chord\">A</span>                       <span class=\"chord\">E</span>\nOh, baby, yeah, come on and shake,\n                <span class=\"chord\">B</span>    <span class=\"chord\">A</span>  N.C.                <span class=\"chord\">E</span>\noh, it's in the bag,    Oh! the hippy hippy shake.\nN.C.                <span class=\"chord\">E</span>      N.C.                <span class=\"chord\">E</span>        <span class=\"chord\">E7</span> <span class=\"chord\">E6</span><span class='none'>\nOh! the hippy hippy shake, Oh! the hippy hippy shake.\n</span>","video":"1Ke8mzgex4U","vintro":null,"tempo":138},{"item_no":12,"title":"Ao Lua Ha Dong","tokey":"Dm?","transpose":0,"intro":"","lyric":"Verse 1:\nNắng Sài <span class=\"chord\">Dm</span>Gòn anh đi mà chợt <span class=\"chord\">A#</span>mát\nBởi vì <span class=\"chord\">Gm</span>em mặc <span class=\"chord\">C7</span>áo lụa Hà <span class=\"chord\">Fmaj7</span>Đông\nAnh vẫn <span class=\"chord\">A7</span>yêu màu áo ấy vô cùng\nAnh vẫn <span class=\"chord\">Gm6</span>yêu màu áo ấy vô <span class=\"chord\">A7</span>cùng\n \nĐK:\nAnh vẫn <span class=\"chord\">Dm</span>nhớ em ngồi đây tóc <span class=\"chord\">A#</span>ngắn\nMà mùa <span class=\"chord\">A7</span>Thu dài lắm ở chung <span class=\"chord\">Dm</span>quanh <span class=\"chord\">D7</span>\nLinh hồn <span class=\"chord\">Gm</span>anh vội <span class=\"chord\">C</span>vã vẽ chân <span class=\"chord\">F</span>dung\nBay vội <span class=\"chord\">Gm7</span>vã vào <span class=\"chord\">A#</span>trong hồn mở <span class=\"chord\">A7</span>cửa\n \nEm chợt <span class=\"chord\">A#</span>đến, chợt <span class=\"chord\">Gm</span>đi, anh vẫn <span class=\"chord\">A#</span>biết\nTrời chợt <span class=\"chord\">F</span>mưa, chợt <span class=\"chord\">C7</span>nắng chẳng gì <span class=\"chord\">Fmaj7</span>đâu\nNhưng sao <span class=\"chord\">A#</span>đi mà không bảo gì <span class=\"chord\">A</span>nhau?\nĐể anh <span class=\"chord\">Gm6</span>gọi tiếng thở buồn vọng <span class=\"chord\">A7</span>lại\n \nVerse 2:\nEm ở <span class=\"chord\">Dm</span>đâu, hỡi mùa Thu tóc <span class=\"chord\">A#</span>ngắn?\nGiữ hộ <span class=\"chord\">Gm</span>anh màu <span class=\"chord\">C7</span>áo lụa Hà <span class=\"chord\">Fmaj7</span>Đông\nAnh vẫn <span class=\"chord\">A7</span>yêu màu áo ấy vô cùng\nAnh vẫn <span class=\"chord\">Gm</span>yêu màu áo <span class=\"chord\">A7</span>ấy vô <span class=\"chord\">Dm</span>cùng\nAnh vẫn <span class=\"chord\">Gm</span>yêu màu áo <span class=\"chord\">A7</span>ấy em <span class=\"chord\">Dm</span><span class='none'>ơi</span>","video":"xZ4myr0lOdA","vintro":[0,23],"tempo":64},{"item_no":13,"title":"Ai Chung Tinh Duoc Mai","tokey":"Em?","transpose":0,"intro":"","lyric":" \nverse 1:\n<span class=\"chord\">Em</span> Bình minh ơi dậy chưa, café <span class=\"chord\">Bm7</span> sáng với tôi được không?\n<span class=\"chord\">C</span> Chơi vơi qua ngày <span class=\"chord\">D</span> đông, sao thấy <span class=\"chord\">G</span> cô đơn và lạc lõng\n<span class=\"chord\">Em</span> Đêm ơi đã ngủ chưa, ngồi đây <span class=\"chord\">Bm7</span> uống với tôi vài ly\n<span class=\"chord\">C</span> Say thì cứ <span class=\"chord\">D</span> say, yêu thì <span class=\"chord\">Em</span> bỏ đi\n \nverse 2:\n<span class=\"chord\">Em</span> Đôi khi ta gặp nhau, để dạy nhau <span class=\"chord\">Bm7</span> cách sống trong khổ đau\n<span class=\"chord\">C</span> Đôi chân mang lặng thinh, <span class=\"chord\">D</span> thương một <span class=\"chord\">G</span> người không hề toan tính\n<span class=\"chord\">Em</span> Đôi khi anh dừng lại chẳng hiểu đang <span class=\"chord\">Bm7</span> khóc đang đau vì ai\n<span class=\"chord\">C</span> Khóc vì, <span class=\"chord\">D</span> đau vì duyên mình <span class=\"chord\">Em</span> đã sai\n \nchorus:\nNhiều khi <span class=\"chord\">Em</span> muốn một mình nhưng sợ cô <span class=\"chord\">Bm7</span> đơn\nSợ cảm <span class=\"chord\">C</span> giác trống vắng mỗi <span class=\"chord\">D</span> ngày mỗi <span class=\"chord\">G</span> lớn <span class=\"chord\">Bm7</span>\nSợ chạm vào nỗi <span class=\"chord\">Em</span> nhớ vu vơ\nGian gian díu <span class=\"chord\">Bm7</span> díu mập mờ\nNắm chưa <span class=\"chord\">Am7</span> xong đã <span class=\"chord\">Bm7</span> vội đổ <span class=\"chord\">Em</span> vỡ <span class=\"chord\">Bm7</span>\n \nỪ thì anh <span class=\"chord\">Em</span> thích một mình nhưng sợ cô <span class=\"chord\">Bm7</span> đơn\nDù đã từng <span class=\"chord\">C</span> nói như thế có <span class=\"chord\">D</span> lẽ sẽ tốt <span class=\"chord\">G</span> hơn <span class=\"chord\">Bm7</span>\nChỉ là vì chẳng <span class=\"chord\">Em</span> muốn yêu ai, khi mình anh với <span class=\"chord\">Bm7</span> những đêm dài\nNghĩ đi <span class=\"chord\">Am7</span> em, đâu <span class=\"chord\">Bm7</span> ai chung tình được <span class=\"chord\">Em</span><span class='none'> mãi</span>","video":"1ZVdCxuZUsM","vintro":[0,19],"tempo":65},{"item_no":14,"title":"Mua Xuan Dau Tien","tokey":"F?","transpose":0,"intro":"","lyric":"Bao nhiêu thương nhớ gom <span class=\"chord\">F</span>nhặt đầy anh trở về thăm <span class=\"chord\">Dm</span>em\nBao lần ngồi thâu <span class=\"chord\">Gm</span>đêm nghe <span class=\"chord\">C</span>mùa Xuân vừa <span class=\"chord\">F</span>đến\n<span class=\"chord\">A#</span>Em ơi hoa thắm rơi <span class=\"chord\">Gm</span>ngập đường trời <span class=\"chord\">G#dim</span>nắng xế vương <span class=\"chord\">Am</span>vương\n<span class=\"chord\">D</span>Lòng nhớ đến em <span class=\"chord\">Gm</span>luôn khi chiều <span class=\"chord\">G</span>tàn chim gọi <span class=\"chord\">C7</span>đàn\n \nEm ơi đôi lúc nghe <span class=\"chord\">F</span>lòng buồn trên sườn đồi thông <span class=\"chord\">Dm</span>xanh\nSương phủ đầy vai <span class=\"chord\">Gm</span>anh canh <span class=\"chord\">C</span>tàn trăng mờ <span class=\"chord\">F</span>ánh\n<span class=\"chord\">A#</span>Long lanh sao rớt vương <span class=\"chord\">Gm</span>đầy trời dòng <span class=\"chord\">G#dim</span>thác trắng bao <span class=\"chord\">Am</span>la\n<span class=\"chord\">D</span>Chờ sáng đến chim <span class=\"chord\">Gm</span>ca cho đường <span class=\"chord\">C7</span>dài cũng không <span class=\"chord\">F</span>xa <span class=\"chord\">A#</span> <span class=\"chord\">F</span>\n \nNgười yêu <span class=\"chord\">Am</span>ơi! biết chăng anh <span class=\"chord\">Dm</span>về\nNgười yêu <span class=\"chord\">Gm</span>ơi! <span class=\"chord\">G</span>nhớ chăng lời <span class=\"chord\">C</span>thề\nAnh say <span class=\"chord\">Dm</span>sưa nhịp bước trên <span class=\"chord\">Am</span>hè\nAnh nâng <span class=\"chord\">C</span>niu nụ hoa vừa <span class=\"chord\">F</span>hé\nĐôi môi <span class=\"chord\">A#</span>xinh người em nhỏ <span class=\"chord\">Gm</span>bé mộng <span class=\"chord\">C7</span>mơ\n \nMùa xuân <span class=\"chord\">Am</span>ơi! biết tôi yêu <span class=\"chord\">Dm</span>đời\nMùa xuân <span class=\"chord\">Gm</span>ơi! <span class=\"chord\">G</span>nói sao nên <span class=\"chord\">C</span>lời\nEm ơi <span class=\"chord\">Dm</span>em, dù nhớ vơi <span class=\"chord\">Am</span>đầy\nBao lâu <span class=\"chord\">C</span>nay, đợi nhau là <span class=\"chord\">F</span>mấy\nAnh đâu <span class=\"chord\">Gm</span>ngờ bến bờ hạnh <span class=\"chord\">C7</span>phúc là <span class=\"chord\">F</span>đây <span class=\"chord\">A#</span> <span class=\"chord\">C</span>\n \nEm ơi xuân đến bên <span class=\"chord\">F</span>thềm rồi nhắp rượu hồng vơi <span class=\"chord\">Dm</span>đi\nHết rồi mùa chia <span class=\"chord\">Gm</span>ly cho <span class=\"chord\">C</span>tình xuân vừa <span class=\"chord\">F</span>ý\n<span class=\"chord\">A#</span>Xin yêu thương đến đôi <span class=\"chord\">Gm</span>bạn hiền để <span class=\"chord\">G#dim</span>xóa hết cô <span class=\"chord\">Am</span>đơn\n<span class=\"chord\">D</span>Rồi quyến luyến nhau <span class=\"chord\">Gm</span>hơn cho người <span class=\"chord\">G</span>em thôi giận <span class=\"chord\">C7</span>hờn\n \nXuân nay ta chúc cho <span class=\"chord\">F</span>mẹ già vui vườn cà thêm <span class=\"chord\">Dm</span>hoa\nVui ruộng đồng bao <span class=\"chord\">Gm</span>la tóc <span class=\"chord\">C</span>bạc phơ đẹp <span class=\"chord\">F</span>quá\n<span class=\"chord\">A#</span>Xin yêu thương đến vơi <span class=\"chord\">Gm</span>hận thù để <span class=\"chord\">G#dim</span>tiếng hát hôm <span class=\"chord\">Am</span>nay\n<span class=\"chord\">D</span>Người chiến sĩ mơ <span class=\"chord\">Gm</span>say bên đàn <span class=\"chord\">C7</span>trẻ bé thơ <span class=\"chord\">F</span>ngây <span class=\"chord\">A#</span> <span class=\"chord\">F</span><span class='none'></span>","video":"ip3Wkm6kEWo","vintro":[0,27],"tempo":80},{"item_no":15,"title":"Celebration","tokey":"G","transpose":0,"intro":"","lyric":"[Intro] (This is your celebration)\n(This is your celebration)\nCelebrate good times, come on (Let's celebrate)\nCelebrate good times, come on (Let's celebrate)\n\n[Verse] There's a party goin' on right here\nA celebration to last throughout the years\nSo bring your good times and your laughter too\nWe gonna celebrate your party with you\nCome on now\n\n[Chorus] (Celebration) Let's all celebrate and have a good time\n(Celebration) We gon' celebrate and have a good time\n\n[Refrain] It's time to come together\nIt's up to you, what's your pleasure?\n(Everyone around the world, come on)\n\n[Pre-Chorus] It's a celebration","video":null,"vintro":null,"tempo":null},{"item_no":16,"title":"Ngo","tokey":"Gm","transpose":0,"intro":"","lyric":" \nAnh <span class=\"chord\">Gm</span>bỗng thấy nhớ em <span class=\"chord\">Eb</span>nhiều,\nAnh <span class=\"chord\">F</span>thấy lòng chợt lẽ <span class=\"chord\">Bb</span>loi\nCô <span class=\"chord\">Gm</span>đơn cùng với đêm <span class=\"chord\">Eb</span>dài,\nCứ <span class=\"chord\">F</span>trôi theo anh từng <span class=\"chord\">Gm</span>ngày\n \nEm <span class=\"chord\">Gm</span>ơi giờ đây anh <span class=\"chord\">Eb</span>cần,\nCần <span class=\"chord\">F</span>một bờ vai em <span class=\"chord\">Bb</span>ơi\nNhưng <span class=\"chord\">Gm</span>không cạnh ai lúc <span class=\"chord\">Eb</span>này,\nĐể <span class=\"chord\">F</span>anh có nơi tựa <span class=\"chord\">Gm</span>vào\n \nAnh <span class=\"chord\">Eb</span>nhớ lại những kỷ <span class=\"chord\">F</span>niệm,\nMà <span class=\"chord\">Dm</span>sao trong anh buồn <span class=\"chord\">Gm</span>thế\nAnh <span class=\"chord\">Eb</span>nghe cơn gió đang <span class=\"chord\">F</span>về,\nNhư <span class=\"chord\">Dm</span>em gần kề bên <span class=\"chord\">Gm</span>anh\n \nAnh <span class=\"chord\">Eb</span>đưa đôi mặt anh <span class=\"chord\">F</span>tìm,\nNhưng <span class=\"chord\">Dm</span>không thấy em ở <span class=\"chord\">Gm</span>đây\nAnh <span class=\"chord\">Eb</span>yêu em quá mất <span class=\"chord\">F</span>rồi,\nNên <span class=\"chord\">Dm</span>ngỡ như em về <span class=\"chord\">Gm</span><span class='none'>thôi.</span>","video":"4kkZcReXVec","vintro":[0,30],"tempo":140},{"item_no":17,"title":"Tinh Vong","tokey":"Bm","transpose":0,"intro":"","lyric":"1. Ôi như mộng <span class=\"chord\">Bm</span>du hồn ta đang <span class=\"chord\">B7</span>thoát đi tìm <span class=\"chord\">Em</span>em  <span class=\"chord\">Em7</span>\nTrong cơn dịu <span class=\"chord\">A</span>êm tình đưa ta <span class=\"chord\">A7</span>đến nơi bình <span class=\"chord\">D</span>yên <span class=\"chord\">F#7</span>\nCon tim hôm <span class=\"chord\">Bm</span>nay cho ta <span class=\"chord\">B7</span>biết nỗi yêu thương còn <span class=\"chord\">C#7</span>đấy\nYêu đến bao <span class=\"chord\">D</span>giờ hồn vẫn <span class=\"chord\">F#7</span>thấy dại <span class=\"chord\">Bm</span>khờ\n \nĐK: Tình yêu là <span class=\"chord\">Em</span>những huyền thoại <span class=\"chord\">A</span>\nRồi có lúc đôi khi ngồi <span class=\"chord\">D</span>nhớ lại <span class=\"chord\">Bm</span>\nTừ khi em <span class=\"chord\">Em</span>đến tình cờ <span class=\"chord\">F#7</span>\nTa bỗng thấy yêu em thật <span class=\"chord\">Bm</span>bất ngờ\n \nĐời qua như <span class=\"chord\">Em</span>gió đổi mùa <span class=\"chord\">A</span>\nTa mới biết khát khao từng <span class=\"chord\">D</span>hơi thở <span class=\"chord\">Bm</span>\nTừng trong nhung <span class=\"chord\">Em</span>nhớ đợi chờ <span class=\"chord\">F#7</span>\nNhư chiếc lá xác cơ cành <span class=\"chord\">Bm</span>rũ khô.\n \n2. Đi trong chiều <span class=\"chord\">Bm</span>nay chiều thênh thang <span class=\"chord\">B7</span>vấn vương còn <span class=\"chord\">Em</span>mang\nTa nghe từ <span class=\"chord\">A</span>đâu dừng lại đây <span class=\"chord\">A7</span>dấu chân thời <span class=\"chord\">D</span>gian <span class=\"chord\">F#7</span>\nTrong vô bờ <span class=\"chord\">Bm</span>kia đêm hoang <span class=\"chord\">B7</span>vắng khát khao tình <span class=\"chord\">C#7</span>ấy\nĐi mãi xa <span class=\"chord\">D</span>đời tình vẫn <span class=\"chord\">F#7</span>cứ gọi <span class=\"chord\">Bm</span><span class='none'>mời.\n \n(Giang Tau)\n(1) (DK) (2)</span>","video":"gA-XFUOabOc","vintro":[15,36],"tempo":66},{"item_no":18,"title":"How Can I Tell Her About You","tokey":"D?","transpose":0,"intro":"","lyric":"<span class=\"chord\">D</span>She knows when <span class=\"chord\">A</span>I'm lonesome, <span class=\"chord\">G</span>she cries when <span class=\"chord\">D</span>I'm sad\n<span class=\"chord\">G</span>She's up in the <span class=\"chord\">D</span>good times, <span class=\"chord\">Em</span>- she's down in the <span class=\"chord\">A</span>bad\n<span class=\"chord\">G</span>-Whenever I'm <span class=\"chord\">F#m</span>discouraged, <span class=\"chord\">G</span>she knows just what <span class=\"chord\">D</span>to do\nBut <span class=\"chord\">Em</span>girl <span class=\"chord\">A</span>-she doesn't know about <span class=\"chord\">D</span>you.\n \n<span class=\"chord\">D</span>-I can tell her my <span class=\"chord\">A</span>troubles, <span class=\"chord\">G</span>- she makes them all <span class=\"chord\">D</span>seem right\n<span class=\"chord\">G</span>-I can make up ex <span class=\"chord\">D</span>cuses <span class=\"chord\">Em</span>- not to hold her at <span class=\"chord\">A</span>night\n<span class=\"chord\">G</span>-We can talk of <span class=\"chord\">F#m</span>to morrow, <span class=\"chord\">G</span>- I'll tell her things that I <span class=\"chord\">D</span>want to do\nBut <span class=\"chord\">Em</span>girl <span class=\"chord\">A</span>-how can I tell her a bout <span class=\"chord\">D</span>you. <span class=\"chord\">A</span>\n \n<span class=\"chord\">G</span>How can <span class=\"chord\">A</span>I tell her <span class=\"chord\">D</span>a bout you\n<span class=\"chord\">G</span>Girl please <span class=\"chord\">A</span>tell me what <span class=\"chord\">D</span>to do\n<span class=\"chord\">G</span>Everything <span class=\"chord\">A</span>seems right when <span class=\"chord\">D</span>never <span class=\"chord\">F#m</span>I'm <span class=\"chord\">Bm</span>with <span class=\"chord\">A</span>you--\nSo <span class=\"chord\">G</span>girl won't you <span class=\"chord\">A</span>tell me <span class=\"chord\">G</span>-how to <span class=\"chord\">A</span>tell her a bout <span class=\"chord\">D</span>you <span class=\"chord\">F#m</span> <span class=\"chord\">G</span> <span class=\"chord\">A</span>\n \n<span class=\"chord\">D</span>-How can I tell her I <span class=\"chord\">A</span>don't miss her whe <span class=\"chord\">G</span>never I'm a <span class=\"chord\">D</span>way\n<span class=\"chord\">G</span>-How can I say it's you <span class=\"chord\">D</span>I think of <span class=\"chord\">Em</span>- every single night and <span class=\"chord\">A</span>day\n<span class=\"chord\">G</span>-But when is it <span class=\"chord\">F#m</span>easy <span class=\"chord\">G</span>-telling someone <span class=\"chord\">D</span>we're through\nAh <span class=\"chord\">Em</span>- girl <span class=\"chord\">A7</span>- help me tell her a bout <span class=\"chord\">D</span><span class='none'>you.</span>","video":"pFZ3vr4Eh6A","vintro":[0,13],"tempo":78},{"item_no":19,"title":"Co Don","tokey":"G?","transpose":0,"intro":"","lyric":"1. Hạnh <span class=\"chord\">G</span> phúc như đôi chim uyên tung bay ngập trời nắng <span class=\"chord\">C</span> ấm\nHạnh <span class=\"chord\">C</span> phúc như sương ban <span class=\"chord\">D7</span> mai long lanh đậu cành lá <span class=\"chord\">G</span> thắm\nTình yêu một <span class=\"chord\">Em</span> thoáng lên <span class=\"chord\">Am</span> ngôi, nhẹ nhàng như <span class=\"chord\">B7</span> áng mây <span class=\"chord\">Em</span> trôi\nDịu dàng như ánh trăng <span class=\"chord\">D</span> soi êm êm thương <span class=\"chord\">D7</span> yêu dâng trong hồn <span class=\"chord\">G</span> tôi.\n\nĐK: <span class=\"chord\">Am</span> Nghe như chim trời phiêu <span class=\"chord\">G</span> lãng\nTheo mây trời lang <span class=\"chord\">C</span> thang rong chơi cùng năm <span class=\"chord\">G</span> tháng.\n<span class=\"chord\">Am</span> Ôi đêm đêm cùng tiếng <span class=\"chord\">G</span> hát \nCho vơi niềm thương <span class=\"chord\">A7</span> nhớ còn gì cho ước <span class=\"chord\">D7</span> mơ\n\n3. Người <span class=\"chord\">G</span> hỡi cho tôi quên đi bao nhiêu kỷ niệm xa <span class=\"chord\">C</span> xưa\nNgười <span class=\"chord\">C</span> hỡi cho tôi quên đi bao nhiêu mộng đẹp nên <span class=\"chord\">G</span> thơ\nTình yêu đã <span class=\"chord\">Em</span> chết trong <span class=\"chord\">Am</span> tôi nụ cười đã <span class=\"chord\">B7</span> tắt trên <span class=\"chord\">Em</span> môi\nChỉ còn tiếc nuối <span class=\"chord\">D</span> khôn nguôi cô đơn bơ <span class=\"chord\">D7</span> vơ, tiếng hát lạc <span class=\"chord\">G</span><span class='none'> loài.</span>","video":"oZ_pOkjCCpk","vintro":[2,24],"tempo":93},{"item_no":20,"title":"Yeu Em Dat Do","tokey":"Bb?","transpose":0,"intro":"","lyric":"1. <span class=\"chord\">A#</span> Em, em xinh như <span class=\"chord\">Gm</span>tiên  trần\nVề bên <span class=\"chord\">Cm</span> anh, mang bao nhiêu <span class=\"chord\">F</span>thơ  mộng\nGặp một lần <span class=\"chord\">Dm</span> thôi, mà tình như giấc <span class=\"chord\">Gm</span> mơ\nGặp một lần <span class=\"chord\">Cm</span> thôi, <span class=\"chord\">F</span>dật  dờ bao <span class=\"chord\">A#</span>nhớ  nhung.\n \nMột lần gặp <span class=\"chord\">A#</span> em,  chợt <span class=\"chord\">D7</span>đã yêu em <span class=\"chord\">Gm</span> rồi\nMột lần bên <span class=\"chord\">Cm</span> em, <span class=\"chord\">D#6</span>tình ngỡ như <span class=\"chord\">F</span>muôn  đời\nĐừng vội vã <span class=\"chord\">A#</span>đi  em, hãy <span class=\"chord\">D7</span>cho anh <span class=\"chord\">Gm</span>một  lần\nĐược nhìn em thiết <span class=\"chord\">Cm</span> tha cho nhớ nhung <span class=\"chord\">F</span>vơi  cạn\n \n2. <span class=\"chord\">A#</span> Em cho anh bao điên <span class=\"chord\">Gm</span> cuồng\nNgày đêm thao <span class=\"chord\">Cm</span> thức, đôi tay ôm <span class=\"chord\">F</span>mong  chờ\nMột lần <span class=\"chord\">Dm</span>yêu  em, ngại ngùng trong bóng <span class=\"chord\">Gm</span> đêm\nTừng ngày <span class=\"chord\">Cm</span> qua, <span class=\"chord\">F</span>thẫn  thờ nhớ <span class=\"chord\">A#</span>thương  em.\n \nMột lần gặp <span class=\"chord\">A#</span> em,  chợt <span class=\"chord\">D7</span>đã yêu em <span class=\"chord\">Gm</span> rồi\nMột lần bên <span class=\"chord\">Cm</span> em, tình <span class=\"chord\">D#6</span>ngỡ như <span class=\"chord\">F</span>muôn  đời\nĐừng vội vã đi <span class=\"chord\">A#</span> em, hãy <span class=\"chord\">D7</span>cho anh <span class=\"chord\">Gm</span>một  lần\nĐược nhìn em <span class=\"chord\">Cm</span>thiết  tha, <span class=\"chord\">F</span>trong nụ  cười <span class=\"chord\">A#</span><span class='none'>thơ  yêu.</span>","video":"3rGWvCtQdU8","vintro":[0,33],"tempo":64},{"item_no":21,"title":"Xin Hay Roi Xa","tokey":"Em","transpose":0,"intro":"1, 2, 3, 4, Music, 2, 3, 4\n","lyric":"(1) Khi đã giã <span class=\"chord\">Em</span>từ người yêu hỡi xin hãy rời <span class=\"chord\">Am6</span>xa\nCho bao dang <span class=\"chord\">B</span> cay theo dòng đời trôi dần sẽ phai <span class=\"chord\">Em</span>nhòa\nGiờ đây em <span class=\"chord\">Em</span>đến cho ta đắm <span class=\"chord\">Am</span>say\nRồi mai xa <span class=\"chord\">D7</span>cách ta thêm đắng <span class=\"chord\">G</span>cay <span class=\"chord\">B</span>\nNày người tình <span class=\"chord\">Em</span>hỡi cho ta <span class=\"chord\">C</span> sầu với\nNhững nỗi sót <span class=\"chord\">F#</span>xa riêng một mình <span class=\"chord\">Am6</span>ta <span class=\"chord\">B7</span>\n \n(2) Khi đã giã <span class=\"chord\">Em</span>từ người yêu hỡi xin hãy quên <span class=\"chord\">Am</span>mau\nCho bao đớn <span class=\"chord\">B</span>đau bao ngày xa nhau rồi cũng phai <span class=\"chord\">Em</span>màu\nTình ta đã <span class=\"chord\">Em</span>lỡ ngày vui đã <span class=\"chord\">Am</span>qua\nGiờ đây ân <span class=\"chord\">D7</span>ái chỉ thêm xót <span class=\"chord\">G</span>xa <span class=\"chord\">B</span>\nNày người tình <span class=\"chord\">Em</span>hỡi tim ta <span class=\"chord\">C</span>rạn nứt\nVới những thương <span class=\"chord\">B</span>đau cho đến khi <span class=\"chord\">Em</span>nào\n \n(3) ĐK: Bao đêm cô <span class=\"chord\">E</span>đơn quặn xé tâm <span class=\"chord\">Am</span>tư\nCho yêu thương <span class=\"chord\">D7</span>xưa vùi lấp trong <span class=\"chord\">G</span>mơ\nMong em quên <span class=\"chord\">Am</span>đi <span class=\"chord\">B</span>nổi nhớ âm <span class=\"chord\">Em</span>thầm\nCho hạnh phúc <span class=\"chord\">F#</span>em cho tình đã <span class=\"chord\">Am6</span>qua <span class=\"chord\">B7</span>\n \n(4) Giờ xa cách <span class=\"chord\">Em</span>rồi người yêu hỡi em có hay <span class=\"chord\">Am</span>chăng\nTa như lá <span class=\"chord\">B</span>rơi trên dòng sông trôi xa mãi bến <span class=\"chord\">Em</span>bờ\nTình ta đã <span class=\"chord\">Em</span>lỡ ngày vui đã <span class=\"chord\">Am</span>qua\nGiờ đây ân <span class=\"chord\">D7</span>ái chỉ thêm xót <span class=\"chord\">G</span>xa <span class=\"chord\">B</span>\nNày người tình <span class=\"chord\">Em</span>hỡi tim ta <span class=\"chord\">C</span> rạng nứt\nVới những thương <span class=\"chord\">B</span>đau cho đến khi <span class=\"chord\">Em</span>nào\n\nOut: Này người tình <span class=\"chord\">Em</span>hỡi tim ta <span class=\"chord\">C</span> rạng nứt\nVới những thương <span class=\"chord\">B</span>đau cho đến khi <span class=\"chord\">Em</span><span class='none'>nào</span>","video":"DDaK1AssrrI","vintro":[18,54],"tempo":83},{"item_no":22,"title":"Tri Ky","tokey":"Bb?","transpose":0,"intro":"","lyric":"Nếu <span class=\"chord\">A#m</span>đã không đi cùng đường với <span class=\"chord\">G#</span>nhau\nThì em <span class=\"chord\">F#</span>chỉ mong thôi một điều nhỏ <span class=\"chord\">Fm</span>nhoi\nDành cho <span class=\"chord\">F#</span>em một vị trí trong <span class=\"chord\">G#</span>tim\nGọi là tri <span class=\"chord\">A#m</span>kỷ.\n \nBởi <span class=\"chord\">A#m</span>trái tim em chỉ cần thế <span class=\"chord\">G#</span>thôi\nVì em <span class=\"chord\">F#</span>biết yêu không cần phải có <span class=\"chord\">Fm</span>nhau\nVà hạnh <span class=\"chord\">F#</span>phúc cho em\nChính <span class=\"chord\">G#</span>là nhìn được hạnh phúc của <span class=\"chord\">A#m</span>anh.\n \nĐK:\nLà một <span class=\"chord\">F#</span>người sẽ thấy <span class=\"chord\">G#</span>vui khi anh <span class=\"chord\">A#m</span>cười\nSẽ thêm <span class=\"chord\">F#</span>đau khi thấy <span class=\"chord\">G#</span>anh rơi nước <span class=\"chord\">Fm</span>mắt\nLà một <span class=\"chord\">F#</span>người cùng anh <span class=\"chord\">G#</span>nghe những bài <span class=\"chord\">A#m</span>hát ngọt ngào\nHay chỉ <span class=\"chord\">F#</span>cùng anh ngắm <span class=\"chord\">G#</span>những vì <span class=\"chord\">A#m</span>sao.\n \nHãy để <span class=\"chord\">F#</span>em xoá giúp <span class=\"chord\">G#</span>anh bao nỗi <span class=\"chord\">F</span>buồn\nVà nhân <span class=\"chord\">F#</span>lên thêm gấp <span class=\"chord\">G#</span>đôi niềm vui <span class=\"chord\">Fm</span>ấy\nHãy để <span class=\"chord\">F#</span>em được bên <span class=\"chord\">G#</span>anh\nVào những <span class=\"chord\">A#m</span>lúc anh cần một <span class=\"chord\">F#</span>bờ vai để <span class=\"chord\">G#</span>anh <span class=\"chord\">A#m</span>sẻ chia.\n \nMột <span class=\"chord\">G#</span>bờ vai để anh sẻ <span class=\"chord\">A#m</span><span class='none'>chia.</span>","video":"k33ERskYrpk","vintro":[0,17],"tempo":60},{"item_no":23,"title":"Nang Thuy Tinh","tokey":"D","transpose":0,"intro":"","lyric":" \nMàu nắng hay là màu mắt <span class=\"chord\">D</span> em\nMùa thu mưa bay cho <span class=\"chord\">G</span> tay mềm\n<span class=\"chord\">Em7</span>Chiều nghiêng nghiêng bóng nắng <span class=\"chord\">D</span> qua thềm\nRồi có hôm nào mây <span class=\"chord\">A</span>bay lên.\nLùa nắng cho buồn vào tóc <span class=\"chord\">D</span>em\nBàn tay xanh xao đón <span class=\"chord\">G</span>ưu phiền\n<span class=\"chord\">Em</span>Ngày xưa sao lá thu <span class=\"chord\">D</span>không vàng\n<span class=\"chord\">A</span>Và nắngchưa vào trong <span class=\"chord\">D</span>mắt em<span class=\"chord\">C</span>\nEm qua công <span class=\"chord\">F</span>viên bước chân âm <span class=\"chord\">Dm</span>thầm\nNgoài <span class=\"chord\">A#</span> kia gió mây về <span class=\"chord\">F</span> ngàn\nCỏ <span class=\"chord\">C</span>cây chợt lên màu <span class=\"chord\">F</span>nắng<span class=\"chord\">Gm</span>\nEm qua công <span class=\"chord\">C</span>viên mắt em ngây <span class=\"chord\">F</span>tròn\nLung <span class=\"chord\">Dm</span>linh nắng thủy tinh <span class=\"chord\">A#</span>vàng\nChợt <span class=\"chord\">Gm</span>hồn buồn dâng mênh <span class=\"chord\">C</span>mang\nChiều đã đi vào vườn mắt <span class=\"chord\">F</span> em\nMùa thu qua tay đã <span class=\"chord\">A#</span>bao lần\nNgàn cây thắp <span class=\"chord\">A#m</span>nến lên hai <span class=\"chord\">F</span>hàng\n<span class=\"chord\">C</span>Để nắng đi vào trong <span class=\"chord\">F</span>mắt em\n<span class=\"chord\">Gm</span>Ngàn cây thắp nến lên hai <span class=\"chord\">F</span>hàng\n<span class=\"chord\">C</span>Màu nắng bây giờ trong mắt <span class=\"chord\">F</span>em …<span class=\"chord\">A#</span>…<span class=\"chord\">F</span><span class='none'></span>","video":"PNw8He0XSag","vintro":[0,28],"tempo":67},{"item_no":24,"title":"Boi Vi Anh Yeu Em","tokey":"Am","transpose":0,"intro":"","lyric":null,"video":null,"vintro":null,"tempo":null},{"item_no":25,"title":"Who'll Stop The Rain","tokey":"G","transpose":0,"intro":"","lyric":" \n<span class=\"chord\">G</span> Long as I remember, the <span class=\"chord\">C</span> rain been comin' <span class=\"chord\">G</span> down\nClouds of mystery <span class=\"chord\">Bm</span> pourin', con-<span class=\"chord\">C</span> fusion on the <span class=\"chord\">G</span> ground.\n<span class=\"chord\">C</span> Good men through the <span class=\"chord\">G</span> ages, tryin' to find the <span class=\"chord\">G</span> sun\n<span class=\"chord\">C</span> And I wonder, <span class=\"chord\">D</span> still I wonder, <span class=\"chord\">Em</span> who'll stop the <span class=\"chord\">G</span> rain\n \n<span class=\"chord\">G</span> I went down Virginia seekin' <span class=\"chord\">C</span> shelter from the <span class=\"chord\">G</span> storm\nCaught up in the <span class=\"chord\">Bm</span> fable, I <span class=\"chord\">C</span> watched the tower <span class=\"chord\">G</span> grow\n<span class=\"chord\">C</span> Five year plans and <span class=\"chord\">G</span> new deals, <span class=\"chord\">C</span> wrapped in golden <span class=\"chord\">G</span> chains.\n<span class=\"chord\">C</span> And I wonder, <span class=\"chord\">D</span> still I wonder, <span class=\"chord\">Em</span> who'll stop the <span class=\"chord\">G</span> rain\n \n<span class=\"chord\">C</span> <span class=\"chord\">G</span> <span class=\"chord\">D</span>-<span class=\"chord\">Am</span> <span class=\"chord\">C</span> <span class=\"chord\">Em</span>-<span class=\"chord\">D</span>\n \n<span class=\"chord\">G</span> Heard the singers playin', <span class=\"chord\">C</span> how we cheered for <span class=\"chord\">G</span> more\nThe crowd had rushed to-<span class=\"chord\">Bm</span> gether <span class=\"chord\">C</span> tryin' to keep <span class=\"chord\">G</span> warm\n<span class=\"chord\">C</span> Still the rain kept <span class=\"chord\">G</span> pourin', <span class=\"chord\">C</span> fallin' on my <span class=\"chord\">G</span> ears\n<span class=\"chord\">C</span> And I wonder, <span class=\"chord\">D</span> still I wonder, <span class=\"chord\">Em</span> who'll stop the <span class=\"chord\">G</span> rain\n \n<span class=\"chord\">G</span> <span class=\"chord\">Em</span>-<span class=\"chord\">G</span> <span class=\"chord\">Em</span>-<span class=\"chord\">G</span> <span class=\"chord\">Em</span>-<span class=\"chord\">G</span> <span class=\"chord\">Em</span><span class='none'>\n </span>","video":"lIPan-rEQJA","vintro":[2,14],"tempo":120},{"item_no":26,"title":"Have You Ever Seen The Rain","tokey":"C","transpose":0,"intro":"","lyric":"<span class=\"chord\">C</span>Someone told me long ago\nThere's a calm before the storm, I <span class=\"chord\">G</span>know\nAnd it's been coming for some <span class=\"chord\">C</span>time\nWhen it's over so they say\nIt'll bring a sunny day, I <span class=\"chord\">G</span>know\nI know, shining down like <span class=\"chord\">C</span>water\n \n<span class=\"chord\">F</span>I wanna <span class=\"chord\">G</span>know, have you <span class=\"chord\">C</span>ever <span class=\"chord\">Em</span>seen the <span class=\"chord\">Am</span>rain\n<span class=\"chord\">F</span>I wanna <span class=\"chord\">G</span>know, have you <span class=\"chord\">Em</span>ever seen the <span class=\"chord\">Am</span>rain\n<span class=\"chord\">F</span>Coming <span class=\"chord\">G</span>down on a sunny <span class=\"chord\">C</span>day\n \n<span class=\"chord\">C</span>Yesterday and days before\nSun is cold and rain is hot, I <span class=\"chord\">G</span>know\nI know, been that way for <span class=\"chord\">C</span>all my time\nTill forever on it goes\nFill the circle fast and slow. I <span class=\"chord\">G</span>know\nI know, and I can't stop my <span class=\"chord\">C</span>wonder\n \n--------\n \n<span class=\"chord\">C</span>Đã từ lâu mình có nghe câu\n<span class=\"chord\">C</span>“Khoảng bình yên thường trước cơn giông”\n<span class=\"chord\">G</span>Đã biết!\nĐiều đó có lẽ cũng <span class=\"chord\">C</span>đúng đôi khi\n \n<span class=\"chord\">C</span>Và sau khi đợt bão đi qua\n<span class=\"chord\">C</span>Trời đổ mưa ngày nắng hoan ca\n<span class=\"chord\">G</span>Đã thấy!\nNgàn tia nắng ấm như dòng <span class=\"chord\">C</span>suối tuôn rơi <span class=\"chord\">C7</span>\n \nChorus:\n<span class=\"chord\">F</span>Bạn đã bao giờ <span class=\"chord\">G</span>thấy\n“Một cơn <span class=\"chord\">C</span>mưa ngang <span class=\"chord\">Em</span>qua cuộc <span class=\"chord\">Am</span>đời”<span class=\"chord\">G</span>\n<span class=\"chord\">F</span>Bạn đã bao giờ <span class=\"chord\">G</span>thấy\n“Một cơn <span class=\"chord\">C</span>mưa ngang <span class=\"chord\">Em</span>qua dòng <span class=\"chord\">Am</span>đời”<span class=\"chord\">G</span>\n<span class=\"chord\">F</span>Giờ tuôn <span class=\"chord\">G</span>rơi vào ngày nắng tuyệt <span class=\"chord\">C</span>vời\n \n<span class=\"chord\">C</span>Ngày hôm qua, ngày đã bay xa\n<span class=\"chord\">C</span>Mặt trời sao lạnh giá như mưa\n<span class=\"chord\">G</span>Đã thấy!\nCuộc sống trong tôi đã từng <span class=\"chord\">C</span>qua như vậy\n \n<span class=\"chord\">C</span>Thời gian không một chút buông lơi\n<span class=\"chord\">C</span>Vòng đời luân hồi mãi rong chơi\n<span class=\"chord\">G</span>Đã biết!\nChẳng thể mong nó <span class=\"chord\">C</span>đứng yên\nYeah..\n \nChorus x2\n<span class=\"chord\">F</span>Bạn đã bao giờ <span class=\"chord\">G</span>thấy\n“Một cơn <span class=\"chord\">C</span>mưa ngang <span class=\"chord\">Em</span>qua cuộc <span class=\"chord\">Am</span>đời”<span class=\"chord\">G</span>\n<span class=\"chord\">F</span>Bạn đã bao giờ <span class=\"chord\">G</span>thấy\n“Một cơn <span class=\"chord\">C</span>mưa ngang <span class=\"chord\">Em</span>qua dòng <span class=\"chord\">Am</span>đời”<span class=\"chord\">G</span>\n<span class=\"chord\">F</span>Giờ tuôn <span class=\"chord\">G</span>rơi vào ngày nắng tuyệt <span class=\"chord\">C</span><span class='none'>vời\nYeah..</span>","video":"u1V8YRJnr4Q","vintro":[17,30],"tempo":115},{"item_no":27,"title":"Nhớ ve em","tokey":"Fm","transpose":0,"intro":"","lyric":"<span class=\"chord\">Fm</span>Ngồi nhìn mây trôi mãi\nTrôi về <span class=\"chord\">Eb</span>nơi xa xăm mịt mù\n<span class=\"chord\">Db</span>Trong cơn mơ chiều nay <span class=\"chord\">Eb</span>\nGọi thầm tên <span class=\"chord\">Ab</span>em\n<span class=\"chord\">Db</span>Những ước muốn mong <span class=\"chord\">Bbm</span>chờ\nCòn tìm <span class=\"chord\">Fm</span>nhau trong cơn mê này\nGiọt sầu <span class=\"chord\">Eb</span>rơi miên man trong <span class=\"chord\">C</span>đời\nKhi đã xa <span class=\"chord\">Fm</span>người\n \n<span class=\"chord\">Fm</span>Còn gì trong thương nhớ\nTóc em ngày <span class=\"chord\">Eb</span>nào xanh như mây trời\n<span class=\"chord\">Db</span>Bơ vơ trong chiều <span class=\"chord\">Eb</span>hoang gọi thầm tên <span class=\"chord\">Ab</span>nhau\n<span class=\"chord\">Db</span>Chiếc lá úa xa <span class=\"chord\">Bbm</span>cành\nGiờ <span class=\"chord\">Fm</span>còn bay về nơi phương ấy\nNgười <span class=\"chord\">Eb</span>đã đi cho bao tháng <span class=\"chord\">C</span>ngày\nChìm khuất trong <span class=\"chord\">Fm</span>mơ\n \nĐK: Nhớ về <span class=\"chord\">Db</span>em trong những <span class=\"chord\">Eb</span>lúc cơ đơn trở <span class=\"chord\">Cm</span>về <span class=\"chord\">F7</span>\nNhớ về <span class=\"chord\">Db</span>em nhớ ánh <span class=\"chord\">Eb</span>mắt môi cười thơ <span class=\"chord\">Ab</span>ngây <span class=\"chord\">Ab7</span>\nNhớ về <span class=\"chord\">Db</span>em trong tiếc <span class=\"chord\">Eb</span>nuối nhớ mong\nTrông <span class=\"chord\">Cm</span>chờ trở về chốn <span class=\"chord\">Fm</span>xưa\nTrọn cả <span class=\"chord\">Db</span>suốt đời này ta vẫn <span class=\"chord\">C</span> thương nhớ về <span class=\"chord\">Fm</span><span class='none'> em</span>","video":"wcvD2HBiZfo","vintro":[2,34],"tempo":72},{"item_no":28,"title":"I Started A Joke","tokey":"G","transpose":0,"intro":"","lyric":"(<span class=\"chord\">G</span> <span class=\"chord\">Bm</span> <span class=\"chord\">C</span> <span class=\"chord\">D</span>) X2\n.\nVerse 1:\n<span class=\"chord\">G</span>I started a <span class=\"chord\">Bm</span>joke\n<span class=\"chord\">C</span>Which started the <span class=\"chord\">D</span>whole world <span class=\"chord\">G</span> crying <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>But <span class=\"chord\">D</span>I didn't <span class=\"chord\">G</span> see <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>That the <span class=\"chord\">D</span>joke was on <span class=\"chord\">G</span>me, <span class=\"chord\">Bm</span>oh <span class=\"chord\">C</span>no <span class=\"chord\">D</span>\n.\nVerse 2:\n<span class=\"chord\">G</span>I started to <span class=\"chord\">Bm</span>cry\n<span class=\"chord\">C</span>Which started the <span class=\"chord\">D</span>whole world <span class=\"chord\">G</span>laughing <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>Oh, if <span class=\"chord\">D</span>I'd only <span class=\"chord\">G</span>seen <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>That the <span class=\"chord\">D</span>joke was on <span class=\"chord\">G</span>me\n.\nChorus:\n<span class=\"chord\">Em</span>I looked at the <span class=\"chord\">Bm</span>skies\nRunning my <span class=\"chord\">C</span>hands over my <span class=\"chord\">G</span>eyes\nAnd <span class=\"chord\">Bm</span>I fell out of <span class=\"chord\">Em</span>bed\n<span class=\"chord\">Em/D</span>Hurting my <span class=\"chord\">Am</span>head\nFrom things that I'd <span class=\"chord\">D</span>said\n.\nVerse 3:\n'Til <span class=\"chord\">G</span>I finally <span class=\"chord\">Bm</span>died\n<span class=\"chord\">C</span>Which started the <span class=\"chord\">D</span>whole world <span class=\"chord\">G</span>living <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>Oh, if <span class=\"chord\">D</span>I'd only <span class=\"chord\">G</span>seen <span class=\"chord\">Bm</span>(4: oh, yeah)\n<span class=\"chord\">C</span>That the <span class=\"chord\">D</span>joke was on <span class=\"chord\">G</span>me\n.\nrepeat chorus\n.\nrepeat verse 3\n.\nCoda:\n.\n<span class=\"chord\">C</span>That the <span class=\"chord\">D</span>joke was on <span class=\"chord\">G</span>me <span class=\"chord\">Bm</span> <span class=\"chord\">C</span> <span class=\"chord\">D</span>\n<span class=\"chord\">G</span> <span class=\"chord\">Bm</span> <span class=\"chord\">C</span> <span class=\"chord\">D</span><span class='none'>Oh...</span>","video":"XYb-w39sGlY","vintro":[0,14],"tempo":76},{"item_no":29,"title":"De Quen Con Tim","tokey":"D","transpose":0,"intro":"","lyric":"Capo 2\nGọi thầm tên <span class=\"chord\">D</span>em khi nắng chiều nhạt ngoài <span class=\"chord\">G</span>sân\nTrở về <span class=\"chord\">A</span>Cali anh nghe nhớ nhung giăng <span class=\"chord\">D</span>sầu <span class=\"chord\">Asus4</span>\nTừ ngày xa <span class=\"chord\">D</span>em anh bỗng trở thành lặng <span class=\"chord\">G</span>câm\nNgày rời <span class=\"chord\">A</span>Paris anh hứa sẽ quay trở <span class=\"chord\">D</span>lại <span class=\"chord\">Asus4</span>\nNghìn trùng xa <span class=\"chord\">D</span>xôi xa vút ngàn lời chờ <span class=\"chord\">G</span>mong\nBầu trời <span class=\"chord\">A</span>Cali hôm nay gió mưa giăng <span class=\"chord\">D</span>đầy <span class=\"chord\">Asus4</span>\nKỷ niệm bên <span class=\"chord\">D</span>em anh đã gối đầu từng <span class=\"chord\">G</span>đêm\nNgày rời <span class=\"chord\">A</span>Paris anh đã để quên con <span class=\"chord\">D</span>tim. <span class=\"chord\">G</span> <span class=\"chord\">D</span>\nAnh đi về anh <span class=\"chord\">A</span>nhớ bóng dáng người ở lại, Paris em yêu <span class=\"chord\">D</span>ơi\nAnh nhớ em thật <span class=\"chord\">G</span>nhiều, <span class=\"chord\">Em</span>, anh nhớ em thật <span class=\"chord\">D/A</span>nhiều .. người yêu <span class=\"chord\">A</span>ơi\nBuổi chiều sông <span class=\"chord\">D</span>Seine có gió lạnh về lập <span class=\"chord\">G</span>đông\nBuổi chiều <span class=\"chord\">A</span>Cali cô đơn từng cơn rã <span class=\"chord\">D</span>rời <span class=\"chord\">Asus4</span>\nTừ ngày xa <span class=\"chord\">D</span>em thao thức trằn trọc từng <span class=\"chord\">G</span>đêm\nNgày rời <span class=\"chord\">A</span>Paris anh đã để quên con <span class=\"chord\">D</span><span class='none'>tim.</span>","video":"_08DmYck4is","vintro":[0,21],"tempo":100},{"item_no":30,"title":"Hay Cho Toi","tokey":"Dm","transpose":0,"intro":"","lyric":"1. <span class=\"chord\">Dm</span>Hãy cho tôi nụ cười người ơi\nHãy cho tôi một <span class=\"chord\">Gm</span>giây phút thôi\n<span class=\"chord\">A</span>Để tôi thấy <span class=\"chord\">Bb</span>đời đang sống\nEm ơi có hay <span class=\"chord\">A7</span>không.\n \n2. <span class=\"chord\">Dm</span>Em cho tôi nụ cười lả lơi\nNói với tôi rằng <span class=\"chord\">Gm</span>em rất vui\n<span class=\"chord\">A</span>Để tôi sống <span class=\"chord\">Bb</span>bằng hình bóng\nĐôi khi có khi <span class=\"chord\">A7</span>không. <span class=\"chord\">Dm</span>\n \nDK. Em cho tôi <span class=\"chord\">Dm</span>bao nhiêu lời cay đắng\nEm cho tôi  bao u phiền nắng đọng\n<span class=\"chord\">A7</span>Em cho tôi mê em cho tôi say\nEm cho tôi <span class=\"chord\">A7</span> quên luôn kiếp tù <span class=\"chord\">Dm</span>đày.\n \n(Giang Tau) (1) (2) (DK) (Giang Tau)\n \nĐường đời ai <span class=\"chord\">Dm</span>biết có lúc khi đổi <span class=\"chord\">A</span>thay\nĐường tình ai <span class=\"chord\">A7</span>hay có những đau thương mà <span class=\"chord\">Dm</span><span class='none'>thôi. (x 4)\n </span>","video":"tR5LtRcGRpk","vintro":[0,40],"tempo":135},null,{"item_no":32,"title":"Nuoi Tiec","tokey":"A?","transpose":0,"intro":"<span class=\"chord\">D|E</span> <span class=\"chord\">C#m|F#7</span> <span class=\"chord\">Bm|C#m</span> <span class=\"chord\">D|E</span> <span class=\"chord\">A</span><span class='none'>\n</span>","lyric":"1. <span class=\"chord\">A</span> Mình xa nhau mà lòng vẫn <span class=\"chord\">D</span> nhớ\n<span class=\"chord\">Bm</span> Ngày xa <span class=\"chord\">E</span> xưa, tình mình như <span class=\"chord\">C#m</span> mơ\n<span class=\"chord\">F#m</span> Chuyện yêu đương hẹn hò hôm <span class=\"chord\">Bm</span> nao\n<span class=\"chord\">E</span> Mà giờ đây cuộc tình đã <span class=\"chord\">A</span> lỡ\n\nMình xa nhau mà lòng cứ <span class=\"chord\">D</span> ngỡ\n<span class=\"chord\">Bm</span> Chuyện chia <span class=\"chord\">E</span> tay tựa một cơn <span class=\"chord\">C#m</span> mơ\n<span class=\"chord\">F#m</span> Lòng xôn xao bàng hoàng nuối <span class=\"chord\">Bm</span> tiếc\n<span class=\"chord\">E</span> Cuộc tình tan, đời mình như <span class=\"chord\">A</span> thơ\n\n2. Ngồi nơi đây lòng chợt nhớ <span class=\"chord\">D</span> đến\n<span class=\"chord\">Bm</span> Người em <span class=\"chord\">E</span> gái mà nghẹn ngào trong <span class=\"chord\">C#m</span> tim\n<span class=\"chord\">F#m</span> Nhìn khói thuốc quyện hồn đơn <span class=\"chord\">Bm</span> côi\n<span class=\"chord\">E</span> Trong bóng tối mình là sao <span class=\"chord\">A</span> đêm\n\nNgồi nơi đây lòng chợt nhớ <span class=\"chord\">D</span> đến\n<span class=\"chord\">Bm</span> Người em <span class=\"chord\">E</span> yêu mà lòng u <span class=\"chord\">C#m</span> mê\n<span class=\"chord\">F#m</span> Gọi tên anh giọt lệ rưng <span class=\"chord\">Bm</span> rưng\n<span class=\"chord\">E</span> Ôi phố vắng làm mình buồn <span class=\"chord\">A</span> thêm\n\nĐK: <span class=\"chord\">D</span> Đã biết có hôm nay\nMà chúng ta vẫn không ngại <span class=\"chord\">C#m</span> ngùng\n<span class=\"chord\">F#m</span> Sống với nhau chia nhau nỗi vui\nÔi tình <span class=\"chord\">Bm</span> yêu thiết tha nồng <span class=\"chord\">E</span> nàn\nVà mình <span class=\"chord\">D</span> quên đi thời <span class=\"chord\">Bm</span> gian trôi quá <span class=\"chord\">E</span> mau\n\n<span class=\"chord\">D</span> Đã biết có hôm nay\nMà chúng <span class=\"chord\">E</span> ta vẫn yêu dại <span class=\"chord\">C#m</span> cuồng\n<span class=\"chord\">F#m</span> Dưới ánh trăng, đôi chúng ta\nĐã cùng <span class=\"chord\">Bm</span> nhau gối chăn mặn <span class=\"chord\">E</span> nồng\nVà quên <span class=\"chord\">D</span> đi ngày mai chúng <span class=\"chord\">E</span> ta chia <span class=\"chord\">A</span><span class='none'> ly\n</span>","video":"Qi7vNeeCqcI","vintro":[0,16],"tempo":80},{"item_no":33,"title":"I Started A Joke","tokey":"G?","transpose":0,"intro":"","lyric":"(<span class=\"chord\">G</span> <span class=\"chord\">Bm</span> <span class=\"chord\">C</span> <span class=\"chord\">D</span>) X2\n.\nVerse 1:\n<span class=\"chord\">G</span>I started a <span class=\"chord\">Bm</span>joke\n<span class=\"chord\">C</span>Which started the <span class=\"chord\">D</span>whole world <span class=\"chord\">G</span> crying <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>But <span class=\"chord\">D</span>I didn't <span class=\"chord\">G</span> see <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>That the <span class=\"chord\">D</span>joke was on <span class=\"chord\">G</span>me, <span class=\"chord\">Bm</span>oh <span class=\"chord\">C</span>no <span class=\"chord\">D</span>\n.\nVerse 2:\n<span class=\"chord\">G</span>I started to <span class=\"chord\">Bm</span>cry\n<span class=\"chord\">C</span>Which started the <span class=\"chord\">D</span>whole world <span class=\"chord\">G</span>laughing <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>Oh, if <span class=\"chord\">D</span>I'd only <span class=\"chord\">G</span>seen <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>That the <span class=\"chord\">D</span>joke was on <span class=\"chord\">G</span>me\n.\nChorus:\n<span class=\"chord\">Em</span>I looked at the <span class=\"chord\">Bm</span>skies\nRunning my <span class=\"chord\">C</span>hands over my <span class=\"chord\">G</span>eyes\nAnd <span class=\"chord\">Bm</span>I fell out of <span class=\"chord\">Em</span>bed\n<span class=\"chord\">Em/D</span>Hurting my <span class=\"chord\">Am</span>head\nFrom things that I'd <span class=\"chord\">D</span>said\n.\nVerse 3:\n'Til <span class=\"chord\">G</span>I finally <span class=\"chord\">Bm</span>died\n<span class=\"chord\">C</span>Which started the <span class=\"chord\">D</span>whole world <span class=\"chord\">G</span>living <span class=\"chord\">Bm</span>\n<span class=\"chord\">C</span>Oh, if <span class=\"chord\">D</span>I'd only <span class=\"chord\">G</span>seen <span class=\"chord\">Bm</span>(4: oh, yeah)\n<span class=\"chord\">C</span>That the <span class=\"chord\">D</span>joke was on <span class=\"chord\">G</span>me\n.\nrepeat chorus\n.\nrepeat verse 3\n.\nCoda:\n.\n<span class=\"chord\">C</span>That the <span class=\"chord\">D</span>joke was on <span class=\"chord\">G</span>me <span class=\"chord\">Bm</span> <span class=\"chord\">C</span> <span class=\"chord\">D</span>\n<span class=\"chord\">G</span> <span class=\"chord\">Bm</span> <span class=\"chord\">C</span> <span class=\"chord\">D</span><span class='none'>Oh...</span>","video":"XYb-w39sGlY","vintro":[0,14],"tempo":76},{"item_no":34,"title":"Crazy","tokey":"Bb","transpose":0,"intro":"","lyric":"<span class=\"chord\">Bb</span>Crazy, I'm <span class=\"chord\">G7</span>crazy for feeling so <span class=\"chord\">Cm</span>lonely\nI'm <span class=\"chord\">F</span>crazy, crazy for feeling so <span class=\"chord\">Bb</span>blue.. <span class=\"chord\">Bdim</span>... <span class=\"chord\">Cm</span>.... <span class=\"chord\">F</span>\n<span class=\"chord\">Bb</span>I knew you'd <span class=\"chord\">G7</span>love me as long as you <span class=\"chord\">Cm</span>wanted\nAnd then <span class=\"chord\">F</span>someday you'd leave me for somebody <span class=\"chord\">Bb</span>new... <span class=\"chord\">Cm</span>... <span class=\"chord\">Dbdim</span>... <span class=\"chord\">Bb/D</span>\n<span class=\"chord\">Eb</span>Worry, why do I <span class=\"chord\">Edim</span>let myself <span class=\"chord\">Bb/F</span>worry?.. <span class=\"chord\">Bb</span>... <span class=\"chord\">Bdim</span>\n<span class=\"chord\">C7</span>Wond'ring what in the world did I <span class=\"chord\">F</span>do? ... <span class=\"chord\">F7</span>\n<span class=\"chord\">Bb</span>Crazy for <span class=\"chord\">G7</span>thinking that my love could <span class=\"chord\">Cm</span>hold you\nI'm <span class=\"chord\">Eb</span>crazy for <span class=\"chord\">Dm</span>trying and <span class=\"chord\">Cm</span>crazy for <span class=\"chord\">G7/b</span>crying\nAnd I'm <span class=\"chord\">Cm</span>crazy for <span class=\"chord\">F</span>loving <span class=\"chord\">Bb</span>you <span class=\"chord\">Gb</span>\n<span class=\"chord\">B</span>Crazy for <span class=\"chord\">Ab7</span>thinking that my love could <span class=\"chord\">Dbm</span>hold you ..<span class=\"chord\">Ab7</span>\nI'm <span class=\"chord\">E</span>crazy for <span class=\"chord\">Ebm</span>trying and <span class=\"chord\">Dbm</span>crazy for <span class=\"chord\">Ab7/b#</span>crying\nAnd I'm <span class=\"chord\">Dbm</span>crazy for <span class=\"chord\">Gb</span>loving <span class=\"chord\">B</span><span class='none'>you.</span>","video":"CKTOvHw8qFM","vintro":[0,32],"tempo":72},{"item_no":35,"title":"Khi","tokey":"Cm?","transpose":0,"intro":"","lyric":" \nKhi <span class=\"chord\">Cm</span>Em nói là mình chia <span class=\"chord\">Fm</span>tay thôi\nKhi <span class=\"chord\">A#</span>Em nói là mình không <span class=\"chord\">D#</span>chung đôi\nKhi <span class=\"chord\">G#</span>Em nói là <span class=\"chord\">C7</span>mình sắp <span class=\"chord\">Fm</span>chia phôi\nKhi <span class=\"chord\">G7</span>Em nói là Em đã <span class=\"chord\">Cm</span>đi rồi\n \nKhi <span class=\"chord\">Cm</span>Anh biết một mình anh <span class=\"chord\">Fm</span>đơn côi\nKhi <span class=\"chord\">A#</span>Anh biết một mình giữa <span class=\"chord\">D#</span>đêm trôi\nKhi <span class=\"chord\">G#</span>Anh biết, lời <span class=\"chord\">C7</span>em nói <span class=\"chord\">Fm</span>trên môi\nKhi <span class=\"chord\">G7</span>Anh biết, mình đã mất <span class=\"chord\">Cm</span>nhau rồi\n \nTiễn em về, <span class=\"chord\">G#</span>giữa một chiều\n<span class=\"chord\">A#</span>mưa giăng <span class=\"chord\">D#</span>giăng buồn\nƯớt đôi bờ, <span class=\"chord\">Fm</span>vai lệ\n<span class=\"chord\">G7</span>Em hay nước <span class=\"chord\">Cm</span>mắt tôi?\nTiễn Em lần, <span class=\"chord\">G#</span>cuối\nrồi <span class=\"chord\">A#</span>mai chia <span class=\"chord\">D#</span>ly trọn đời\nBước chầm <span class=\"chord\">Fm</span>chậm thôi,\n<span class=\"chord\">Ddim</span>để đường <span class=\"chord\">G7</span>dài mãi em ơi!!!\nĐừng buồn em <span class=\"chord\">G#</span>hỡi <span class=\"chord\">A#</span>thầm\nmong Em <span class=\"chord\">D#</span>luôn yên bình\nNếu ta <span class=\"chord\">Fm</span>gặp nhau, tìm bàn\n<span class=\"chord\">G7</span>tay sưởi ấm <span class=\"chord\">Cm</span>một bàn tay\nChúc Em hạnh, <span class=\"chord\">G#</span>phúc\ndù <span class=\"chord\">A#</span>đêm mưa <span class=\"chord\">D#</span>ướt đường về\nHãy trả lời <span class=\"chord\">Fm</span>Anh... Em <span class=\"chord\">G7</span>nghỉ gì?\nKhi Em nói... <span class=\"chord\">Cm</span><span class='none'>chia tay?</span>","video":"6oiSp9qV8Q0","vintro":[0,32],"tempo":68}]
+      </script>
+      <footer style="font-size: 75%">
+        <div class="small text-muted">
+          <a href="/"><i class="fa fa-home">&nbsp;</i></a><span>Copyright (C) - 2023-2024.</span>
+        </div>
+      </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/dataTables.rowReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/rowReorder.bootstrap5.min.js"></script>
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/9f4e4b189d.js"></script>
+    <script src="/js/app.js?v=3" type="text/javascript"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+      var player;
+      var play_timer = null;
+      
+      // This function will be called when the API is ready
+      function onYouTubeIframeAPIReady() {
+          player = new YT.Player('youtube-player', {
+              videoId: '',
+              playerVars: {
+                  autoplay:       1,
+                  controls:       0,
+                  showinfo:       0,
+                  modestbranding: 1,
+              },
+          });
+      }
+      
+      function cancel_play() {
+        cancel_play_timer()
+        player.stopVideo();
+        $('#youtube').hide();
+      }
+      
+      function cancel_play_timer() {
+        if (play_timer) {
+          clearTimeout(play_timer);
+          play_timer = null
+        }
+      }
+      
+      function loopPlay(stime, etime) {
+        console.log(`Seeking to ${stime}. Play for ${etime - stime}`)
+        player.seekTo(stime, true)
+        if (etime <= stime)
+          return
+      
+        // Looping play
+        var duration = etime - stime
+        cancel_play_timer();
+        play_timer = setTimeout(function() {
+          loopPlay(stime, etime);
+        }, duration*1000);
+        // console.log('Starting timer: ', play_timer, ' duration: ', duration)
+      }
+      
+      function play_on_youtube(video, title, stime, etime) {
+        var href = `https://www.youtube.com/embed/${video}?autoplay=1&playsinline=1`;
+        console.log(href, stime, etime)
+      
+        $('#youtube-title')[0].innerHTML = title
+        player.loadVideoById(video, stime)
+        player.seekTo(stime, true)
+      
+        /* Slow down player */
+        if (etime > 0) {
+          const prate = 1
+          player.setPlaybackRate(prate);
+          etime2 = stime + ((etime - stime)/prate);
+        }
+      
+        // 1st seek somehow have to wait a bit ...
+        setTimeout(function() {
+          player.unMute()
+          $('#youtube').show();
+          loopPlay(stime, etime);
+        }, 500)
+      }
+    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+      var main_table;
+      var myModal;
+      
+      $(function() {
+        main_table = new DataTable('#main_table', {
+          layout: {
+            topStart:    'search',
+            bottomStart: 'info',
+          },
+          search: {
+            search: '',
+            caseInsensitive: true,
+          },
+          responsive: true,
+          paging:     false,
+          columns: [null, {data: 'id'}, {data: 'title', width: '25%'},
+                    null, null, null, null, null],
+          order:  [[ 1, "asc" ]],
+          columnDefs: [
+            { target: 0, visible: false, searchable: true },
+            { target: 1, visible: true,  searchable: false },
+            { target: 7, visible: false, searchable: true },
+            { target: 8, visible: true,  searchable: false },
+          ],
+          rowReorder: {
+            dataSrc: 'id',
+          },
+          initComplete: function(settings, json) {
+            var newkey  = ''
+            for (let value of $('#main_table tbody tr')) {
+              newkey += value.childNodes[4].innerText.replace(/[\(\) ]/g, "")
+            }
+            let curkey = localStorage.getItem('pagekey.2024-05-UF')
+            console.log(`2024-05-UF curkey: ${curkey}`)
+            console.log(`2024-05-UF newkey: ${newkey}`)
+            localStorage.setItem("pagekey.2024-05-UF", newkey)
+            if (curkey == newkey) {
+              restore_order()
+            }
+          }
+        });
+      
+        main_table.on('row-reorder', (e, diff, edit) => {
+          setTimeout(() => { save_order() }, 100)
+        })
+      
+        myModal  = new bootstrap.Modal(document.getElementById('lybox'))
+      });
+      
+      function reset_order() {
+        localStorage.removeItem("pageorder.2024-05-UF")
+        location.reload()
+      }
+      
+      function current_order() {
+        var olist = []
+        for (value of $('#main_table tbody tr')) {
+          olist.push(value.childNodes[15].innerText)
+        }
+        return olist
+      }
+      
+      // Save order to localstore (per device only)
+      function save_order() {
+        var olist = current_order()
+        console.log('new_list: ', olist)
+        localStorage.setItem("pageorder.2024-05-UF", JSON.stringify(olist))
+      }
+      
+      // Save order to server (so it could be shared)
+      function sv_save_order() {
+        var olist = current_order()
+        var url = `/playlist/reorder/2024-05-UF/${olist.join(',')}`
+        jQuery.ajax({
+          url:      url,
+          method:   'POST',
+          async:    false,
+          dataType: 'json',
+          success:  location.reload(),
+        });
+      }
+      
+      function restore_order() {
+        let item = localStorage.getItem("pageorder.2024-05-UF")
+        if (item == null) {
+          console.log("No order to restore")
+          return
+        }
+      
+        let olist   = JSON.parse(item)
+        let dt_rows = $('#main_table tbody tr')
+        var offset  = 2
+        console.log(`Restore olist: ${olist}`)
+      
+        for (rowno of olist) {
+          //console.log('rowno: ', rowno)
+          //console.log('dtrow: ', dt_rows[rowno])
+      
+          if (dt_rows[rowno] == null) {
+            continue
+          }
+          let listno = dt_rows[rowno].childNodes[2].innerText
+          dt_rows[rowno].childNodes[2].innerText = offset
+          offset += 1
+        }
+      
+        setTimeout(() => {
+          main_table.rows().invalidate().draw()
+        }, 100)
+      }
+    </script>
+  </body>
+</html>
