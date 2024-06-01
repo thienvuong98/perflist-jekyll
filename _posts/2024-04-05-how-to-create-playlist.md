@@ -8,44 +8,70 @@ categories: playlist
 
 This just put up a quick note on how to create/update the playlist from the shared excel sheet
 
-* Get the URL of the sheet (from browser) - open up the shared spreadsheet for song and copy the URL
+### Create performance list and download of lyrics
 
-* Create a local playlist .yml file - named it playlist/_playlist_.yml, with the following content. These are just guidelines - there are no restriction on the field names. Those will be printed on the playlist.
+* You need a source google sheet. This could be shared by a friend, or you
+  could create one. It must have the following columns: Singer, Song, Genre, Key.
+  Make that sheet globally sharable (should also be editable if you allow
+  others to edit).
 
-   ```
+* Get the URL of the sheet (from browser) - open up the shared spreadsheet
+  for song and copy the URL
+
+* Create a local playlist .yml file - named it playlist/_playlist_.yml, with
+  the following content. Only the source field is required, the rest are
+  just going to be printed on the playlist.
+
+   ```plaintext
    ---
    title: Some title for your playlist
    date: 03/30/2024
    location: 
+   source: <URL of Google Sheet>
    ```
 
 * Populate the data from the spreadsheet to the playlist file
-	```
-  hav.rb load-sheet playlist/<playlist>.yml
-  ```
-    * This will download the sheet, parse for the useful information. Then for each song, will search for the lyrics source from hopamhay, hopamchuan, or hopamviet and fill in the key to the playlist. This is a best guest attempts (but is quite good) so you may need to verify the afterward
-    * This could be run incrementally. It would ignore any entries already processed previously.  Also, if this step discover new song, the next step to fetch lyrics must follow.
-	
-* Fetch lyric to a temporary file 
 
-  ```
-  hav.rb find-missing playlist/<playlist>.yml | tee store-new.yml
-  ```
+  ```bash
+    perflist.rb load-sheet --search-lyrics share/<playlist>.yml
+    ```
 
-    * This searches and downloads the lyrics from the sites if any are missing from local song_store
+* This will download the sheet, parse for the useful information. Then for
+  each song, will search for the lyrics source from supported lyric sites
+  and fill in the key to the playlist. This is a best guest attempt relying
+  on the site search capability so you'll need to verify the content.
 
-* Add the file content to song_store.yml (manually).  Edit, go to end of file, and read in store-new.yml
+* Lyrics will be kept locally after initial download under share/lyrics/_song_name_.yml.
+  After that, the source URL would not be touched, and you could post edit
+  and change as much as you wanted.
 
-* Edit song_store.yml for the new song perf_url (video from youtube). If these are pulled from hopamchuan, there is a list of perf_links that you may pull from. Only choose the youtube links. 
+* ```load-sheet``` could be run incrementally if you update the source sheet (add/change entries).
+  However, entries will NOT be removed if you remove from the source. This need
+  to be taken care manually.
 
-    * *The video selected should be embeddable - but there is no indication at youtube, so you'll have to try. Mostly, vietnamese videos are embeddable, foreign are not*
+* If you wanted to reload a lyric from the source, update the **url** field
+  (if needed), and add a field **updating**: true to the yaml lyrics. Then
+  run ```perflist.rb update-lyrics```. It will check for any file needing
+  update and download a fresh copy of lyrics from the specified URL.
 
-* [If you want loops] Last step is to play the video, and extract the info for intro/mid/out to add in the loop parts, and add that into *playlist*.yml
+### Enhancing content of lyrics data
 
-* [Optiona] If have time and song is good, may want to re-chord again with personal version in hopamchuan. Versions on public site are generic and may not work well for all videos.
+Source lyric only contains the lyric/accompaniment without much else.
+You should post edit the stored file under share/lyrics for additional data
+
+* Getting youtube video matching play and adding the vido performance section (video, loops, style, tempo, ....)
+
+* The video selected should be embeddable. There is no indication looking at
+  youtube, so you'll have to try. Mostly, vietnamese videos are embeddable,
+  foreign are not
+
+* If you want video loops - Play the video, and extract the info for intro/mid/out to add in the loop parts,
 
 * Build site and deploy
 
-  ```
-  hav.rb build-site --deploy
-  ```
+  ```bash
+  perflist.rb build-site --deploy
+
+* Validate content at site
+
+>
