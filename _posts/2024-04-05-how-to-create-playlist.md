@@ -4,8 +4,6 @@ title:  "How to Create/Update Playlist - 2024"
 date:   2024-04-05 11:02:37 -0700
 categories: playlist
 ---
-## Steps to create a playlist and make available for others
-
 This just put up a quick note on how to create/update the playlist from the shared excel sheet
 
 ### Create performance list and download of lyrics
