@@ -8,6 +8,7 @@
 * Freeze registration
 * Change mixer to bring Style to 0%
 * Change split point to bring to C1 (full keyboard for performance)
+* Disable ACMP and OTS Link
 
 ### For One Man Band
 
@@ -15,3 +16,4 @@
 * Freeze registration
 * Change mixer to bring Style to 100%
 * Change split point to bring to F#2 (normal split)
+* Enable ACMP and OTS Link
