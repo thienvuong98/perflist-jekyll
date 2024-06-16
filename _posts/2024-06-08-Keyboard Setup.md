@@ -1,5 +1,8 @@
-# Keyboard Setup Checklist
-
+---
+layout: post
+title: Keyboard Setup Checklist
+categories: playlist
+---
 ## PSR-S975
 
 ### For Playing with Full Band
@@ -8,7 +11,7 @@
 * Freeze registration
 * Change mixer to bring Style to 0%
 * Change split point to bring to C1 (full keyboard for performance)
-* Disable ACMP and OTS Link
+* Disable ACMP and enable OTS Link
 
 ### For One Man Band
 
@@ -17,3 +20,4 @@
 * Change mixer to bring Style to 100%
 * Change split point to bring to F#2 (normal split)
 * Enable ACMP and OTS Link
+
