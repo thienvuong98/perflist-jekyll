@@ -1,7 +1,6 @@
 ---
 layout: post
-title:  "New Playlist for 2024"
-date:   2024-04-04 11:02:37 -0700
+title: New Playlist for 2024
 categories: playlist
 ---
 A new [playlist](/playlist) is created for 2024 since I've lost most of
@@ -72,4 +71,9 @@ be used for playing or singing.[^3]
 
 ### Issues
 
+* None at this time
+
+### Footnotes
+
 ---
+
