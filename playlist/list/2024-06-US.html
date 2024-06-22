@@ -1,0 +1,697 @@
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="PlayList" name="Playlist - Program" />
+    <link href="/smulelist.png?version=0" rel="shortcut icon" type="image/x-icon" />
+    <title>Music Program: 2024-06-US</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/rowreorder/1.5.0/css/rowReorder.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://www.smule.com" rel="preconnect" />
+    <link href="https://c-cl.cdn.smule.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&amp;family=Edu+SA+Beginner" rel="stylesheet" />
+    <style>
+      a:link {
+        text-decoration: none;
+      }
+      .loopstyle {
+        font-size: 70%;
+      }
+      .transpose {
+        font-size:        90%;
+        background-color: #ccc;
+        padding-left:     4px;
+        padding-right:    4px;
+      }
+      #list-select {
+        position: absolute;
+        top:      10;
+        right:    10;
+        width:  150;
+      }
+      #youtube {
+        border:   1px solid #aaa;
+        display:  none;
+        z-index:  9999;
+        position: fixed;
+        top:      0;
+        left:     0;
+      }
+      .hidden {
+        color:     #fff;
+        font-size: 10%;
+      }
+    </style><style>
+      #youtube-player {
+        width:    250;
+        height:   140;
+        opacity:  0.75;
+      }
+      #youtube-closer {
+        position: absolute;
+        top:      0;
+        right:    0;
+        z-index:  99;
+      }
+    </style><style>
+      .chord {
+        color:            #aa5;
+        vertical-align:   12px;
+        font-family:      monospace;
+        font-weight:      800;
+        padding:          2px;
+        border-left:      1px solid #888;
+        border-bottom:    1px solid #888;
+        font-size:        80%;
+        background-color: #ffc;
+      }
+      #lybox-title {
+        font-size: 50%;
+      }
+      #lybox-debug {
+        font-size: 50%;
+      }
+    </style>
+    <style>
+      .vsmall {
+        font-size: 60%;
+      }
+      .notice {
+        width: 50%;
+        text-align: center;
+        border: 4px solid #ccc;
+        background-color: hsl(20,50%,85%)
+      }
+      body {
+        font-size:   16pt
+      }
+      .srow td {
+        font-size: small;
+      }
+      tr:nth-child(even) td {
+        background-color: #eee;
+        border-top: 1px solid;
+      }
+      .player {
+        border:     5px #888;
+        width:      200px;
+        z-index:    9;
+        opacity:    1;
+        padding:    3px;
+        background: #fff;
+        position:   fixed;
+        bottom:     0;
+        right:      0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <!--============================================================ --><!--Generates program / practice content page--><!--============================================================ -->
+      <!--Select different playlist--><!--Video player - hidden until brought up-->
+      <div id="youtube">
+        <div>
+          <a href="#" id="youtube-closer" onClick="cancel_play(); return false"><i class="fa fa-window-close"></i></a><span id="youtube-title" style="font-size:60%"></span>
+        </div>
+        <div id="youtube-player"></div>
+      </div><!--Allow language accent, etc -->
+      <!--Lyric modal - hidden until brought up-->
+      <div class="modal fade" id="lybox" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" style="max-width:100%; max-height:100%">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="small" id="lybox-header"></div>
+              <div class="small" id="lybox-debug"></div>
+              <div id="lybox-vctl">
+                <button class="btn btn-secondary" onClick="play_song()" title="Play full video" type="button"><i class="fa-solid fa-headphones"></i></button><button class="btn btn-secondary" onClick="play_intro()" title="Play intro" type="button"><i class="fa-solid fa-undo"></i></button><button class="btn btn-secondary" onClick="cancel_play()" title="Stop plauing" type="button"><i class="fa-solid fa-stop"></i></button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div id="lybox-content"></div>
+            </div>
+            <div class="modal-footer">
+              <div id="lybox-title"></div><button class="btn btn-secondary" onClick="singer_toggle()" title="Toogle chord" type="button"><i class="fa fa-music"></i></button><button class="btn btn-warning" data-bs-dismiss="modal" title="Close" type="button"><i class="fa fa-sign-out"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        function singer_toggle() {
+          $('.chord').toggle()
+          $('#lybox .modal-header').toggle()
+        }
+        
+        function dblog(msg) {
+          console.log(msg)
+          // var dbhandle = $('#lybox-debug')
+          // dbhandle.html(dbhandle.html() + ` - ${msg}`)
+        }
+        
+        function load_lyric(async = true, offset = 0) {
+          var olist = current_order()
+        
+          var cur_ofs = olist.indexOf(myModal.item.toString())
+          var new_ofs = cur_ofs + offset
+        
+          if ((new_ofs < 0) || (new_ofs >= olist.length)) {
+            return
+          }
+          get_lyric(myModal.program, olist[new_ofs], async)
+        }
+        function play_intro() {
+          var lvideo = $('#lybox-vctl')
+          var video  = lvideo.attr('my_video')
+          var stime  = parseInt(lvideo.attr('my_vstart'))
+          var etime  = parseInt(lvideo.attr('my_vend'))
+          var title  = lvideo.attr('my_title')
+          play_on_youtube(video, title, stime, etime)
+        }
+        function play_song() {
+          var lvideo = $('#lybox-vctl')
+          var video = lvideo.attr('my_video')
+          var title = lvideo.attr('my_title')
+          play_on_youtube(video, title, 0, 0)
+        }
+        function get_lyric(program, item, async = true) {
+          myModal.program = program
+          myModal.item    = item
+        
+          dblog(`Getting item # ${myModal.item}`)
+        
+          if (async) {
+            var url = `/playlist/lyric/${program}/${item}?type=list`
+            jQuery.ajax({
+              url:      url,
+              async:    true,
+              dataType: 'json',
+              success:  show_lyric,
+            });
+          } else {
+            var content  = extra[item]
+            if (content != null) {
+              show_lyric(content)
+            }
+          }
+        }
+        function show_lyric(content) {
+          console.log('content ', content)
+          var lvideo = $('#lybox-vctl')
+        
+          // If vintro exist - create button for play/stop intro
+          lvideo.attr('my_video',  content['video'])
+          lvideo.attr('my_title',  content['title'])
+          lvideo.attr('my_item',   content['item_no'])
+        
+          if (content['vintro'] != null) {
+            lvideo.attr('my_vstart', content['vintro'][0])
+            lvideo.attr('my_vend',   content['vintro'][1])
+          }
+          lvideo.show()
+        
+          var lyric = content['lyric'].replaceAll('\n', '<br>')
+          $('#lybox-content').html('<center><b>' + lyric)
+          $('#lybox-header').html(`Key: ${content['tokey']}.${content['transpose']}#${content['tempo']} - Intro: ${content['intro']}`)
+          $('#lybox-title').html(content['title'].substring(0, 19))
+          $('.modal-header').show()
+          myModal.show()
+        }
+      </script><select class="form-select" id="list-select" onchange="window.location.href = &#39;/playlist/list/&#39; + this.options[this.selectedIndex].value">
+        <option value="2024-03-TH">
+          2024-03-TH
+        </option>
+        <option value="2024-04-TH">
+          2024-04-TH
+        </option>
+        <option value="2024-05-AM">
+          2024-05-AM
+        </option>
+        <option value="2024-05-TH">
+          2024-05-TH
+        </option>
+        <option value="2024-05-TS">
+          2024-05-TS
+        </option>
+        <option value="2024-05-UF">
+          2024-05-UF
+        </option>
+        <option selected="" value="2024-06-US">
+          2024-06-US
+        </option>
+        <option value="2024-06-VH">
+          2024-06-VH
+        </option>
+        <option value="thien">
+          thien
+        </option>
+        <option value="thu-suong">
+          thu-suong
+        </option>
+      </select>
+      <h1>
+        Disco Party 6/29/2024
+      </h1>
+      <h4>
+        <a href="https://docs.google.com/spreadsheets/d/1matxKaSoZ9HSSauRlUMJ_l4iaNMbUkF_v2YSR5_AQYg/edit?gid=1775891206#gid=1775891206" target="sheet">Uyen&#39;s Shop - Oakland  - 06/29/2024</a>
+      </h4>
+      <table class="cell-border compact display dt-responsive" id="main_table" style="width:100%">
+        <thead>
+          <tr>
+            <th>
+              S-Title
+            </th>
+            <th>
+              No.
+            </th>
+            <th>
+              Title
+            </th>
+            <th>
+              Singer
+            </th>
+            <th>
+              Beat.Tm
+            </th>
+            <th>
+              Key.Tr
+            </th>
+            <th>
+              Perf Video/Loops
+            </th>
+            <th>
+              Note
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Con Chut Gi De Nho
+            </td>
+            <td>
+              2
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/1969/con-chut-gi-de-nho" title="Source lyrics">Con Chut Gi De Nho</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Frank&#39;)">Frank</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;SlowRock&#39;)">SlowRock</button><span class="transpose text-right" title="Tempo">62</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-06-US&#39;, 0, false)" title="Show Lyric Pane"><b>C</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;6a6pA7vfgxk&#39;, &#39;Con Chut Gi De Nho&#39;, 0, 0)" title="Playing 6a6pA7vfgxk"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;6a6pA7vfgxk&#39;, &#39;Con Chut Gi De Nho&#39;, 0, 36)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.36
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                0
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Stumbling in
+            </td>
+            <td>
+              3
+            </td>
+            <td>
+              <a href="https://hopamviet.vn/chord/song/stumblinin/W8IUIFEB.html" title="Source lyrics">Stumbling in</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Van Vinh&#39;)">Van Vinh</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Bebop&#39;)">Bebop</button><span class="transpose text-right" title="Tempo">130</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-06-US&#39;, 1, false)" title="Show Lyric Pane"><b>G?</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;0AbvnTgGH8s&#39;, &#39;Stumbling in&#39;, 0, 0)" title="Playing 0AbvnTgGH8s"><i class="fa-solid fa-video"></i></button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                1
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              
+            </td>
+            <td>
+              4
+            </td>
+            <td>LK Modern Talking
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;New Wave&#39;)">New Wave</button>
+            </td>
+            <td>
+              <div class="d-grid gap-2">?
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                2
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              
+            </td>
+            <td>
+              5
+            </td>
+            <td>
+              <a href="file:voulez-vous-gimme-gimme" title="Source lyrics">Voulez Vous &amp; Gimme Gimme</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Techno&#39;)">Techno</button>
+            </td>
+            <td>
+              <div class="d-grid gap-2">?
+              </div>
+            </td>
+            <td>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                3
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Voulez Vous
+            </td>
+            <td>
+              6
+            </td>
+            <td>
+              <a href="https://hopamviet.vn/chord/song/voulez-vous/W8IUW9BE.html" title="Source lyrics">Voulez Vous</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Techno&#39;)">Techno</button><span class="transpose text-right" title="Tempo">126</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-06-US&#39;, 4, false)" title="Show Lyric Pane"><b>Em?</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;za05HBtGsgU&#39;, &#39;Voulez Vous&#39;, 0, 0)" title="Playing za05HBtGsgU"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;za05HBtGsgU&#39;, &#39;Voulez Vous&#39;, 1, 24)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  1.23
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                4
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Gimme Gimme
+            </td>
+            <td>
+              7
+            </td>
+            <td>
+              <a href="https://hopamchuan.com/song/9948/gimme-gimme-gimme/thienv" title="Source lyrics">Gimme Gimme</a>
+            </td>
+            <td>
+              <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
+            </td>
+            <td class="dt-right">
+              <button class="btn" onClick="return dt_search(&#39;Techno&#39;)">Techno</button><span class="transpose text-right" title="Tempo">118</span>
+            </td>
+            <td>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onClick="get_lyric(&#39;2024-06-US&#39;, 5, false)" title="Show Lyric Pane"><b>Dm?</b><span></span></button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-sm" onClick="return play_on_youtube(&#39;XEjLoHdbVeE&#39;, &#39;Gimme Gimme&#39;, 0, 0)" title="Playing XEjLoHdbVeE"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm" onClick="return play_on_youtube(&#39;XEjLoHdbVeE&#39;, &#39;Gimme Gimme&#39;, 0, 38)" title="Play looping section"><i class="fa-solid fa-undo"></i>
+                <div class="loopstyle">
+                  0.38
+                </div>
+              </button>
+            </td>
+            <td>
+              
+            </td>
+            <td>
+              <div class="hidden">
+                5
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-sm btn-outline-secondary" onClick="reset_order()">Reset Order </button>
+      <script>
+        extra = [{"item_no":0,"title":"Con Chut Gi De Nho","tokey":"C","transpose":0,"intro":"","lyric":"Capo 2\nPhố núi cao <span class=\"chord\">C</span>cao phố núi đầy sương\nPhố núi cây <span class=\"chord\">F</span>xanh trời thấp thật <span class=\"chord\">C</span>buồn\nAnh khách <span class=\"chord\">Am</span>lạ đi lên đi <span class=\"chord\">Dm</span>xuống\nMay mà có <span class=\"chord\">G7</span>em đời còn dễ thương\nEm Plei-<span class=\"chord\">C</span>ku má đỏ môi <span class=\"chord\">Em</span>hồng\nỞ đây buổi <span class=\"chord\">C</span>chiều quanh năm mùa đông\nNên tóc em <span class=\"chord\">Em</span>ướt và mắt em <span class=\"chord\">G</span>ướt\nNên em mềm <span class=\"chord\">F</span>như mây chiều <span class=\"chord\">C</span>trong\nPhố núi <span class=\"chord\">C</span>cao phố núi trời gần\nPhố xá không <span class=\"chord\">F</span>xa nên phố tình <span class=\"chord\">C</span>thân\nĐi dăm <span class=\"chord\">F</span>phút đã về chốn <span class=\"chord\">Dm</span>cũ\nMột buổi chiều <span class=\"chord\">G</span>nao lòng bỗng bâng <span class=\"chord\">G7</span>khuâng\nXin cảm <span class=\"chord\">C</span>ơn thành phố có <span class=\"chord\">Am</span>em\nXin cảm <span class=\"chord\">Em</span>ơn một mái tóc <span class=\"chord\">C</span>mềm\nMai xa <span class=\"chord\">F</span>lắc trên đồn biên <span class=\"chord\">Dm</span>giới\nCòn một chút <span class=\"chord\">G7</span>gì để nhớ để <span class=\"chord\">C</span>quên\n \nHát tăng lên 1 ½ cung lên <span class=\"chord\">D#</span>---------\n \n* Xin cảm <span class=\"chord\">D#</span>ơn thành phố có <span class=\"chord\">Cm</span>em\nXin cảm <span class=\"chord\">Gm</span>ơn một mái tóc <span class=\"chord\">D#</span>mềm\nMai xa <span class=\"chord\">G#</span>lắc trên đồn biên <span class=\"chord\">Fm</span>giới\nCòn một chút <span class=\"chord\">A#7</span>gì để nhớ để <span class=\"chord\">D#</span>quên\nCòn một chút <span class=\"chord\">A#7</span>gì để nhớ để <span class=\"chord\">D#</span><span class='none'>quên</span>","video":"6a6pA7vfgxk","vintro":[0,36],"tempo":62},{"item_no":1,"title":"Stumbling in","tokey":"G?","transpose":0,"intro":"","lyric":"<span class=\"chord\">G</span> Our love is a-<span class=\"chord\">Am</span> live <span class=\"chord\">D</span> and so we be-<span class=\"chord\">G</span> gin <span class=\"chord\">Em</span>\nFoolishly <span class=\"chord\">Am</span> laying our hearts on the <span class=\"chord\">D</span> table, stumblin' <span class=\"chord\">G</span> in <span class=\"chord\">Em</span>\nOur love is a <span class=\"chord\">Am</span> flame <span class=\"chord\">D</span> burning with- <span class=\"chord\">G</span> in <span class=\"chord\">Em</span>\nNow and then, <span class=\"chord\">Am</span> fire light will catch <span class=\"chord\">D</span> us, stumblin'<span class=\"chord\">G</span> in\n\nWherever you <span class=\"chord\">Am</span> go, <span class=\"chord\">D</span> whatever you <span class=\"chord\">G</span> do <span class=\"chord\">Em</span> \nYou know these<span class=\"chord\">Am</span> reckless thoughts of <span class=\"chord\">D</span> mine are following <span class=\"chord\">G</span> you <span class=\"chord\">Em</span>\nI've fallen for <span class=\"chord\">Am</span> you, whatever you <span class=\"chord\">G</span> do <span class=\"chord\">Em</span> \n'Cause baby, you've <span class=\"chord\">Am</span> shown me so many <span class=\"chord\">D</span> things that I never <span class=\"chord\">G</span> knew <span class=\"chord\">Em</span>\nWhatever it <span class=\"chord\">Am</span> takes, <span class=\"chord\">D</span> baby, I'll do it for <span class=\"chord\">G</span> you\n\n<span class=\"chord\">G</span> Our love is a-<span class=\"chord\">Am</span> live <span class=\"chord\">D</span> and so we be-<span class=\"chord\">G</span> gin <span class=\"chord\">Em</span>\nFoolishly <span class=\"chord\">Am</span> laying our hearts on the <span class=\"chord\">D</span> table, stumblin' <span class=\"chord\">G</span> in <span class=\"chord\">Em</span>\nOur love is a <span class=\"chord\">Am</span> flame <span class=\"chord\">D</span> burning with- <span class=\"chord\">G</span> in <span class=\"chord\">Em</span>\nNow and then, <span class=\"chord\">Am</span> fire light will catch <span class=\"chord\">D</span> us, stumblin'<span class=\"chord\">G</span> in <span class=\"chord\">Em</span>\n\n<span class=\"chord\">Am</span><span class=\"chord\">D</span><span class=\"chord\">G</span><span class=\"chord\">Em</span><span class=\"chord\">Am</span><span class=\"chord\">D</span><span class=\"chord\">G</span>\n\nYou were so <span class=\"chord\">Am</span> young <span class=\"chord\">D</span> and I was so <span class=\"chord\">G</span> free <span class=\"chord\">Em</span>\nI may have been <span class=\"chord\">Am</span> young but baby that's <span class=\"chord\">D</span> not what I wanted to <span class=\"chord\">G</span> be <span class=\"chord\">Em</span>\nWell, you were the <span class=\"chord\">Am</span> one, <span class=\"chord\">D</span> oh, why was it <span class=\"chord\">G</span> me? <span class=\"chord\">Em</span> \n'Cause baby, you've <span class=\"chord\">Am</span> shown me so many <span class=\"chord\">D</span> things that I'd never <span class=\"chord\">G</span> knew <span class=\"chord\">Em</span>\nWhatever you <span class=\"chord\">Am</span> need, <span class=\"chord\">D</span> baby, you got it from <span class=\"chord\">G</span> me..\n\n<span class=\"chord\">G</span> Our love is a-<span class=\"chord\">Am</span> live <span class=\"chord\">D</span> and so we be-<span class=\"chord\">G</span> gin <span class=\"chord\">Em</span>\nFoolishly <span class=\"chord\">Am</span> laying our hearts on the <span class=\"chord\">D</span> table, stumblin' <span class=\"chord\">G</span> in <span class=\"chord\">Em</span>\nOur love is a <span class=\"chord\">Am</span> flame <span class=\"chord\">D</span> burning with- <span class=\"chord\">G</span> in <span class=\"chord\">Em</span>\nNow and then, <span class=\"chord\">Am</span> fire light will catch <span class=\"chord\">D</span> us, stumblin'<span class=\"chord\">G</span><span class='none'> in</span>","video":"0AbvnTgGH8s","vintro":null,"tempo":130},null,{"item_no":3,"title":"Voulez Vous & Gimme Gimme","tokey":null,"transpose":0,"intro":"","lyric":null,"video":null,"vintro":null,"tempo":null},{"item_no":4,"title":"Voulez Vous","tokey":"Em?","transpose":0,"intro":"","lyric":"1. <span class=\"chord\">Em</span> People everywhere\n<span class=\"chord\">C</span> A sense of expectation <span class=\"chord\">Em</span> hanging in the air\nGiving out a spark\n<span class=\"chord\">C</span> Across the room your eyes are <span class=\"chord\">Em</span> glowing in the dark\nAnd here we <span class=\"chord\">B</span> go again, we know the start, we know the end\n<span class=\"chord\">Em</span> Masters of the scene <span class=\"chord\">B</span> iiiii\nWe've done it all before and now we're back to get some more\n<span class=\"chord\">Em</span> You know what I mean\n\nChorus: <span class=\"chord\">Em</span> Vou-<span class=\"chord\">C</span> lez—<span class=\"chord\">Am</span> vous (ah-ha)\nTake it now or leave it (ah-ha)\nNow it's all we get (ah-ha)\nNothing promised, no re-<span class=\"chord\">Em</span> grets\n<span class=\"chord\">Em</span> Vou-<span class=\"chord\">C</span> lez—<span class=\"chord\">Am</span> vous (ah-ha)\nAin't no big decision (ah-ha)\nYou know what to do (ah-ha)\nLa question c'est voulez-<span class=\"chord\">Em</span> vous\n<span class=\"chord\">Em</span> Vou-<span class=\"chord\">C</span> lez-<span class=\"chord\">Am</span> vous <span class=\"chord\">B</span> uh\n(I can still say voulez-vous)\n\n2. <span class=\"chord\">Em</span> I know what you think\n<span class=\"chord\">C</span> \"the girl means business so i'll <span class=\"chord\">Em</span> offer her a drink\"\nLooking mighty proud\nI see you leave your table, pushing through the crowd\nI'm really <span class=\"chord\">B</span> glad you came, you know the rules, you know the game\n<span class=\"chord\">Em</span> Master of the scene <span class=\"chord\">B</span> iiiii\nWe've done it all before and now we're back to get some more\n<span class=\"chord\">Em</span> You know what i mean\n\n<span class=\"chord\">Em</span> Vou-<span class=\"chord\">C</span> lez-<span class=\"chord\">Am</span> (ah-ha, ah-ha, ah-ha)\n<span class=\"chord\">Em</span> Vou-<span class=\"chord\">C</span> lez-<span class=\"chord\">Am</span> (ah-ha, ah-ha, ah-ha)\n<span class=\"chord\">Em</span> Vou-<span class=\"chord\">C</span> lez-<span class=\"chord\">Am</span> (ah-ha, ah-ha, ah-ha)\n<span class=\"chord\">Em</span> Vou-<span class=\"chord\">C</span> lez-<span class=\"chord\">Am</span><span class='none'> (ah-ha, ah-ha, ah-ha)</span>","video":"za05HBtGsgU","vintro":[1,24],"tempo":126},{"item_no":5,"title":"Gimme Gimme","tokey":"Dm?","transpose":0,"intro":"","lyric":" \nVerse\n<span class=\"chord\">Dm</span>Half past twelve\nAnd I'm <span class=\"chord\">Gm</span>watching the late show in my flat all alone\nHow I hate to spend the evening on my <span class=\"chord\">Dm</span>own\n<span class=\"chord\">Dm</span>Autumn winds\nBlowing <span class=\"chord\">Gm</span>outside the window as I look around the room\nAnd it makes me so depressed to see the <span class=\"chord\">Dm</span>gloom\n<span class=\"chord\">A#</span>There's not a soul out there\n<span class=\"chord\">Gm</span>No one to hear my prayer<span class=\"chord\">Dm/A</span> <span class=\"chord\">A</span>\n \nChorus\n<span class=\"chord\">Dm</span>Gimme gimme <span class=\"chord\">A#</span>gimme a <span class=\"chord\">C</span>man after <span class=\"chord\">Dm</span>midnight\n<span class=\"chord\">A#</span>Won't somebody <span class=\"chord\">Dm</span>help me chase these <span class=\"chord\">C</span>shadows <span class=\"chord\">Dm</span>away\n<span class=\"chord\">Dm</span>Gimme gimme <span class=\"chord\">A#</span>gimme a <span class=\"chord\">C</span>man after <span class=\"chord\">Dm</span>midnight\n<span class=\"chord\">A#</span>Take me through the <span class=\"chord\">Dm</span>darkness to the <span class=\"chord\">C</span>break of the <span class=\"chord\">Dm</span>day\n \n<span class=\"chord\">Dm</span> <span class=\"chord\">F</span> <span class=\"chord\">Am</span> <span class=\"chord\">Dm</span>\n<span class=\"chord\">Dm</span> <span class=\"chord\">F</span> <span class=\"chord\">Am</span> <span class=\"chord\">Dm</span>\n<span class=\"chord\">Dm</span>Movie stars\nFind the <span class=\"chord\">Gm</span>end of the rainbow, with that fortune to win\nIt's so different from the world I'm living <span class=\"chord\">Dm</span>in\nTired of T.V.\nI open the <span class=\"chord\">Gm</span>window and I gaze into the night\nBut there's nothing there to see, no one in <span class=\"chord\">Dm</span>sight\n<span class=\"chord\">A#</span>There's not a soul out there\n<span class=\"chord\">Gm</span>No one to hear my prayer <span class=\"chord\">Dm/A</span> <span class=\"chord\">A</span>\n \nChorus\n<span class=\"chord\">Dm</span>Gimme gimme <span class=\"chord\">A#</span>gimme a <span class=\"chord\">C</span>man after <span class=\"chord\">Dm</span>midnight\n<span class=\"chord\">A#</span>Ah <span class=\"chord\">Dm</span>ah <span class=\"chord\">C</span>ah <span class=\"chord\">Dm</span>ah...\n<span class=\"chord\">Dm</span>Gimme gimme <span class=\"chord\">A#</span>gimme a <span class=\"chord\">C</span>man after <span class=\"chord\">Dm</span>midnight\n<span class=\"chord\">A#</span>Ah <span class=\"chord\">Dm</span>ah <span class=\"chord\">C</span>ah <span class=\"chord\">Dm</span>ah...\n \nInstrumental\n<span class=\"chord\">Dm</span> <span class=\"chord\">F</span> <span class=\"chord\">Am</span> <span class=\"chord\">Dm</span>x12\n \n<span class=\"chord\">A#</span>There's not a soul out there\n<span class=\"chord\">Gm</span>No one to hear my prayer <span class=\"chord\">Dm/A</span> <span class=\"chord\">A</span>\n \nChorus x2\n<span class=\"chord\">Dm</span>Gimme gimme <span class=\"chord\">A#</span>gimme a <span class=\"chord\">C</span>man after <span class=\"chord\">Dm</span>midnight\n<span class=\"chord\">A#</span>Won't somebody <span class=\"chord\">Dm</span>help me chase these <span class=\"chord\">C</span>shadows <span class=\"chord\">Dm</span>away\n<span class=\"chord\">Dm</span>Gimme gimme <span class=\"chord\">A#</span>gimme a <span class=\"chord\">C</span>man after <span class=\"chord\">Dm</span>midnight\n<span class=\"chord\">A#</span>Take me through the <span class=\"chord\">Dm</span>darkness to the <span class=\"chord\">C</span>break of the <span class=\"chord\">Dm</span>day\n \n<span class=\"chord\">Dm</span> <span class=\"chord\">F</span> <span class=\"chord\">Am</span> <span class=\"chord\">Dm</span><span class='none'>x3 fade out</span>","video":"XEjLoHdbVeE","vintro":[0,38],"tempo":118}]
+      </script>
+      <footer style="font-size: 75%">
+        <div class="small text-muted">
+          <a href="/"><i class="fa fa-home">&nbsp;</i></a><span>Copyright (C) - 2023-2024.</span>
+        </div>
+      </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/dataTables.rowReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/rowReorder.bootstrap5.min.js"></script>
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/9f4e4b189d.js"></script>
+    <script src="/js/app.js?v=3" type="text/javascript"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+      var player;
+      var play_timer = null;
+      
+      // This function will be called when the API is ready
+      function onYouTubeIframeAPIReady() {
+          player = new YT.Player('youtube-player', {
+              videoId: '',
+              playerVars: {
+                  autoplay:       1,
+                  controls:       0,
+                  showinfo:       0,
+                  modestbranding: 1,
+              },
+          });
+      }
+      
+      function cancel_play() {
+        cancel_play_timer()
+        player.stopVideo();
+        $('#youtube').hide();
+      }
+      
+      function cancel_play_timer() {
+        if (play_timer) {
+          clearTimeout(play_timer);
+          play_timer = null
+        }
+      }
+      
+      function loopPlay(stime, etime) {
+        console.log(`Seeking to ${stime}. Play for ${etime - stime}`)
+        player.seekTo(stime, true)
+        if (etime <= stime)
+          return
+      
+        // Looping play
+        var duration = etime - stime
+        cancel_play_timer();
+        play_timer = setTimeout(function() {
+          loopPlay(stime, etime);
+        }, duration*1000);
+        // console.log('Starting timer: ', play_timer, ' duration: ', duration)
+      }
+      
+      function play_on_youtube(video, title, stime, etime) {
+        var href = `https://www.youtube.com/embed/${video}?autoplay=1&playsinline=1`;
+        console.log(href, stime, etime)
+      
+        $('#youtube-title')[0].innerHTML = title
+        player.loadVideoById(video, stime)
+        player.seekTo(stime, true)
+      
+        /* Slow down player */
+        if (etime > 0) {
+          const prate = 1
+          player.setPlaybackRate(prate);
+          etime2 = stime + ((etime - stime)/prate);
+        }
+      
+        // 1st seek somehow have to wait a bit ...
+        setTimeout(function() {
+          player.unMute()
+          $('#youtube').show();
+          loopPlay(stime, etime);
+        }, 500)
+      }
+    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+      var main_table;
+      var myModal;
+      
+      $(function() {
+        main_table = new DataTable('#main_table', {
+          layout: {
+            topStart:    'search',
+            bottomStart: 'info',
+          },
+          search: {
+            search: '',
+            caseInsensitive: true,
+          },
+          responsive: true,
+          paging:     false,
+          columns: [null, {data: 'id'}, {data: 'title', width: '25%'},
+                    null, null, null, null, null],
+          order:  [[ 1, "asc" ]],
+          columnDefs: [
+            { target: 0, visible: false, searchable: true },
+            { target: 1, visible: true,  searchable: false },
+            { target: 7, visible: false, searchable: true },
+            { target: 8, visible: true,  searchable: false },
+          ],
+          rowReorder: {
+            dataSrc: 'id',
+          },
+          initComplete: function(settings, json) {
+            var newkey  = ''
+            for (let value of $('#main_table tbody tr')) {
+              newkey += value.childNodes[4].innerText.replace(/[\(\) ]/g, "")
+            }
+            let curkey = localStorage.getItem('pagekey.2024-06-US')
+            console.log(`2024-06-US curkey: ${curkey}`)
+            console.log(`2024-06-US newkey: ${newkey}`)
+            localStorage.setItem("pagekey.2024-06-US", newkey)
+            if (curkey == newkey) {
+              restore_order()
+            }
+          }
+        });
+      
+        main_table.on('row-reorder', (e, diff, edit) => {
+          setTimeout(() => { save_order() }, 100)
+        })
+      
+        myModal  = new bootstrap.Modal(document.getElementById('lybox'))
+      });
+      
+      function reset_order() {
+        localStorage.removeItem("pageorder.2024-06-US")
+        location.reload()
+      }
+      
+      function current_order() {
+        var olist = []
+        for (value of $('#main_table tbody tr')) {
+          olist.push(value.childNodes[15].innerText)
+        }
+        return olist
+      }
+      
+      // Save order to localstore (per device only)
+      function save_order() {
+        var olist = current_order()
+        console.log('new_list: ', olist)
+        localStorage.setItem("pageorder.2024-06-US", JSON.stringify(olist))
+      }
+      
+      // Save order to server (so it could be shared)
+      function sv_save_order() {
+        var olist = current_order()
+        var url = `/playlist/reorder/2024-06-US/${olist.join(',')}`
+        jQuery.ajax({
+          url:      url,
+          method:   'POST',
+          async:    false,
+          dataType: 'json',
+          success:  location.reload(),
+        });
+      }
+      
+      function restore_order() {
+        let item = localStorage.getItem("pageorder.2024-06-US")
+        if (item == null) {
+          console.log("No order to restore")
+          return
+        }
+      
+        let olist   = JSON.parse(item)
+        let dt_rows = $('#main_table tbody tr')
+        var offset  = 2
+        console.log(`Restore olist: ${olist}`)
+      
+        for (rowno of olist) {
+          //console.log('rowno: ', rowno)
+          //console.log('dtrow: ', dt_rows[rowno])
+      
+          if (dt_rows[rowno] == null) {
+            continue
+          }
+          let listno = dt_rows[rowno].childNodes[2].innerText
+          dt_rows[rowno].childNodes[2].innerText = offset
+          offset += 1
+        }
+      
+        setTimeout(() => {
+          main_table.rows().invalidate().draw()
+        }, 100)
+      }
+    </script>
+  </body>
+</html>
