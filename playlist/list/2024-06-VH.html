@@ -1982,22 +1982,22 @@
     <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/rowReorder.bootstrap5.min.js"></script>
     <script crossorigin="anonymous" src="https://kit.fontawesome.com/9f4e4b189d.js"></script>
     <script src="/js/app.js?v=3" type="text/javascript"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-      var player;
+      var player = null;
       var play_timer = null;
       
       // This function will be called when the API is ready
       function onYouTubeIframeAPIReady() {
-          player = new YT.Player('youtube-player', {
-              videoId: '',
-              playerVars: {
-                  autoplay:       1,
-                  controls:       0,
-                  showinfo:       0,
-                  modestbranding: 1,
-              },
-          });
+        console.log("Frame API ready")
+        player = new YT.Player('youtube-player', {
+          videoId: '',
+          playerVars: {
+              autoplay:       1,
+              controls:       0,
+              showinfo:       0,
+              modestbranding: 1,
+          },
+        });
       }
       
       function cancel_play() {
@@ -2029,6 +2029,10 @@
       }
       
       function play_on_youtube(video, title, stime, etime) {
+        if (player == null) {
+          alert("Youtube player is not ready")
+          return
+        }
         var href = `https://www.youtube.com/embed/${video}?autoplay=1&playsinline=1`;
         console.log(href, stime, etime)
       
@@ -2051,6 +2055,7 @@
         }, 500)
       }
     </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
       var main_table;
@@ -2086,8 +2091,8 @@
               newkey += value.childNodes[4].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-06-VH')
-            console.log(`2024-06-VH curkey: ${curkey}`)
-            console.log(`2024-06-VH newkey: ${newkey}`)
+            // console.log(`2024-06-VH curkey: ${curkey}`)
+            // console.log(`2024-06-VH newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-06-VH", newkey)
             if (curkey == newkey) {
               restore_order()
