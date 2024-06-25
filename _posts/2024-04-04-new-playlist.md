@@ -50,6 +50,9 @@ Clicking on the headphone icon opens up a mini-player playing the song.
 In addition, some segments (intro, mid, ending) are also presented.
 Clicking on any of these plays loops[^2] of that particular segments
 
+Video played in here does not have ad shown (at least until Google decides
+to block)
+
 [^2]: This is used for practice to memorize the playing style.
 [^2a]: Many youtube videos, especially English songs, would block being embedded in the mini-player.  A warning message would be shown in the video frame.  You may click through to play full screen, but loop playing would not work in that case.
 
@@ -71,13 +74,14 @@ be used for playing or singing.[^3]
   visibility. Hiding is useful when used by singer to remove distracting
   details.
 * Also, forward/backward navigation button is there to walk through the lyrics
-  without needing to go back to the main page[^4].
-
-[^4]: Currently broken
+  without needing to go back to the main page.
 
 ### Issues
 
-* None at this time
+* When the page loads the first time, sometimes clicking on video shows the
+  video but never get readu to play.  Workaround is to tap/click on the
+  video once more and it will start playing.  This only happenes sometimes
+  at initial load.  After that it should work normally.
 
 ### Footnotes
 
