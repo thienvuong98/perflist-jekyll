@@ -34,6 +34,12 @@ picked up later when the list is re-generated.
 * The key also may include a transpose value.  Some difficult base key
   could be transpose 1/2 or 1 tone lower then use transpose to switch -
   that will keep the playing simpler and allow for better solos[^1].
+* You could change the order of the performance list by dragging the row
+  (click at the nunber and drag up and down). This is used to re-arrange
+  the list per order performed.  The new order is saved on the current browser
+  and will persist when you reload (but only at the same browser and device).
+  To clear the local order and restored back to the server version, click
+  on the 'Reset Order' button at the bottom of page.
 
 [^1]: Encourage singer to use simpler base key (w/o transposition). Only top-notch professional singers need to be at the exact key.  Most others could drop 1/2 tone without any impact.
 
