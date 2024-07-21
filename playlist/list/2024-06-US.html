@@ -1724,13 +1724,16 @@
       
       function loopPlay(stime, etime) {
         console.log(`Seeking to ${stime}. Play for ${etime - stime}`)
+      
+        // In case a loop play precede.  Must cancel any play timer
+        cancel_play_timer();
         player.seekTo(stime, true)
-        if (etime <= stime)
+        if (etime <= stime) {
           return
+        }
       
         // Looping play
         var duration = etime - stime
-        cancel_play_timer();
         play_timer = setTimeout(function() {
           loopPlay(stime, etime);
         }, duration*1000);
