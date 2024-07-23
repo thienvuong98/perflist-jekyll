@@ -1,0 +1,741 @@
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="PlayList" name="Playlist - Program" />
+    <link href="/smulelist.png?version=0" rel="shortcut icon" type="image/x-icon" />
+    <title>Singer: thu-suong</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/rowreorder/1.5.0/css/rowReorder.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://www.smule.com" rel="preconnect" />
+    <link href="https://c-cl.cdn.smule.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&amp;family=Edu+SA+Beginner" rel="stylesheet" />
+    <style>
+      a:link {
+        text-decoration: none;
+      }
+      .loopstyle {
+        font-size: 70%;
+      }
+      .transpose {
+        font-size:        90%;
+        background-color: #ccc;
+        padding-left:     4px;
+        padding-right:    4px;
+      }
+      #list-select {
+        position: absolute;
+        top:      10;
+        right:    10;
+        width:  150;
+      }
+      #youtube {
+        border:   1px solid #aaa;
+        display:  none;
+        z-index:  9999;
+        position: fixed;
+        top:      0;
+        left:     0;
+      }
+      .hidden {
+        color:     #fff;
+        font-size: 10%;
+      }
+    </style><style>
+      #youtube-player {
+        width:    250;
+        height:   140;
+        opacity:  0.75;
+      }
+      #youtube-closer {
+        position: absolute;
+        top:      0;
+        right:    0;
+        z-index:  99;
+      }
+    </style><style>
+      .chord {
+        color:            #aa5;
+        vertical-align:   12px;
+        font-family:      monospace;
+        font-weight:      800;
+        padding:          2px;
+        border-left:      1px solid #888;
+        border-bottom:    1px solid #888;
+        font-size:        80%;
+        background-color: #ffc;
+      }
+      #lybox-title {
+        font-size: 80%;
+      }
+      #lybox-debug {
+        font-size: 50%;
+      }
+    </style>
+    <style>
+      .vsmall {
+        font-size: 60%;
+      }
+      .notice {
+        width: 50%;
+        text-align: center;
+        border: 4px solid #ccc;
+        background-color: hsl(20,50%,85%)
+      }
+      body {
+        font-size:   16pt
+      }
+      .srow td {
+        font-size: small;
+      }
+      tr:nth-child(even) td {
+        background-color: #eee;
+        border-top: 1px solid;
+      }
+      .player {
+        border:     5px #888;
+        width:      200px;
+        z-index:    9;
+        opacity:    1;
+        padding:    3px;
+        background: #fff;
+        position:   fixed;
+        bottom:     0;
+        right:      0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <!--============================================================ --><!--Generates program / practice content page--><!--============================================================ -->
+      <!--Select different playlist--><!--Video player - hidden until brought up-->
+      <div id="youtube">
+        <div>
+          <a href="#" id="youtube-closer" onClick="cancel_play(); return false"><i class="fa fa-window-close"></i></a><span id="youtube-title" style="font-size:60%"></span>
+        </div>
+        <div id="youtube-player"></div>
+      </div><!--Allow language accent, etc -->
+      <!--Lyric modal - hidden until brought up-->
+      <div class="modal fade" id="lybox" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" style="max-width:100%; max-height:100%">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="small" id="lybox-header"></div>
+              <div class="small" id="lybox-debug"></div>
+              <div id="lybox-vctl">
+                <button class="btn btn-secondary" onClick="play_song()" title="Play full video" type="button"><i class="fa-solid fa-headphones"></i></button><button class="btn btn-secondary" onClick="play_intro()" title="Play intro" type="button"><i class="fa-solid fa-undo"></i></button><button class="btn btn-secondary" onClick="cancel_play()" title="Stop plauing" type="button"><i class="fa-solid fa-stop"></i></button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div id="lybox-content"></div>
+            </div>
+            <div class="modal-footer">
+              <div id="lybox-title"></div>
+              <button class="btn btn-secondary" onClick="load_lyric(false, -1)" title="Previous Page" type="button"><i class="fa fa-backward"></i></button><button class="btn btn-secondary" onClick="singer_toggle()" title="Toogle chord" type="button"><i class="fa fa-music"></i></button><button class="btn btn-secondary" onClick="load_lyric(false, 1)" title="Next Page" type="button"><i class="fa fa-forward"></i></button><button class="btn btn-warning" data-bs-dismiss="modal" title="Close" type="button"><i class="fa fa-sign-out"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        function singer_toggle() {
+          $('.chord').toggle()
+          $('#lybox .modal-header').toggle()
+        }
+        
+        function dblog(msg) {
+          console.log(msg)
+          // var dbhandle = $('#lybox-debug')
+          // dbhandle.html(dbhandle.html() + ` - ${msg}`)
+        }
+        
+        function load_lyric(async = true, offset = 0) {
+          var olist = current_order()
+        
+          var cur_ofs = olist.indexOf(myModal.item.toString())
+          var new_ofs = cur_ofs + offset
+        
+          if ((new_ofs < 0) || (new_ofs >= olist.length)) {
+            return
+          }
+          get_lyric(myModal.program, olist[new_ofs], async)
+        }
+        function play_intro() {
+          var lvideo = $('#lybox-vctl')
+          var video  = lvideo.attr('my_video')
+          var stime  = parseInt(lvideo.attr('my_vstart'))
+          var etime  = parseInt(lvideo.attr('my_vend'))
+          var title  = lvideo.attr('my_title')
+          play_on_youtube(video, title, stime, etime)
+        }
+        function play_song() {
+          var lvideo = $('#lybox-vctl')
+          var video = lvideo.attr('my_video')
+          var title = lvideo.attr('my_title')
+          play_on_youtube(video, title, 0, 0)
+        }
+        function get_lyric(program, item, async = true) {
+          myModal.program = program
+          myModal.item    = item
+        
+          dblog(`Getting item # ${myModal.item}`)
+        
+          if (async) {
+            var url = `/playlist/lyric/${program}/${item}?type=singer`
+            jQuery.ajax({
+              url:      url,
+              async:    true,
+              dataType: 'json',
+              success:  show_lyric,
+            });
+          } else {
+            var content  = extra[item]
+            if (content != null) {
+              show_lyric(content)
+            }
+          }
+        }
+        function show_lyric(content) {
+          console.log('content ', content)
+          var lvideo = $('#lybox-vctl')
+        
+          // If vintro exist - create button for play/stop intro
+          lvideo.attr('my_video',  content['video'])
+          lvideo.attr('my_title',  content['title'])
+          lvideo.attr('my_item',   content['item_no'])
+        
+          if (content['vintro'] != null) {
+            lvideo.attr('my_vstart', content['vintro'][0])
+            lvideo.attr('my_vend',   content['vintro'][1])
+          }
+          lvideo.show()
+        
+          var lyric = content['lyric'].replaceAll('\n', '<br>')
+          $('#lybox-content').html('<center><b>' + lyric)
+          $('#lybox-header').html(`${content['beat']}: ${content['tokey']}.${content['transpose']}#${content['tempo']} - Intro: ${content['intro']}`)
+          $('#lybox-title').html(content['title'].substring(0, 19))
+          $('.modal-header').show()
+          myModal.show()
+        }
+      </script><select class="form-select" id="list-select" onchange="window.location.href = &#39;/playlist/singer/&#39; + this.options[this.selectedIndex].value">
+        <option value="ai hoa">
+          ai hoa
+        </option>
+        <option value="andy">
+          andy
+        </option>
+        <option value="angelina">
+          angelina
+        </option>
+        <option value="angelina mytien">
+          angelina mytien
+        </option>
+        <option value="anh hai">
+          anh hai
+        </option>
+        <option value="anh hailily">
+          anh hailily
+        </option>
+        <option value="anh phong">
+          anh phong
+        </option>
+        <option value="anh tabolero">
+          anh tabolero
+        </option>
+        <option value="anh tam">
+          anh tam
+        </option>
+        <option value="band">
+          band
+        </option>
+        <option value="bich hang">
+          bich hang
+        </option>
+        <option value="bich hien">
+          bich hien
+        </option>
+        <option value="brittany">
+          brittany
+        </option>
+        <option value="chi">
+          chi
+        </option>
+        <option value="chi hai">
+          chi hai
+        </option>
+        <option value="chi linh">
+          chi linh
+        </option>
+        <option value="chrystine">
+          chrystine
+        </option>
+        <option value="chrystine dai">
+          chrystine dai
+        </option>
+        <option value="dai">
+          dai
+        </option>
+        <option value="diep">
+          diep
+        </option>
+        <option value="diep nguyen">
+          diep nguyen
+        </option>
+        <option value="djane">
+          djane
+        </option>
+        <option value="frank">
+          frank
+        </option>
+        <option value="group">
+          group
+        </option>
+        <option value="hai">
+          hai
+        </option>
+        <option value="hai chi">
+          hai chi
+        </option>
+        <option value="hang">
+          hang
+        </option>
+        <option value="hien phan">
+          hien phan
+        </option>
+        <option value="hoa">
+          hoa
+        </option>
+        <option value="hung">
+          hung
+        </option>
+        <option value="hung ho">
+          hung ho
+        </option>
+        <option value="huyen">
+          huyen
+        </option>
+        <option value="huyen thanh">
+          huyen thanh
+        </option>
+        <option value="joan phan">
+          joan phan
+        </option>
+        <option value="kayla">
+          kayla
+        </option>
+        <option value="khoi">
+          khoi
+        </option>
+        <option value="lan">
+          lan
+        </option>
+        <option value="lily">
+          lily
+        </option>
+        <option value="loc">
+          loc
+        </option>
+        <option value="long">
+          long
+        </option>
+        <option value="mai">
+          mai
+        </option>
+        <option value="mai huong">
+          mai huong
+        </option>
+        <option value="michelle">
+          michelle
+        </option>
+        <option value="mike">
+          mike
+        </option>
+        <option value="mike thanh">
+          mike thanh
+        </option>
+        <option value="mina">
+          mina
+        </option>
+        <option value="mindy">
+          mindy
+        </option>
+        <option value="mindy dang">
+          mindy dang
+        </option>
+        <option value="minh">
+          minh
+        </option>
+        <option value="my tien">
+          my tien
+        </option>
+        <option value="nga">
+          nga
+        </option>
+        <option value="ngon">
+          ngon
+        </option>
+        <option value="nhat">
+          nhat
+        </option>
+        <option value="nhom ngau nhien">
+          nhom ngau nhien
+        </option>
+        <option value="nina hoang">
+          nina hoang
+        </option>
+        <option value="phi">
+          phi
+        </option>
+        <option value="phi tu">
+          phi tu
+        </option>
+        <option value="phong">
+          phong
+        </option>
+        <option value="phuong">
+          phuong
+        </option>
+        <option value="phuong kayla">
+          phuong kayla
+        </option>
+        <option value="phuongmai nguyen">
+          phuongmai nguyen
+        </option>
+        <option value="stefan hoang">
+          stefan hoang
+        </option>
+        <option value="suong">
+          suong
+        </option>
+        <option value="tam">
+          tam
+        </option>
+        <option value="tam ca ao den">
+          tam ca ao den
+        </option>
+        <option value="thanh">
+          thanh
+        </option>
+        <option value="thanh liem">
+          thanh liem
+        </option>
+        <option value="thien">
+          thien
+        </option>
+        <option value="thien ngan">
+          thien ngan
+        </option>
+        <option value="thien thanh">
+          thien thanh
+        </option>
+        <option value="thong">
+          thong
+        </option>
+        <option value="thu">
+          thu
+        </option>
+        <option value="thu ngo">
+          thu ngo
+        </option>
+        <option value="thu suong">
+          thu suong
+        </option>
+        <option value="thuy">
+          thuy
+        </option>
+        <option value="thuy dung">
+          thuy dung
+        </option>
+        <option value="thuy nguyen">
+          thuy nguyen
+        </option>
+        <option value="toan">
+          toan
+        </option>
+        <option value="trang">
+          trang
+        </option>
+        <option value="trang nguyen">
+          trang nguyen
+        </option>
+        <option value="trinh pham">
+          trinh pham
+        </option>
+        <option value="tu">
+          tu
+        </option>
+        <option value="tu oanh">
+          tu oanh
+        </option>
+        <option value="uyen phuong">
+          uyen phuong
+        </option>
+        <option value="van">
+          van
+        </option>
+        <option value="van vinh">
+          van vinh
+        </option>
+        <option value="vanessa">
+          vanessa
+        </option>
+        <option value="vinh">
+          vinh
+        </option>
+        <option value="wiley">
+          wiley
+        </option>
+        <option value="yen phuong">
+          yen phuong
+        </option>
+      </select>
+      <h1>
+        List for thu-suong
+      </h1>
+      <h4>
+        <a target="sheet">Virtual  - 2024-07-23</a>
+      </h4>
+      <table class="cell-border compact display dt-responsive" id="main_table" style="width:100%">
+        <thead>
+          <tr>
+            <th>
+              S-Title
+            </th>
+            <th>
+              No.
+            </th>
+            <th>
+              Title
+            </th>
+            <th>
+              List
+            </th>
+            <th>
+              Beat.Tm
+            </th>
+            <th>
+              Key.Tr
+            </th>
+            <th>
+              Perf Video/Loops
+            </th>
+            <th>
+              Note
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <button class="btn btn-sm btn-outline-secondary" onClick="reset_order()">Reset Order </button>
+      <script>
+        extra = []
+      </script>
+      <footer style="font-size: 75%">
+        <div class="small text-muted">
+          <a href="/"><i class="fa fa-home">&nbsp;</i></a><span>Copyright (C) - 2023-2024.</span>
+        </div>
+      </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/dataTables.rowReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/rowReorder.bootstrap5.min.js"></script>
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/9f4e4b189d.js"></script>
+    <script src="/js/app.js?v=3" type="text/javascript"></script>
+    <script>
+      var player = null;
+      var play_timer = null;
+      
+      // This function will be called when the API is ready
+      function onYouTubeIframeAPIReady() {
+        console.log("Frame API ready")
+        player = new YT.Player('youtube-player', {
+          videoId: '',
+          playerVars: {
+              autoplay:       1,
+              controls:       0,
+              showinfo:       0,
+              modestbranding: 1,
+          },
+        });
+      }
+      
+      function cancel_play() {
+        cancel_play_timer()
+        player.stopVideo();
+        $('#youtube').hide();
+      }
+      
+      function cancel_play_timer() {
+        if (play_timer) {
+          clearTimeout(play_timer);
+          play_timer = null
+        }
+      }
+      
+      function loopPlay(stime, etime) {
+        console.log(`Seeking to ${stime}. Play for ${etime - stime}`)
+      
+        // In case a loop play precede.  Must cancel any play timer
+        cancel_play_timer();
+        player.seekTo(stime, true)
+        if (etime <= stime) {
+          return
+        }
+      
+        // Looping play
+        var duration = etime - stime
+        play_timer = setTimeout(function() {
+          loopPlay(stime, etime);
+        }, duration*1000);
+        // console.log('Starting timer: ', play_timer, ' duration: ', duration)
+      }
+      
+      function play_on_youtube(video, title, stime, etime) {
+        if (player == null) {
+          alert("Youtube player is not ready")
+          return
+        }
+        var href = `https://www.youtube.com/embed/${video}?autoplay=1&playsinline=1`;
+        console.log(href, stime, etime)
+      
+        $('#youtube-title')[0].innerHTML = title
+        player.loadVideoById(video, stime)
+        player.seekTo(stime, true)
+      
+        /* Slow down player */
+        if (etime > 0) {
+          const prate = 1
+          player.setPlaybackRate(prate);
+          etime2 = stime + ((etime - stime)/prate);
+        }
+      
+        // 1st seek somehow have to wait a bit ...
+        setTimeout(function() {
+          player.unMute()
+          $('#youtube').show();
+          loopPlay(stime, etime);
+        }, 500)
+      }
+    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+      var main_table;
+      var myModal;
+      
+      $(function() {
+        main_table = new DataTable('#main_table', {
+          layout: {
+            topStart:    'search',
+            bottomStart: 'info',
+          },
+          search: {
+            search: '',
+            caseInsensitive: true,
+          },
+          responsive: true,
+          paging:     false,
+          columns: [null, {data: 'id'}, {data: 'title', width: '25%'},
+                    null, null, null, null, null],
+          order:  [[ 1, "asc" ]],
+          columnDefs: [
+            { target: 0, visible: false, searchable: true },
+            { target: 1, visible: true,  searchable: false },
+            { target: 7, visible: false, searchable: true },
+            { target: 8, visible: true,  searchable: false },
+          ],
+          rowReorder: {
+            dataSrc: 'id',
+          },
+          initComplete: function(settings, json) {
+            var newkey  = ''
+            for (let value of $('#main_table tbody tr')) {
+              newkey += value.childNodes[4].innerText.replace(/[\(\) ]/g, "")
+            }
+            let curkey = localStorage.getItem('pagekey.thu-suong')
+            // console.log(`thu-suong curkey: ${curkey}`)
+            // console.log(`thu-suong newkey: ${newkey}`)
+            localStorage.setItem("pagekey.thu-suong", newkey)
+            if (curkey == newkey) {
+              restore_order()
+            }
+          }
+        });
+      
+        main_table.on('row-reorder', (e, diff, edit) => {
+          setTimeout(() => { save_order() }, 100)
+        })
+      
+        myModal  = new bootstrap.Modal(document.getElementById('lybox'))
+      });
+      
+      function reset_order() {
+        localStorage.removeItem("pageorder.thu-suong")
+        location.reload()
+      }
+      
+      function current_order() {
+        var olist = []
+        for (value of $('#main_table tbody tr')) {
+          olist.push(value.childNodes[15].innerText)
+        }
+        return olist
+      }
+      
+      // Save order to localstore (per device only)
+      function save_order() {
+        var olist = current_order()
+        console.log('new_list: ', olist)
+        localStorage.setItem("pageorder.thu-suong", JSON.stringify(olist))
+      }
+      
+      // Save order to server (so it could be shared)
+      function sv_save_order() {
+        var olist = current_order()
+        var url = `/playlist/reorder/thu-suong/${olist.join(',')}`
+        jQuery.ajax({
+          url:      url,
+          method:   'POST',
+          async:    false,
+          dataType: 'json',
+          success:  location.reload(),
+        });
+      }
+      
+      function restore_order() {
+        let item = localStorage.getItem("pageorder.thu-suong")
+        if (item == null) {
+          console.log("No order to restore")
+          return
+        }
+      
+        let olist   = JSON.parse(item)
+        let dt_rows = $('#main_table tbody tr')
+        var offset  = 2
+        console.log(`Restore olist: ${olist}`)
+      
+        for (rowno of olist) {
+          // console.log('rowno: ', rowno)
+          // console.log('dtrow: ', dt_rows[rowno])
+      
+          if (dt_rows[rowno] == null) {
+            continue
+          }
+          let listno = dt_rows[rowno].childNodes[2].innerText
+          dt_rows[rowno].childNodes[2].innerText = offset
+          offset += 1
+        }
+      
+        setTimeout(() => {
+          main_table.rows().invalidate().draw()
+        }, 100)
+      }
+    </script>
+  </body>
+</html>

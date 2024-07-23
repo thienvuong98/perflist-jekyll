@@ -52,15 +52,13 @@
     <div class="container-fluid"><p>
   Use this form to request a performance list to be created and posted to
   this site. You need to have a public accessible Google Sheet containing
-  the raw performance list of your event. You could still edit the sheet 
-  to update the content afterward and it would be sync'ed up to the generated
-  performance list.
-</p>
-<p>
-  The sheet must have the following columns: Singer, Song, Genre, Key, Link (optional)
-</p>
-<p>
-  If you don't have one already, I could create one and send back to you for use.
+  the raw performance list of your event. 
+  
+  Use this <a href="https://docs.google.com/spreadsheets/d/119yKYdejJG2rrk3LOxUufepnzM80_PtLTHQm3VUm94M/edit?gid=1775891206#gid=1775891206" target="sheet">template</a> to create your sheet (use File/Save A Copy to your
+  drive).  Then edit and share your file to all who have the links.
+  Fill in as much info as you have, but the only fields required are
+  Song and Singer.  You could edit the sheet later to update the content
+  and it would be sync'ed up to the generated performance list.
 </p>
 <form action="" class="needs-validation" data-netlify="true" method="POST" name="request" novalidate="">
   <input name="subject" type="hidden" value="Request from perflist - %{submissionId}" />
@@ -77,7 +75,7 @@
     </div>
   </div>
   <div class="form-group">
-    <label>Google Sheet URL (if you already have one)</label><input class="form-control" name="url" type="url" />
+    <label>Google Sheet URL</label><input class="form-control" name="url" type="url" />
   </div>
   <div class="row">
     <div class="col">
