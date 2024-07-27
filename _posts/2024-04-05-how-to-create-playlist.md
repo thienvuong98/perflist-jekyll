@@ -1,7 +1,6 @@
 ---
 layout: post
 title:  "How to Create/Update Playlist - 2024"
-date:   2024-04-05 11:02:37 -0700
 categories: playlist
 ---
 This just put up a quick note on how to create/update the playlist from the shared excel sheet
@@ -9,12 +8,20 @@ This just put up a quick note on how to create/update the playlist from the shar
 ### Create performance list and download of lyrics
 
 * You need a source google sheet. This could be shared by a friend, or you
-  could create one. It must have the following columns: Singer, Song, Genre, Key.
-  Make that sheet globally sharable (should also be editable if you allow
-  others to edit).
+  could create one using this
+  [template](https://docs.google.com/spreadsheets/d/119yKYdejJG2rrk3LOxUufepnzM80_PtLTHQm3VUm94M).
+  It must have the following columns: Singer, Song, Genre, Key.  Make that
+  sheet globally sharable (should also be editable if you allow others
+  to edit).  Fill in as much data as you have (mininum is the song and singer)
 
 * Get the URL of the sheet (from browser) - open up the shared spreadsheet
   for song and copy the URL
+
+* Run the following to create the local performance list
+
+   ```plaintext
+   perflist.py create-list <list-name> <google-sheet-url>
+   ```
 
 * Create a local playlist .yml file - named it playlist/_playlist_.yml, with
   the following content. Only the source field is required, the rest are
@@ -31,7 +38,7 @@ This just put up a quick note on how to create/update the playlist from the shar
 * Populate the data from the spreadsheet to the playlist file
 
   ```bash
-    perflist.rb load-sheet --search-lyrics share/<playlist>.yml
+    perflist.py load-sheet --reorder --search-lyrics share/<playlist>.yml
     ```
 
 * This will download the sheet, parse for the useful information. Then for
