@@ -1,22 +1,24 @@
-- name: 2024-03-TH
-  desc: VNHV Reunion 2024
-- name: 2024-04-TH
-  desc: VNHV Reunion 2024
+- name: 2024-09-TU
+  desc: Tuan / Mai Kha Party - 9/28/2024
+- name: 2024-08-TV
+  desc: August List Practice
+- name: 2024-08-PH
+  desc: Phong Hoa Garden Party 08/24/2024
+- name: 2024-08-MI
+  desc: Hien/Hien's Birthday Party 08/03/2024
+- name: 2024-06-VH
+  desc: Summer Party, Thuy/Bich Hien 6/8/2024
+- name: 2024-06-US
+  desc: Disco Party 6/29/2024
+- name: 2024-05-UF
+  desc: Uyen/Frank's Dinner 5/25/2004
 - name: 2024-05-TS
   desc: Thien/Suong's Dinner 5/4/2004
 - name: 2024-05-TH
   desc: VNHV Reunion 2024
 - name: 2024-05-AM
   desc: L'Amour Party 5/19/2004
-- name: 2024-05-UF
-  desc: Uyen/Frank's Dinner 5/25/2004
-- name: 2024-06-VH
-  desc: Summer Party, Thuy/Bich Hien 6/8/2024
-- name: 2024-06-US
-  desc: Disco Party 6/29/2024
-- name: 2024-08-MI
-  desc: Hien/Hien's Birthday Party 08/03/2024
-- name: 2024-08-TV
-  desc: August List Practice
-- name: 2024-08-PH
-  desc: Phong Hoa Garden Party 08/24/2024
+- name: 2024-04-TH
+  desc: VNHV Reunion 2024
+- name: 2024-03-TH
+  desc: VNHV Reunion 2024
