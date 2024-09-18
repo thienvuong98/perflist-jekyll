@@ -595,6 +595,9 @@
                   No.
                 </th>
                 <th>
+                  Key.Tr
+                </th>
+                <th>
                   Title
                 </th>
                 <th>
@@ -602,9 +605,6 @@
                 </th>
                 <th>
                   Beat [Tempo]
-                </th>
-                <th>
-                  Key.Tr
                 </th>
                 <th>
                   Perf Video/Loops
@@ -720,7 +720,6 @@
       
       $(function() {
       
-        console.log('Tooltip is up?')
         $('.mtooltip').tooltip()
       
         main_table = new DataTable('#main_table', {
@@ -734,12 +733,12 @@
           },
           responsive: true,
           paging:     false,
-          columns: [null, {data: 'id'}, {data: 'title'},
-                    null, null, null, null, null],
+          columns: [null, {data: 'id'}, null, {data: 'title'},
+                    null, null, null, null],
           order:  [[ 1, "asc" ]],
           columnDefs: [
             { target: 0, visible: false, searchable: true },
-            { target: 1, visible: true,  searchable: false },
+            { target: 2, visible: true,  searchable: false },
             { target: 7, visible: false, searchable: true },
             { target: 8, visible: true,  searchable: false },
           ],
