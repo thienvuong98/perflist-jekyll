@@ -20,7 +20,7 @@ This just put up a quick note on how to create/update the playlist from the shar
 * Run the following to create the local performance list
 
    ```plaintext
-   perflist.py create-list <list-name> <google-sheet-url>
+   perflist create-list <list-name> <google-sheet-url>
    ```
 
 * Create a local playlist .yml file - named it playlist/_playlist_.yml, with
@@ -38,7 +38,7 @@ This just put up a quick note on how to create/update the playlist from the shar
 * Populate the data from the spreadsheet to the playlist file
 
   ```bash
-    perflist.py load-sheet --reorder --search-lyrics share/<playlist>.yml
+    perflist load-sheet --search-lyrics share/<playlist>.yml
     ```
 
 * This will download the sheet, parse for the useful information. Then for
@@ -55,28 +55,25 @@ This just put up a quick note on how to create/update the playlist from the shar
   to be taken care manually.
 
 * If you wanted to reload a lyric from the source, update the **url** field
-  (if needed), and add a field **updating**: true to the yaml lyrics. Then
-  run ```perflist.rb update-lyrics```. It will check for any file needing
-  update and download a fresh copy of lyrics from the specified URL.
+  (if needed), and add a field **updating**: true to the yaml lyrics. The
+  next time perflist load-sheet is run, it will check for any file
+  needing update and download a fresh copy of lyrics from the specified
+  URL.
 
 ### Enhancing content of lyrics data
 
-Source lyric only contains the lyric/accompaniment without much else.
-You should post edit the stored file under share/lyrics for additional data
+The source lyric file only includes the basic lyrics and accompaniment. You’ll need to edit the stored file located under share/lyrics to add more details.
 
-* Getting youtube video matching play and adding the vido performance section (video, loops, style, tempo, ....)
+Next, find a matching YouTube video to play alongside the lyrics, and add the video performance section (video, loops, style, tempo, etc.).
 
-* The video selected should be embeddable. There is no indication looking at
-  youtube, so you'll have to try. Mostly, vietnamese videos are embeddable,
-  foreign are not
+Make sure the video you choose is embeddable. Unfortunately, YouTube doesn’t provide clear indicators for this, so you’ll have to try embedding it to check. Vietnamese videos are often embeddable, while foreign ones might not be.
 
-* If you want video loops - Play the video, and extract the info for intro/mid/out to add in the loop parts,
+If you want to create video loops, play the video and identify the sections (intro, mid, outro) to extract the timing and add them to the loop sections.
 
-* Build site and deploy
+Once everything’s set, build and deploy the site using the following command:
 
-  ```bash
-  perflist.rb build-site --deploy
+```bash
+perflist.rb build-site --deploy
+```
 
-* Validate content at site
-
->
+Finally, verify the content on the site to ensure everything looks good.

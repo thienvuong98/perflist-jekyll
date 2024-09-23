@@ -22,12 +22,12 @@ title: Thien's Site
 email: thienv@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Simple site to keep band playlists.
-baseurl:          "" # the subpath of your site, e.g. /blog
-url:              ""
+baseurl: "" # the subpath of your site, e.g. /blog
+url: ""
 twitter_username: jekyllrb
-github_username:  jekyll
+github_username: jekyll
 
-theme:            minima
+theme: minima
 plugins:
   - jekyll-feed
   - jekyll-sitemap
@@ -40,14 +40,12 @@ plugins:
 # Excluded items can be processed by explicitly listing the directories or
 # their entries' file path in the `include:` list.
 #
-# exclude:
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - bin/
+  - node_modules/
+  - vendor/bundle/
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules/
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
