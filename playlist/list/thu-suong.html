@@ -294,9 +294,6 @@
           <table class="cell-border compact display dt-responsive" id="main_table" width="100%">
             <thead>
               <tr>
-                <th>
-                  S-Title
-                </th>
                 <th></th>
                 <th>
                   Key
@@ -317,13 +314,13 @@
                   Note
                 </th>
                 <th></th>
+                <th>
+                  S-Title
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>
-                  xin hay roi xa
-                </td>
                 <td>
                   2
                 </td>
@@ -364,11 +361,11 @@
                     0
                   </div>
                 </td>
+                <td>
+                  xin hay roi xa
+                </td>
               </tr>
               <tr>
-                <td>
-                  hoa bang lang
-                </td>
                 <td>
                   3
                 </td>
@@ -401,11 +398,11 @@
                     1
                   </div>
                 </td>
+                <td>
+                  hoa bang lang
+                </td>
               </tr>
               <tr>
-                <td>
-                  hanh phuc lang thang
-                </td>
                 <td>
                   4
                 </td>
@@ -438,11 +435,11 @@
                     2
                   </div>
                 </td>
+                <td>
+                  hanh phuc lang thang
+                </td>
               </tr>
               <tr>
-                <td>
-                  ngay mai nguoi ta di lay chong
-                </td>
                 <td>
                   5
                 </td>
@@ -475,11 +472,11 @@
                     3
                   </div>
                 </td>
+                <td>
+                  ngay mai nguoi ta di lay chong
+                </td>
               </tr>
               <tr>
-                <td>
-                  dung hoi em
-                </td>
                 <td>
                   6
                 </td>
@@ -512,11 +509,11 @@
                     4
                   </div>
                 </td>
+                <td>
+                  dung hoi em
+                </td>
               </tr>
               <tr>
-                <td>
-                  nua vang trang
-                </td>
                 <td>
                   7
                 </td>
@@ -549,11 +546,11 @@
                     5
                   </div>
                 </td>
+                <td>
+                  nua vang trang
+                </td>
               </tr>
               <tr>
-                <td>
-                  cat doi noi sau
-                </td>
                 <td>
                   8
                 </td>
@@ -593,6 +590,9 @@
                   <div class="hidden">
                     6
                   </div>
+                </td>
+                <td>
+                  cat doi noi sau
                 </td>
               </tr>
             </tbody>
@@ -715,15 +715,15 @@
           },
           responsive: true,
           paging:     false,
-          columns: [null, {data: 'id'}, null, {data: 'title'},
-                    null, null, null, null],
-          order:  [[ 1, "asc" ]],
+          columns: [{data: 'id'}, null, {data: 'title'},
+                    null, null, null, null, null],
+          order:  [[ 0, "asc" ]],
           columnDefs: [
-            { target: 0, visible: false, searchable: true },
-            { target: 2, visible: true,  searchable: false },
-            { target: 3, width: "50%" },
-            { target: 7, visible: false, searchable: true },
-            { target: 8, visible: true,  searchable: false },
+            { target: 1, visible: true,  searchable: false },
+            { target: 2, width: "40%" },
+            { target: 6, visible: false, searchable: true },
+            { target: 7, visible: true,  searchable: false },
+            { target: 8, visible: false, searchable: true },
           ],
           rowReorder: {
             dataSrc: 'id',
@@ -731,7 +731,7 @@
           initComplete: function(settings, json) {
             var newkey  = ''
             for (let value of $('#main_table tbody tr')) {
-              newkey += value.childNodes[4].innerText.replace(/[\(\) ]/g, "")
+              newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.thu-suong')
             // console.log(`thu-suong curkey: ${curkey}`)
@@ -758,6 +758,7 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
+          console.log(value)
           olist.push(value.childNodes[15].innerText)
         }
         return olist

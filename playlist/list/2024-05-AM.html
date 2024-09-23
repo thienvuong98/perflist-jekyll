@@ -294,9 +294,6 @@
           <table class="cell-border compact display dt-responsive" id="main_table" width="100%">
             <thead>
               <tr>
-                <th>
-                  S-Title
-                </th>
                 <th></th>
                 <th>
                   Key
@@ -317,13 +314,13 @@
                   Note
                 </th>
                 <th></th>
+                <th>
+                  S-Title
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>
-                  diana
-                </td>
                 <td>
                   2
                 </td>
@@ -356,11 +353,11 @@
                     0
                   </div>
                 </td>
+                <td>
+                  diana
+                </td>
               </tr>
               <tr>
-                <td>
-                  bong hong cai ao
-                </td>
                 <td>
                   3
                 </td>
@@ -393,11 +390,11 @@
                     1
                   </div>
                 </td>
+                <td>
+                  bong hong cai ao
+                </td>
               </tr>
               <tr>
-                <td>
-                  thoi
-                </td>
                 <td>
                   4
                 </td>
@@ -430,11 +427,11 @@
                     2
                   </div>
                 </td>
+                <td>
+                  thoi
+                </td>
               </tr>
               <tr>
-                <td>
-                  hay cho toi
-                </td>
                 <td>
                   5
                 </td>
@@ -471,11 +468,11 @@
                     3
                   </div>
                 </td>
+                <td>
+                  hay cho toi
+                </td>
               </tr>
               <tr>
-                <td>
-                  bao tinh
-                </td>
                 <td>
                   6
                 </td>
@@ -508,11 +505,11 @@
                     4
                   </div>
                 </td>
+                <td>
+                  bao tinh
+                </td>
               </tr>
               <tr>
-                <td>
-                  pretty woman
-                </td>
                 <td>
                   7
                 </td>
@@ -545,11 +542,11 @@
                     5
                   </div>
                 </td>
+                <td>
+                  pretty woman
+                </td>
               </tr>
               <tr>
-                <td>
-                  bai tango xa roi
-                </td>
                 <td>
                   8
                 </td>
@@ -582,11 +579,11 @@
                     6
                   </div>
                 </td>
+                <td>
+                  bai tango xa roi
+                </td>
               </tr>
               <tr>
-                <td>
-                  canh hong phai
-                </td>
                 <td>
                   9
                 </td>
@@ -619,11 +616,11 @@
                     7
                   </div>
                 </td>
+                <td>
+                  canh hong phai
+                </td>
               </tr>
               <tr>
-                <td>
-                  roi mai toi dua em
-                </td>
                 <td>
                   10
                 </td>
@@ -655,6 +652,9 @@
                   <div class="hidden">
                     8
                   </div>
+                </td>
+                <td>
+                  roi mai toi dua em
                 </td>
               </tr>
             </tbody>
@@ -777,15 +777,15 @@
           },
           responsive: true,
           paging:     false,
-          columns: [null, {data: 'id'}, null, {data: 'title'},
-                    null, null, null, null],
-          order:  [[ 1, "asc" ]],
+          columns: [{data: 'id'}, null, {data: 'title'},
+                    null, null, null, null, null],
+          order:  [[ 0, "asc" ]],
           columnDefs: [
-            { target: 0, visible: false, searchable: true },
-            { target: 2, visible: true,  searchable: false },
-            { target: 3, width: "50%" },
-            { target: 7, visible: false, searchable: true },
-            { target: 8, visible: true,  searchable: false },
+            { target: 1, visible: true,  searchable: false },
+            { target: 2, width: "40%" },
+            { target: 6, visible: false, searchable: true },
+            { target: 7, visible: true,  searchable: false },
+            { target: 8, visible: false, searchable: true },
           ],
           rowReorder: {
             dataSrc: 'id',
@@ -793,7 +793,7 @@
           initComplete: function(settings, json) {
             var newkey  = ''
             for (let value of $('#main_table tbody tr')) {
-              newkey += value.childNodes[4].innerText.replace(/[\(\) ]/g, "")
+              newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-05-AM')
             // console.log(`2024-05-AM curkey: ${curkey}`)
@@ -820,6 +820,7 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
+          console.log(value)
           olist.push(value.childNodes[15].innerText)
         }
         return olist

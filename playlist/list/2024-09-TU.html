@@ -294,9 +294,6 @@
           <table class="cell-border compact display dt-responsive" id="main_table" width="100%">
             <thead>
               <tr>
-                <th>
-                  S-Title
-                </th>
                 <th></th>
                 <th>
                   Key
@@ -317,13 +314,13 @@
                   Note
                 </th>
                 <th></th>
+                <th>
+                  S-Title
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>
-                  nhu da dau yeu
-                </td>
                 <td>
                   2
                 </td>
@@ -356,11 +353,11 @@
                     0
                   </div>
                 </td>
+                <td>
+                  nhu da dau yeu
+                </td>
               </tr>
               <tr>
-                <td>
-                  mai anh di roi
-                </td>
                 <td>
                   3
                 </td>
@@ -393,11 +390,11 @@
                     1
                   </div>
                 </td>
+                <td>
+                  mai anh di roi
+                </td>
               </tr>
               <tr>
-                <td>
-                  can nha ngoai o
-                </td>
                 <td>
                   4
                 </td>
@@ -430,11 +427,11 @@
                     2
                   </div>
                 </td>
+                <td>
+                  can nha ngoai o
+                </td>
               </tr>
               <tr>
-                <td>
-                  duyen phan
-                </td>
                 <td>
                   5
                 </td>
@@ -466,11 +463,11 @@
                     3
                   </div>
                 </td>
+                <td>
+                  duyen phan
+                </td>
               </tr>
               <tr>
-                <td>
-                  em se la nguoi ra di
-                </td>
                 <td>
                   6
                 </td>
@@ -498,11 +495,11 @@
                     4
                   </div>
                 </td>
+                <td>
+                  em se la nguoi ra di
+                </td>
               </tr>
               <tr>
-                <td>
-                  nho oi
-                </td>
                 <td>
                   7
                 </td>
@@ -534,11 +531,11 @@
                     5
                   </div>
                 </td>
+                <td>
+                  nho oi
+                </td>
               </tr>
               <tr>
-                <td>
-                  ha trang
-                </td>
                 <td>
                   8
                 </td>
@@ -570,11 +567,11 @@
                     6
                   </div>
                 </td>
+                <td>
+                  ha trang
+                </td>
               </tr>
               <tr>
-                <td>
-                  mua thu cho em
-                </td>
                 <td>
                   9
                 </td>
@@ -606,11 +603,11 @@
                     7
                   </div>
                 </td>
+                <td>
+                  mua thu cho em
+                </td>
               </tr>
               <tr>
-                <td>
-                  dem dinh menh
-                </td>
                 <td>
                   10
                 </td>
@@ -643,11 +640,11 @@
                     8
                   </div>
                 </td>
+                <td>
+                  dem dinh menh
+                </td>
               </tr>
               <tr>
-                <td>
-                  doc thoai
-                </td>
                 <td>
                   11
                 </td>
@@ -680,11 +677,11 @@
                     9
                   </div>
                 </td>
+                <td>
+                  doc thoai
+                </td>
               </tr>
               <tr>
-                <td>
-                  tra no tinh xa
-                </td>
                 <td>
                   12
                 </td>
@@ -717,11 +714,11 @@
                     10
                   </div>
                 </td>
+                <td>
+                  tra no tinh xa
+                </td>
               </tr>
               <tr>
-                <td>
-                  niem khuc cuoi
-                </td>
                 <td>
                   13
                 </td>
@@ -754,11 +751,11 @@
                     11
                   </div>
                 </td>
+                <td>
+                  niem khuc cuoi
+                </td>
               </tr>
               <tr>
-                <td>
-                  bai khong ten so 2
-                </td>
                 <td>
                   14
                 </td>
@@ -790,11 +787,11 @@
                     12
                   </div>
                 </td>
+                <td>
+                  bai khong ten so 2
+                </td>
               </tr>
               <tr>
-                <td>
-                  ngay mai nguoi ta lay chong
-                </td>
                 <td>
                   15
                 </td>
@@ -827,11 +824,11 @@
                     13
                   </div>
                 </td>
+                <td>
+                  ngay mai nguoi ta lay chong
+                </td>
               </tr>
               <tr>
-                <td>
-                  nhu vat nang
-                </td>
                 <td>
                   16
                 </td>
@@ -863,6 +860,9 @@
                   <div class="hidden">
                     14
                   </div>
+                </td>
+                <td>
+                  nhu vat nang
                 </td>
               </tr>
             </tbody>
@@ -985,15 +985,15 @@
           },
           responsive: true,
           paging:     false,
-          columns: [null, {data: 'id'}, null, {data: 'title'},
-                    null, null, null, null],
-          order:  [[ 1, "asc" ]],
+          columns: [{data: 'id'}, null, {data: 'title'},
+                    null, null, null, null, null],
+          order:  [[ 0, "asc" ]],
           columnDefs: [
-            { target: 0, visible: false, searchable: true },
-            { target: 2, visible: true,  searchable: false },
-            { target: 3, width: "50%" },
-            { target: 7, visible: false, searchable: true },
-            { target: 8, visible: true,  searchable: false },
+            { target: 1, visible: true,  searchable: false },
+            { target: 2, width: "40%" },
+            { target: 6, visible: false, searchable: true },
+            { target: 7, visible: true,  searchable: false },
+            { target: 8, visible: false, searchable: true },
           ],
           rowReorder: {
             dataSrc: 'id',
@@ -1001,7 +1001,7 @@
           initComplete: function(settings, json) {
             var newkey  = ''
             for (let value of $('#main_table tbody tr')) {
-              newkey += value.childNodes[4].innerText.replace(/[\(\) ]/g, "")
+              newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-09-TU')
             // console.log(`2024-09-TU curkey: ${curkey}`)
@@ -1028,6 +1028,7 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
+          console.log(value)
           olist.push(value.childNodes[15].innerText)
         }
         return olist
