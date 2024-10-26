@@ -283,6 +283,9 @@
             <option value="2024-09-TU">
               2024-09-TU
             </option>
+            <option value="2024-11-UF">
+              2024-11-UF
+            </option>
             <option selected="" value="thien">
               thien
             </option>
@@ -1733,7 +1736,7 @@
           videoId: '',
           playerVars: {
               autoplay:       1,
-              controls:       0,
+              controls:       1,
               showinfo:       0,
               modestbranding: 1,
           },
@@ -1862,7 +1865,6 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
-          console.log(value)
           olist.push(value.childNodes[15].innerText)
         }
         return olist

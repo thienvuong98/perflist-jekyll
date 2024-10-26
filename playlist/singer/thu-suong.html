@@ -242,7 +242,7 @@
             List for thu-suong
           </h2>
           <h5>
-            <a target="sheet">Virtual  - 2024-09-28</a>
+            <a target="sheet">Virtual  - 2024-10-26</a>
           </h5>
         </div>
         <div class="col-md-4">
@@ -301,6 +301,9 @@
             <option value="anh tam">
               anh tam
             </option>
+            <option value="annie">
+              annie
+            </option>
             <option value="band">
               band
             </option>
@@ -358,6 +361,9 @@
             <option value="djane">
               djane
             </option>
+            <option value="duc minh">
+              duc minh
+            </option>
             <option value="f">
               f
             </option>
@@ -382,6 +388,9 @@
             <option value="hoa">
               hoa
             </option>
+            <option value="huetu">
+              huetu
+            </option>
             <option value="hung">
               hung
             </option>
@@ -405,6 +414,9 @@
             </option>
             <option value="lan">
               lan
+            </option>
+            <option value="lanthuy">
+              lanthuy
             </option>
             <option value="lily">
               lily
@@ -456,6 +468,9 @@
             </option>
             <option value="minh dung">
               minh dung
+            </option>
+            <option value="minhnuong">
+              minhnuong
             </option>
             <option value="my tien">
               my tien
@@ -555,6 +570,9 @@
             </option>
             <option value="trang nguyen">
               trang nguyen
+            </option>
+            <option value="trinh">
+              trinh
             </option>
             <option value="trinh pham">
               trinh pham
@@ -663,7 +681,7 @@
           videoId: '',
           playerVars: {
               autoplay:       1,
-              controls:       0,
+              controls:       1,
               showinfo:       0,
               modestbranding: 1,
           },
@@ -792,7 +810,6 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
-          console.log(value)
           olist.push(value.childNodes[15].innerText)
         }
         return olist
