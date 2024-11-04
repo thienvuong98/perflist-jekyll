@@ -217,14 +217,15 @@
               success:  show_lyric,
             });
           } else {
-            var content  = extra[item]
+            var iitem = parseInt(item.substring(4), 10)
+            var content  = extra[iitem]
             if (content != null) {
               show_lyric(content)
             }
           }
         }
         function show_lyric(content) {
-          // console.log(`_lyric_box.slim:117`, content)
+          // console.log(`_lyric_box.slim:118`, content)
           var lvideo = $('#lybox-vctl')
         
           // If vintro exist - create button for play/stop intro
