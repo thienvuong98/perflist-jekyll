@@ -19,6 +19,9 @@
       a:link {
         text-decoration: none;
       }
+      .chorder {
+        margin-right: 10px;
+      }
       .loopstyle {
         font-size: 70%;
       }
@@ -86,6 +89,9 @@
       }
       #lybox-title {
         font-size: 80%;
+      }
+      #lybox-content {
+        font-size: 150%;
       }
       #lybox-debug {
         font-size: 50%;
@@ -161,17 +167,13 @@
           $('#lybox .modal-header').toggle()
         }
         
-        function dblog(msg) {
-          console.log(msg)
-          // var dbhandle = $('#lybox-debug')
-          // dbhandle.html(dbhandle.html() + ` - ${msg}`)
-        }
-        
         function load_lyric(async = true, offset = 0) {
           var olist = current_order()
         
+          // console.log(`_lyric_box.slim:71 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
+          console.log(`_lyric_box.slim:74 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -196,7 +198,7 @@
           myModal.program = program
           myModal.item    = item
         
-          dblog(`Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:99 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=singer`
@@ -214,7 +216,7 @@
           }
         }
         function show_lyric(content) {
-          console.log('content ', content)
+          // console.log(`_lyric_box.slim:117`, content)
           var lvideo = $('#lybox-vctl')
         
           // If vintro exist - create button for play/stop intro
@@ -236,13 +238,13 @@
           myModal.show()
         }
       </script>
-      <div class="row">
+      <div class="row program-info">
         <div class="col-md-8">
-          <h2>
+          <h1>
             List for thien
-          </h2>
+          </h1>
           <h5>
-            <a target="sheet">Virtual  - 2024-11-03</a>
+            <a target="sheet">Virtual  - 2024-11-04</a>
           </h5>
         </div>
         <div class="col-md-4">
@@ -655,20 +657,19 @@
                 <th>
                   Note
                 </th>
-                <th></th>
                 <th class="hiddenCol">
                   S-Title
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr id="row_0">
                 <td>
                   2
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 0, false)" style="background-color:#bc9" title="Lyric for: Sans Elle (Nếu vắng nàng), tempo: 118"><b>A</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_0&#39;, false)" style="background-color:#bc9" title="Lyric for: Sans Elle (Nếu vắng nàng), tempo: 118"><b>A</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -697,22 +698,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    0
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   sans elle
                 </td>
               </tr>
-              <tr>
+              <tr id="row_1">
                 <td>
                   3
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 1, false)" style="background-color:#bc9" title="Lyric for: Toi Jamais / L&#39;Amour C&#39;est Pour Rien (Anh Thì Không), tempo: 104"><b>Dm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_1&#39;, false)" style="background-color:#bc9" title="Lyric for: Toi Jamais / L&#39;Amour C&#39;est Pour Rien (Anh Thì Không), tempo: 104"><b>Dm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -741,22 +737,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    1
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   toi jamais lamour cest pour rien
                 </td>
               </tr>
-              <tr>
+              <tr id="row_2">
                 <td>
                   4
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 2, false)" style="background-color:#5cf" title="Lyric for: Geant de Papier (Lạc Mất Mùa Xuân), tempo: 57"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_2&#39;, false)" style="background-color:#5cf" title="Lyric for: Geant de Papier (Lạc Mất Mùa Xuân), tempo: 57"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -785,22 +776,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    2
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   geant de papier
                 </td>
               </tr>
-              <tr>
+              <tr id="row_3">
                 <td>
                   5
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 3, false)" style="background-color:#7cd" title="Lyric for: Magic Boulevard, tempo: 66"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_3&#39;, false)" style="background-color:#7cd" title="Lyric for: Magic Boulevard, tempo: 66"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -829,22 +815,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    3
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   magic boulevard
                 </td>
               </tr>
-              <tr>
+              <tr id="row_4">
                 <td>
                   6
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 4, false)" style="background-color:#dc7" title="Lyric for: Nhung Loi Me Hoac, tempo: 122"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_4&#39;, false)" style="background-color:#dc7" title="Lyric for: Nhung Loi Me Hoac, tempo: 122"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -869,22 +850,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    4
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   nhung loi me hoac
                 </td>
               </tr>
-              <tr>
+              <tr id="row_5">
                 <td>
                   7
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 5, false)" style="background-color:#fc5" title="Lyric for: Bai Khong Ten 37 (Rung Rung Le), tempo: 150"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_5&#39;, false)" style="background-color:#fc5" title="Lyric for: Bai Khong Ten 37 (Rung Rung Le), tempo: 150"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -913,22 +889,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    5
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   bai khong ten 37
                 </td>
               </tr>
-              <tr>
+              <tr id="row_6">
                 <td>
                   8
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 6, false)" style="background-color:#dc7" title="Lyric for: Pretty Woman, tempo: 130"><b>A</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_6&#39;, false)" style="background-color:#dc7" title="Lyric for: Pretty Woman, tempo: 130"><b>A</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -949,22 +920,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    6
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   pretty woman
                 </td>
               </tr>
-              <tr>
+              <tr id="row_7">
                 <td>
                   9
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 7, false)" style="background-color:#bc9" title="Lyric for: Bai Tango Xa Roi, tempo: 116"><b>Dm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_7&#39;, false)" style="background-color:#bc9" title="Lyric for: Bai Tango Xa Roi, tempo: 116"><b>Dm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -985,22 +951,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    7
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   bai tango xa roi
                 </td>
               </tr>
-              <tr>
+              <tr id="row_8">
                 <td>
                   10
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 8, false)" style="background-color:#9cb" title="Lyric for: Canh Hong Phai, tempo: 90"><b>Gm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_8&#39;, false)" style="background-color:#9cb" title="Lyric for: Canh Hong Phai, tempo: 90"><b>Gm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1021,22 +982,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    8
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   canh hong phai
                 </td>
               </tr>
-              <tr>
+              <tr id="row_9">
                 <td>
                   11
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 9, false)" style="background-color:#5cf" title="Lyric for: Roi Mai Toi Dua Em, tempo: 58"><b>D</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_9&#39;, false)" style="background-color:#5cf" title="Lyric for: Roi Mai Toi Dua Em, tempo: 58"><b>D</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1057,22 +1013,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    9
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   roi mai toi dua em
                 </td>
               </tr>
-              <tr>
+              <tr id="row_10">
                 <td>
                   12
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 10, false)" style="background-color:#7cd" title="Lyric for: Doi Bo, tempo: 69"><b>D</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_10&#39;, false)" style="background-color:#7cd" title="Lyric for: Doi Bo, tempo: 69"><b>D</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1093,22 +1044,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    10
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   doi bo
                 </td>
               </tr>
-              <tr>
+              <tr id="row_11">
                 <td>
                   13
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 11, false)" style="background-color:#bc9" title="Lyric for: Pho Buon, tempo: 112"><b>Gm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_11&#39;, false)" style="background-color:#bc9" title="Lyric for: Pho Buon, tempo: 112"><b>Gm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1129,22 +1075,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    11
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   pho buon
                 </td>
               </tr>
-              <tr>
+              <tr id="row_12">
                 <td>
                   14
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 12, false)" style="background-color:#7cd" title="Lyric for: Niem Dau Chon Dau, tempo: 80"><b>D</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_12&#39;, false)" style="background-color:#7cd" title="Lyric for: Niem Dau Chon Dau, tempo: 80"><b>D</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1165,22 +1106,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    12
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   niem dau chon dau
                 </td>
               </tr>
-              <tr>
+              <tr id="row_13">
                 <td>
                   15
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 13, false)" style="background-color:#bc9" title="Lyric for: Sans Elle, tempo: 118"><b>A</b><span> (Ngon)</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_13&#39;, false)" style="background-color:#bc9" title="Lyric for: Sans Elle, tempo: 118"><b>A</b><span> (Ngon)</span></button>
                   </div>
                 </td>
                 <td>
@@ -1209,22 +1145,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    13
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   sans elle
                 </td>
               </tr>
-              <tr>
+              <tr id="row_14">
                 <td>
                   16
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 14, false)" style="background-color:#dc7" title="Lyric for: Vet Son Tren Ao, tempo: 140"><b>C</b><span> (Ngon)</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_14&#39;, false)" style="background-color:#dc7" title="Lyric for: Vet Son Tren Ao, tempo: 140"><b>C</b><span> (Ngon)</span></button>
                   </div>
                 </td>
                 <td>
@@ -1253,22 +1184,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    14
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   vet son tren ao
                 </td>
               </tr>
-              <tr>
+              <tr id="row_15">
                 <td>
                   17
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 15, false)" style="background-color:#fc5" title="Lyric for: Ngo, tempo: 145"><b>Cm</b><span> (Ngon)</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_15&#39;, false)" style="background-color:#fc5" title="Lyric for: Ngo, tempo: 145"><b>Cm</b><span> (Ngon)</span></button>
                   </div>
                 </td>
                 <td>
@@ -1289,22 +1215,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    15
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   ngo
                 </td>
               </tr>
-              <tr>
+              <tr id="row_16">
                 <td>
                   18
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 16, false)" style="background-color:#dc7" title="Lyric for: Nho Ve Em, tempo: 130"><b>Cm</b><span> (Ngon)</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_16&#39;, false)" style="background-color:#dc7" title="Lyric for: Nho Ve Em, tempo: 130"><b>Cm</b><span> (Ngon)</span></button>
                   </div>
                 </td>
                 <td>
@@ -1325,22 +1246,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    16
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   nho ve em
                 </td>
               </tr>
-              <tr>
+              <tr id="row_17">
                 <td>
                   19
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 17, false)" style="background-color:#fc5" title="Lyric for: Rung Rung Le, tempo: 150"><b>Am</b><span> (Ngon)</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_17&#39;, false)" style="background-color:#fc5" title="Lyric for: Rung Rung Le, tempo: 150"><b>Am</b><span> (Ngon)</span></button>
                   </div>
                 </td>
                 <td>
@@ -1369,22 +1285,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    17
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   rung rung le
                 </td>
               </tr>
-              <tr>
+              <tr id="row_18">
                 <td>
                   20
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 18, false)" style="background-color:#7cd" title="Lyric for: Con Mo Bang Gia, tempo: 63"><b>Em</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_18&#39;, false)" style="background-color:#7cd" title="Lyric for: Con Mo Bang Gia, tempo: 63"><b>Em</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1413,22 +1324,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    18
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   con mo bang gia
                 </td>
               </tr>
-              <tr>
+              <tr id="row_19">
                 <td>
                   21
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 19, false)" style="background-color:#fff" title="Lyric for: De Nho Mot Thoi Ta Da Yeu, tempo: "><b>Cm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_19&#39;, false)" style="background-color:#fff" title="Lyric for: De Nho Mot Thoi Ta Da Yeu, tempo: "><b>Cm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1444,22 +1350,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    19
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   de nho mot thoi ta da yeu
                 </td>
               </tr>
-              <tr>
+              <tr id="row_20">
                 <td>
                   22
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 20, false)" style="background-color:#fc5" title="Lyric for: Coi Chung Gai Dep, tempo: 170"><b>G</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_20&#39;, false)" style="background-color:#fc5" title="Lyric for: Coi Chung Gai Dep, tempo: 170"><b>G</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1476,22 +1377,17 @@
                 <td>
                   Belle, Belle
                 </td>
-                <td>
-                  <div class="hidden">
-                    20
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   coi chung gai dep
                 </td>
               </tr>
-              <tr>
+              <tr id="row_21">
                 <td>
                   23
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 21, false)" style="background-color:#dc7" title="Lyric for: Yeu Het Con Tim, tempo: 125"><b>A</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_21&#39;, false)" style="background-color:#dc7" title="Lyric for: Yeu Het Con Tim, tempo: 125"><b>A</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1512,22 +1408,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    21
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   yeu het con tim
                 </td>
               </tr>
-              <tr>
+              <tr id="row_22">
                 <td>
                   24
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 22, false)" style="background-color:#bc9" title="Lyric for: Senorita, tempo: 118"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_22&#39;, false)" style="background-color:#bc9" title="Lyric for: Senorita, tempo: 118"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1548,22 +1439,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    22
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   senorita
                 </td>
               </tr>
-              <tr>
+              <tr id="row_23">
                 <td>
                   25
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 23, false)" style="background-color:#fc5" title="Lyric for: Luan Vu Ngay Mua, tempo: 160"><b>Gm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_23&#39;, false)" style="background-color:#fc5" title="Lyric for: Luan Vu Ngay Mua, tempo: 160"><b>Gm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1584,22 +1470,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    23
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   luan vu ngay mua
                 </td>
               </tr>
-              <tr>
+              <tr id="row_24">
                 <td>
                   26
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 24, false)" style="background-color:#dc7" title="Lyric for: Tango Tinh, tempo: 124"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_24&#39;, false)" style="background-color:#dc7" title="Lyric for: Tango Tinh, tempo: 124"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1620,22 +1501,17 @@
                 <td>
                   Tango d&#39;Amour
                 </td>
-                <td>
-                  <div class="hidden">
-                    24
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tango tinh
                 </td>
               </tr>
-              <tr>
+              <tr id="row_25">
                 <td>
                   27
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 25, false)" style="background-color:#7cd" title="Lyric for: Anh Van Biet, tempo: 76"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_25&#39;, false)" style="background-color:#7cd" title="Lyric for: Anh Van Biet, tempo: 76"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1656,22 +1532,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    25
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   anh van biet
                 </td>
               </tr>
-              <tr>
+              <tr id="row_26">
                 <td>
                   28
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 26, false)" style="background-color:#bc9" title="Lyric for: Neu Vang Nang, tempo: 118"><b>A</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_26&#39;, false)" style="background-color:#bc9" title="Lyric for: Neu Vang Nang, tempo: 118"><b>A</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1692,22 +1563,17 @@
                 <td>
                   Sans Elle
                 </td>
-                <td>
-                  <div class="hidden">
-                    26
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   neu vang nang
                 </td>
               </tr>
-              <tr>
+              <tr id="row_27">
                 <td>
                   29
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 27, false)" style="background-color:#bc9" title="Lyric for: Nguoi Hay Quen Em Di, tempo: 116"><b>Gm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_27&#39;, false)" style="background-color:#bc9" title="Lyric for: Nguoi Hay Quen Em Di, tempo: 116"><b>Gm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1728,22 +1594,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    27
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   nguoi hay quen em di
                 </td>
               </tr>
-              <tr>
+              <tr id="row_28">
                 <td>
                   30
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 28, false)" style="background-color:#bc9" title="Lyric for: Nostalgie, tempo: 108"><b>Cm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_28&#39;, false)" style="background-color:#bc9" title="Lyric for: Nostalgie, tempo: 108"><b>Cm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1764,22 +1625,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    28
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   nostalgie
                 </td>
               </tr>
-              <tr>
+              <tr id="row_29">
                 <td>
                   31
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 29, false)" style="background-color:#fff" title="Lyric for: Ngay Mai Nguoi Ta Lay Chong, tempo: "><b>Am</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_29&#39;, false)" style="background-color:#fff" title="Lyric for: Ngay Mai Nguoi Ta Lay Chong, tempo: "><b>Am</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -1795,22 +1651,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    29
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   ngay mai nguoi ta lay chong
                 </td>
               </tr>
-              <tr>
+              <tr id="row_30">
                 <td>
                   32
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 30, false)" style="background-color:#fff" title="Lyric for: Xa Vang, tempo: "><b>Dm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_30&#39;, false)" style="background-color:#fff" title="Lyric for: Xa Vang, tempo: "><b>Dm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -1826,22 +1677,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    30
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   xa vang
                 </td>
               </tr>
-              <tr>
+              <tr id="row_31">
                 <td>
                   33
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 31, false)" style="background-color:#fff" title="Lyric for: Kho Vi Yeu Nang, tempo: "><b>Cm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_31&#39;, false)" style="background-color:#fff" title="Lyric for: Kho Vi Yeu Nang, tempo: "><b>Cm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -1857,22 +1703,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    31
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   kho vi yeu nang
                 </td>
               </tr>
-              <tr>
+              <tr id="row_32">
                 <td>
                   34
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 32, false)" style="background-color:#fff" title="Lyric for: Cơn mơ băng giá, tempo: "><b>Gm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_32&#39;, false)" style="background-color:#fff" title="Lyric for: Cơn mơ băng giá, tempo: "><b>Gm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -1888,22 +1729,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    32
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   con mo bang gia
                 </td>
               </tr>
-              <tr>
+              <tr id="row_33">
                 <td>
                   35
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 33, false)" style="background-color:#fff" title="Lyric for: Và Tôi Cũng Yêu Em, tempo: "><b>C</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_33&#39;, false)" style="background-color:#fff" title="Lyric for: Và Tôi Cũng Yêu Em, tempo: "><b>C</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -1919,22 +1755,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    33
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   va toi cung yeu em
                 </td>
               </tr>
-              <tr>
+              <tr id="row_34">
                 <td>
                   36
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 34, false)" style="background-color:#fff" title="Lyric for: Bâng khuâng chiều nội trú, tempo: "><b>Cm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_34&#39;, false)" style="background-color:#fff" title="Lyric for: Bâng khuâng chiều nội trú, tempo: "><b>Cm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -1950,22 +1781,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    34
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   bang khuang chieu noi tru
                 </td>
               </tr>
-              <tr>
+              <tr id="row_35">
                 <td>
                   37
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 35, false)" style="background-color:#fff" title="Lyric for: Em đã thấy mùa Xuân chưa, tempo: "><b>Dm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_35&#39;, false)" style="background-color:#fff" title="Lyric for: Em đã thấy mùa Xuân chưa, tempo: "><b>Dm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -1981,22 +1807,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    35
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   em da thay mua xuan chua
                 </td>
               </tr>
-              <tr>
+              <tr id="row_36">
                 <td>
                   38
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 36, false)" style="background-color:#fff" title="Lyric for: Trong miệt mài em quên, tempo: "><b>D</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_36&#39;, false)" style="background-color:#fff" title="Lyric for: Trong miệt mài em quên, tempo: "><b>D</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2012,22 +1833,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    36
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   trong miet mai em quen
                 </td>
               </tr>
-              <tr>
+              <tr id="row_37">
                 <td>
                   39
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 37, false)" style="background-color:#fff" title="Lyric for: Vì Đó Là Anh, tempo: "><b>Dm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_37&#39;, false)" style="background-color:#fff" title="Lyric for: Vì Đó Là Anh, tempo: "><b>Dm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2043,22 +1859,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    37
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   vi do la anh
                 </td>
               </tr>
-              <tr>
+              <tr id="row_38">
                 <td>
                   40
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 38, false)" style="background-color:#fff" title="Lyric for: Xin lỗi, tempo: "><b>Dm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_38&#39;, false)" style="background-color:#fff" title="Lyric for: Xin lỗi, tempo: "><b>Dm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2074,22 +1885,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    38
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   xin loi
                 </td>
               </tr>
-              <tr>
+              <tr id="row_39">
                 <td>
                   41
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 39, false)" style="background-color:#fff" title="Lyric for: Xin hãy rời xa, tempo: "><b>Cm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_39&#39;, false)" style="background-color:#fff" title="Lyric for: Xin hãy rời xa, tempo: "><b>Cm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2105,22 +1911,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    39
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   xin hay roi xa
                 </td>
               </tr>
-              <tr>
+              <tr id="row_40">
                 <td>
                   42
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 40, false)" style="background-color:#fff" title="Lyric for: Xot xa, tempo: "><b>Cm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_40&#39;, false)" style="background-color:#fff" title="Lyric for: Xot xa, tempo: "><b>Cm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2136,22 +1937,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    40
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   xot xa
                 </td>
               </tr>
-              <tr>
+              <tr id="row_41">
                 <td>
                   43
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 41, false)" style="background-color:#fff" title="Lyric for: Ban Tinh Ca Mua Dong, tempo: "><b>Gm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_41&#39;, false)" style="background-color:#fff" title="Lyric for: Ban Tinh Ca Mua Dong, tempo: "><b>Gm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2167,22 +1963,17 @@
                 <td>
                   Han
                 </td>
-                <td>
-                  <div class="hidden">
-                    41
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   ban tinh ca mua dong
                 </td>
               </tr>
-              <tr>
+              <tr id="row_42">
                 <td>
                   44
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 42, false)" style="background-color:#fff" title="Lyric for: Mua Tren Bien Vang, tempo: "><b>Cm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_42&#39;, false)" style="background-color:#fff" title="Lyric for: Mua Tren Bien Vang, tempo: "><b>Cm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2198,22 +1989,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    42
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   mua tren bien vang
                 </td>
               </tr>
-              <tr>
+              <tr id="row_43">
                 <td>
                   45
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 43, false)" style="background-color:#fff" title="Lyric for: Tan Tac, tempo: "><b>Bm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_43&#39;, false)" style="background-color:#fff" title="Lyric for: Tan Tac, tempo: "><b>Bm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2229,22 +2015,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    43
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tan tac
                 </td>
               </tr>
-              <tr>
+              <tr id="row_44">
                 <td>
                   46
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 44, false)" style="background-color:#fff" title="Lyric for: Hoang Vang, tempo: "><b>Cm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_44&#39;, false)" style="background-color:#fff" title="Lyric for: Hoang Vang, tempo: "><b>Cm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2260,22 +2041,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    44
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   hoang vang
                 </td>
               </tr>
-              <tr>
+              <tr id="row_45">
                 <td>
                   47
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 45, false)" style="background-color:#fff" title="Lyric for: Tan Tro, tempo: "><b>Am</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_45&#39;, false)" style="background-color:#fff" title="Lyric for: Tan Tro, tempo: "><b>Am</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2291,22 +2067,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    45
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tan tro
                 </td>
               </tr>
-              <tr>
+              <tr id="row_46">
                 <td>
                   48
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 46, false)" style="background-color:#fff" title="Lyric for: Yeu Em Bang Ca Trai Tim, tempo: "><b>D</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_46&#39;, false)" style="background-color:#fff" title="Lyric for: Yeu Em Bang Ca Trai Tim, tempo: "><b>D</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2322,22 +2093,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    46
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   yeu em bang ca trai tim
                 </td>
               </tr>
-              <tr>
+              <tr id="row_47">
                 <td>
                   49
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 47, false)" style="background-color:#fff" title="Lyric for: Lang Du, tempo: "><b>Dm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_47&#39;, false)" style="background-color:#fff" title="Lyric for: Lang Du, tempo: "><b>Dm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2353,22 +2119,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    47
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   lang du
                 </td>
               </tr>
-              <tr>
+              <tr id="row_48">
                 <td>
                   50
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 48, false)" style="background-color:#fff" title="Lyric for: Tinh Yeu Nhu Mui Ten, tempo: "><b>Em</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_48&#39;, false)" style="background-color:#fff" title="Lyric for: Tinh Yeu Nhu Mui Ten, tempo: "><b>Em</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2384,22 +2145,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    48
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tinh yeu nhu mui ten
                 </td>
               </tr>
-              <tr>
+              <tr id="row_49">
                 <td>
                   51
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 49, false)" style="background-color:#fff" title="Lyric for: Luan Vu Ngay Mua (Coi Mo), tempo: "><b>Gm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_49&#39;, false)" style="background-color:#fff" title="Lyric for: Luan Vu Ngay Mua (Coi Mo), tempo: "><b>Gm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2415,22 +2171,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    49
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   luan vu ngay mua
                 </td>
               </tr>
-              <tr>
+              <tr id="row_50">
                 <td>
                   52
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 50, false)" style="background-color:#fff" title="Lyric for: Nguoi Tinh Mua Dong, tempo: "><b>G</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_50&#39;, false)" style="background-color:#fff" title="Lyric for: Nguoi Tinh Mua Dong, tempo: "><b>G</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2446,22 +2197,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    50
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   nguoi tinh mua dong
                 </td>
               </tr>
-              <tr>
+              <tr id="row_51">
                 <td>
                   53
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 51, false)" style="background-color:#fff" title="Lyric for: Bien Can, tempo: "><b>Cm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_51&#39;, false)" style="background-color:#fff" title="Lyric for: Bien Can, tempo: "><b>Cm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2477,22 +2223,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    51
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   bien can
                 </td>
               </tr>
-              <tr>
+              <tr id="row_52">
                 <td>
                   54
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 52, false)" style="background-color:#fff" title="Lyric for: Chieu Dong Matxcova, tempo: "><b>?</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_52&#39;, false)" style="background-color:#fff" title="Lyric for: Chieu Dong Matxcova, tempo: "><b>?</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2508,22 +2249,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    52
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   chieu dong matxcova
                 </td>
               </tr>
-              <tr>
+              <tr id="row_53">
                 <td>
                   55
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 53, false)" style="background-color:#fff" title="Lyric for: Phut Cuoi, tempo: "><b>E</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_53&#39;, false)" style="background-color:#fff" title="Lyric for: Phut Cuoi, tempo: "><b>E</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2539,22 +2275,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    53
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   phut cuoi
                 </td>
               </tr>
-              <tr>
+              <tr id="row_54">
                 <td>
                   56
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 54, false)" style="background-color:#fff" title="Lyric for: Sau Dong, tempo: "><b>Em</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_54&#39;, false)" style="background-color:#fff" title="Lyric for: Sau Dong, tempo: "><b>Em</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2570,22 +2301,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    54
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   sau dong
                 </td>
               </tr>
-              <tr>
+              <tr id="row_55">
                 <td>
                   57
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 55, false)" style="background-color:#fff" title="Lyric for: Ghen, tempo: "><b>C</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_55&#39;, false)" style="background-color:#fff" title="Lyric for: Ghen, tempo: "><b>C</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2601,22 +2327,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    55
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   ghen
                 </td>
               </tr>
-              <tr>
+              <tr id="row_56">
                 <td>
                   58
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 56, false)" style="background-color:#fff" title="Lyric for: Nhung Tam Hon Co Don, tempo: "><b>Bm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_56&#39;, false)" style="background-color:#fff" title="Lyric for: Nhung Tam Hon Co Don, tempo: "><b>Bm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2632,22 +2353,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    56
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   nhung tam hon co don
                 </td>
               </tr>
-              <tr>
+              <tr id="row_57">
                 <td>
                   59
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 57, false)" style="background-color:#fff" title="Lyric for: Bai Khong Ten So 7, tempo: "><b>Gm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_57&#39;, false)" style="background-color:#fff" title="Lyric for: Bai Khong Ten So 7, tempo: "><b>Gm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2663,22 +2379,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    57
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   bai khong ten so 7
                 </td>
               </tr>
-              <tr>
+              <tr id="row_58">
                 <td>
                   60
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 58, false)" style="background-color:#fff" title="Lyric for: Casablanca, tempo: "><b>Am</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_58&#39;, false)" style="background-color:#fff" title="Lyric for: Casablanca, tempo: "><b>Am</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2694,22 +2405,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    58
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   casablanca
                 </td>
               </tr>
-              <tr>
+              <tr id="row_59">
                 <td>
                   61
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 59, false)" style="background-color:#fff" title="Lyric for: Tinh Yeu Den Trong Gia Tu, tempo: "><b>Dm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_59&#39;, false)" style="background-color:#fff" title="Lyric for: Tinh Yeu Den Trong Gia Tu, tempo: "><b>Dm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2725,22 +2431,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    59
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tinh yeu den trong gia tu
                 </td>
               </tr>
-              <tr>
+              <tr id="row_60">
                 <td>
                   62
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 60, false)" style="background-color:#fff" title="Lyric for: Khi Co Don Anh Goi Ten Em, tempo: "><b>C</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_60&#39;, false)" style="background-color:#fff" title="Lyric for: Khi Co Don Anh Goi Ten Em, tempo: "><b>C</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2756,22 +2457,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    60
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   khi co don anh goi ten em
                 </td>
               </tr>
-              <tr>
+              <tr id="row_61">
                 <td>
                   63
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 61, false)" style="background-color:#fff" title="Lyric for: Mo Khuc Tuong Phung, tempo: "><b>Dm</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_61&#39;, false)" style="background-color:#fff" title="Lyric for: Mo Khuc Tuong Phung, tempo: "><b>Dm</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2787,22 +2483,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    61
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   mo khuc tuong phung
                 </td>
               </tr>
-              <tr>
+              <tr id="row_62">
                 <td>
                   64
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;thien&#39;, 62, false)" style="background-color:#fff" title="Lyric for: Co Don, tempo: "><b>C</b><span> ()</span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;thien&#39;, &#39;row_62&#39;, false)" style="background-color:#fff" title="Lyric for: Co Don, tempo: "><b>C</b><span> ()</span></button>
                   </div>
                 </td>
                 <td>
@@ -2817,11 +2508,6 @@
                 </td>
                 <td>
                   
-                </td>
-                <td>
-                  <div class="hidden">
-                    62
-                  </div>
                 </td>
                 <td class="hiddenCol">
                   co don
@@ -2856,7 +2542,7 @@
       
       // This function will be called when the API is ready
       function onYouTubeIframeAPIReady() {
-        console.log("Frame API ready")
+        console.log(`_pl_player.slim:37 Frame API ready`)
         player = new YT.Player('youtube-player', {
           videoId: '',
           playerVars: {
@@ -2948,14 +2634,13 @@
           responsive: true,
           paging:     false,
           columns: [{data: 'id'}, null, {data: 'title'},
-                    null, null, null, null, null],
+                    null, null, null, null],
           order:  [[ 0, "asc" ]],
           columnDefs: [
             { target: 1, visible: true,  searchable: false },
             { target: 2, width: "40%" },
             { target: 6, visible: false, searchable: true },
-            { target: 7, visible: true,  searchable: false },
-            { target: 8, visible: false, searchable: true },
+            { target: 7, visible: false, searchable: true },
           ],
           rowReorder: {
             dataSrc: 'id',
@@ -2966,8 +2651,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.thien')
-            // console.log(`thien curkey: ${curkey}`)
-            // console.log(`thien newkey: ${newkey}`)
+            console.log(`program.slim:228 thien curkey: ${curkey}`)
+            console.log(`program.slim:229 thien newkey: ${newkey}`)
             localStorage.setItem("pagekey.thien", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -2990,7 +2675,8 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
-          olist.push(value.childNodes[15].innerText)
+          // console.log('rowid', value.id)
+          olist.push(value.id)
         }
         return olist
       }
@@ -2998,7 +2684,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log('new_list: ', olist)
+        console.log(`program.slim:261 new_list: ${olist}`)
         localStorage.setItem("pageorder.thien", JSON.stringify(olist))
       }
       
@@ -3018,14 +2704,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.thien")
         if (item == null) {
-          console.log("No order to restore")
+          console.log(`program.slim:281 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`Restore olist: ${olist}`)
+        console.log(`program.slim:288 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)

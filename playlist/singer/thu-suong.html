@@ -19,6 +19,9 @@
       a:link {
         text-decoration: none;
       }
+      .chorder {
+        margin-right: 10px;
+      }
       .loopstyle {
         font-size: 70%;
       }
@@ -86,6 +89,9 @@
       }
       #lybox-title {
         font-size: 80%;
+      }
+      #lybox-content {
+        font-size: 150%;
       }
       #lybox-debug {
         font-size: 50%;
@@ -161,17 +167,13 @@
           $('#lybox .modal-header').toggle()
         }
         
-        function dblog(msg) {
-          console.log(msg)
-          // var dbhandle = $('#lybox-debug')
-          // dbhandle.html(dbhandle.html() + ` - ${msg}`)
-        }
-        
         function load_lyric(async = true, offset = 0) {
           var olist = current_order()
         
+          // console.log(`_lyric_box.slim:71 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
+          console.log(`_lyric_box.slim:74 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -196,7 +198,7 @@
           myModal.program = program
           myModal.item    = item
         
-          dblog(`Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:99 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=singer`
@@ -214,7 +216,7 @@
           }
         }
         function show_lyric(content) {
-          console.log('content ', content)
+          // console.log(`_lyric_box.slim:117`, content)
           var lvideo = $('#lybox-vctl')
         
           // If vintro exist - create button for play/stop intro
@@ -236,13 +238,13 @@
           myModal.show()
         }
       </script>
-      <div class="row">
+      <div class="row program-info">
         <div class="col-md-8">
-          <h2>
+          <h1>
             List for thu-suong
-          </h2>
+          </h1>
           <h5>
-            <a target="sheet">Virtual  - 2024-11-03</a>
+            <a target="sheet">Virtual  - 2024-11-04</a>
           </h5>
         </div>
         <div class="col-md-4">
@@ -655,7 +657,6 @@
                 <th>
                   Note
                 </th>
-                <th></th>
                 <th class="hiddenCol">
                   S-Title
                 </th>
@@ -691,7 +692,7 @@
       
       // This function will be called when the API is ready
       function onYouTubeIframeAPIReady() {
-        console.log("Frame API ready")
+        console.log(`_pl_player.slim:37 Frame API ready`)
         player = new YT.Player('youtube-player', {
           videoId: '',
           playerVars: {
@@ -783,14 +784,13 @@
           responsive: true,
           paging:     false,
           columns: [{data: 'id'}, null, {data: 'title'},
-                    null, null, null, null, null],
+                    null, null, null, null],
           order:  [[ 0, "asc" ]],
           columnDefs: [
             { target: 1, visible: true,  searchable: false },
             { target: 2, width: "40%" },
             { target: 6, visible: false, searchable: true },
-            { target: 7, visible: true,  searchable: false },
-            { target: 8, visible: false, searchable: true },
+            { target: 7, visible: false, searchable: true },
           ],
           rowReorder: {
             dataSrc: 'id',
@@ -801,8 +801,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.thu-suong')
-            // console.log(`thu-suong curkey: ${curkey}`)
-            // console.log(`thu-suong newkey: ${newkey}`)
+            console.log(`program.slim:228 thu-suong curkey: ${curkey}`)
+            console.log(`program.slim:229 thu-suong newkey: ${newkey}`)
             localStorage.setItem("pagekey.thu-suong", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -825,7 +825,8 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
-          olist.push(value.childNodes[15].innerText)
+          // console.log('rowid', value.id)
+          olist.push(value.id)
         }
         return olist
       }
@@ -833,7 +834,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log('new_list: ', olist)
+        console.log(`program.slim:261 new_list: ${olist}`)
         localStorage.setItem("pageorder.thu-suong", JSON.stringify(olist))
       }
       
@@ -853,14 +854,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.thu-suong")
         if (item == null) {
-          console.log("No order to restore")
+          console.log(`program.slim:281 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`Restore olist: ${olist}`)
+        console.log(`program.slim:288 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)

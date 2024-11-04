@@ -19,6 +19,9 @@
       a:link {
         text-decoration: none;
       }
+      .chorder {
+        margin-right: 10px;
+      }
       .loopstyle {
         font-size: 70%;
       }
@@ -86,6 +89,9 @@
       }
       #lybox-title {
         font-size: 80%;
+      }
+      #lybox-content {
+        font-size: 150%;
       }
       #lybox-debug {
         font-size: 50%;
@@ -161,17 +167,13 @@
           $('#lybox .modal-header').toggle()
         }
         
-        function dblog(msg) {
-          console.log(msg)
-          // var dbhandle = $('#lybox-debug')
-          // dbhandle.html(dbhandle.html() + ` - ${msg}`)
-        }
-        
         function load_lyric(async = true, offset = 0) {
           var olist = current_order()
         
+          // console.log(`_lyric_box.slim:71 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
+          console.log(`_lyric_box.slim:74 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -196,7 +198,7 @@
           myModal.program = program
           myModal.item    = item
         
-          dblog(`Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:99 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=list`
@@ -214,7 +216,7 @@
           }
         }
         function show_lyric(content) {
-          console.log('content ', content)
+          // console.log(`_lyric_box.slim:117`, content)
           var lvideo = $('#lybox-vctl')
         
           // If vintro exist - create button for play/stop intro
@@ -236,11 +238,11 @@
           myModal.show()
         }
       </script>
-      <div class="row">
+      <div class="row program-info">
         <div class="col-md-8">
-          <h2>
+          <h1>
             August List Practice
-          </h2>
+          </h1>
           <h5>
             <a target="sheet">Practice List  - 07/27/2024</a>
           </h5>
@@ -319,20 +321,19 @@
                 <th>
                   Note
                 </th>
-                <th></th>
                 <th class="hiddenCol">
                   S-Title
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr id="row_0">
                 <td>
                   2
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, 0, false)" style="background-color:#dc7" title="Lyric for: Yeu Het Con Tim, tempo: 125"><b>A</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_0&#39;, false)" style="background-color:#dc7" title="Lyric for: Yeu Het Con Tim, tempo: 125"><b>A</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -354,22 +355,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    0
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   yeu het con tim
                 </td>
               </tr>
-              <tr>
+              <tr id="row_1">
                 <td>
                   3
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, 1, false)" style="background-color:#fc5" title="Lyric for: Coi Chung Gai Dep, tempo: 170"><b>A</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_1&#39;, false)" style="background-color:#fc5" title="Lyric for: Coi Chung Gai Dep, tempo: 170"><b>A</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -387,22 +383,17 @@
                 <td>
                   Belle, Belle
                 </td>
-                <td>
-                  <div class="hidden">
-                    1
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   coi chung gai dep
                 </td>
               </tr>
-              <tr>
+              <tr id="row_2">
                 <td>
                   4
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, 2, false)" style="background-color:#bc9" title="Lyric for: Nhung Loi Me Hoac, tempo: 120"><b>Cm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_2&#39;, false)" style="background-color:#bc9" title="Lyric for: Nhung Loi Me Hoac, tempo: 120"><b>Cm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -424,22 +415,17 @@
                 <td>
                   Paroles
                 </td>
-                <td>
-                  <div class="hidden">
-                    2
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   nhung loi me hoac
                 </td>
               </tr>
-              <tr>
+              <tr id="row_3">
                 <td>
                   5
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, 3, false)" style="background-color:#fc5" title="Lyric for: Luan Vu Ngay Mua, tempo: 160"><b>Em</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_3&#39;, false)" style="background-color:#fc5" title="Lyric for: Luan Vu Ngay Mua, tempo: 160"><b>Em</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -461,22 +447,17 @@
                 <td>
                   Valses de Vienne
                 </td>
-                <td>
-                  <div class="hidden">
-                    3
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   luan vu ngay mua
                 </td>
               </tr>
-              <tr>
+              <tr id="row_4">
                 <td>
                   6
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, 4, false)" style="background-color:#dc7" title="Lyric for: Tango Tinh, tempo: 124"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_4&#39;, false)" style="background-color:#dc7" title="Lyric for: Tango Tinh, tempo: 124"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -498,22 +479,17 @@
                 <td>
                   Tango d&#39;Amour
                 </td>
-                <td>
-                  <div class="hidden">
-                    4
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tango tinh
                 </td>
               </tr>
-              <tr>
+              <tr id="row_5">
                 <td>
                   7
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, 5, false)" style="background-color:#7cd" title="Lyric for: Anh Van Biet, tempo: 76"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_5&#39;, false)" style="background-color:#7cd" title="Lyric for: Anh Van Biet, tempo: 76"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -535,22 +511,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    5
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   anh van biet
                 </td>
               </tr>
-              <tr>
+              <tr id="row_6">
                 <td>
                   8
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, 6, false)" style="background-color:#bc9" title="Lyric for: Neu Vang Nang, tempo: 118"><b>A</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_6&#39;, false)" style="background-color:#bc9" title="Lyric for: Neu Vang Nang, tempo: 118"><b>A</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -571,11 +542,6 @@
                 </td>
                 <td>
                   Sans Elle
-                </td>
-                <td>
-                  <div class="hidden">
-                    6
-                  </div>
                 </td>
                 <td class="hiddenCol">
                   neu vang nang
@@ -610,7 +576,7 @@
       
       // This function will be called when the API is ready
       function onYouTubeIframeAPIReady() {
-        console.log("Frame API ready")
+        console.log(`_pl_player.slim:37 Frame API ready`)
         player = new YT.Player('youtube-player', {
           videoId: '',
           playerVars: {
@@ -702,14 +668,13 @@
           responsive: true,
           paging:     false,
           columns: [{data: 'id'}, null, {data: 'title'},
-                    null, null, null, null, null],
+                    null, null, null, null],
           order:  [[ 0, "asc" ]],
           columnDefs: [
             { target: 1, visible: true,  searchable: false },
             { target: 2, width: "40%" },
             { target: 6, visible: false, searchable: true },
-            { target: 7, visible: true,  searchable: false },
-            { target: 8, visible: false, searchable: true },
+            { target: 7, visible: false, searchable: true },
           ],
           rowReorder: {
             dataSrc: 'id',
@@ -720,8 +685,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-08-TV')
-            // console.log(`2024-08-TV curkey: ${curkey}`)
-            // console.log(`2024-08-TV newkey: ${newkey}`)
+            console.log(`program.slim:228 2024-08-TV curkey: ${curkey}`)
+            console.log(`program.slim:229 2024-08-TV newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-08-TV", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -744,7 +709,8 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
-          olist.push(value.childNodes[15].innerText)
+          // console.log('rowid', value.id)
+          olist.push(value.id)
         }
         return olist
       }
@@ -752,7 +718,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log('new_list: ', olist)
+        console.log(`program.slim:261 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-08-TV", JSON.stringify(olist))
       }
       
@@ -772,14 +738,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-08-TV")
         if (item == null) {
-          console.log("No order to restore")
+          console.log(`program.slim:281 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`Restore olist: ${olist}`)
+        console.log(`program.slim:288 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)

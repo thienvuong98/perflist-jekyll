@@ -19,6 +19,9 @@
       a:link {
         text-decoration: none;
       }
+      .chorder {
+        margin-right: 10px;
+      }
       .loopstyle {
         font-size: 70%;
       }
@@ -86,6 +89,9 @@
       }
       #lybox-title {
         font-size: 80%;
+      }
+      #lybox-content {
+        font-size: 150%;
       }
       #lybox-debug {
         font-size: 50%;
@@ -161,17 +167,13 @@
           $('#lybox .modal-header').toggle()
         }
         
-        function dblog(msg) {
-          console.log(msg)
-          // var dbhandle = $('#lybox-debug')
-          // dbhandle.html(dbhandle.html() + ` - ${msg}`)
-        }
-        
         function load_lyric(async = true, offset = 0) {
           var olist = current_order()
         
+          // console.log(`_lyric_box.slim:71 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
+          console.log(`_lyric_box.slim:74 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -196,7 +198,7 @@
           myModal.program = program
           myModal.item    = item
         
-          dblog(`Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:99 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=list`
@@ -214,7 +216,7 @@
           }
         }
         function show_lyric(content) {
-          console.log('content ', content)
+          // console.log(`_lyric_box.slim:117`, content)
           var lvideo = $('#lybox-vctl')
         
           // If vintro exist - create button for play/stop intro
@@ -236,11 +238,11 @@
           myModal.show()
         }
       </script>
-      <div class="row">
+      <div class="row program-info">
         <div class="col-md-8">
-          <h2>
+          <h1>
             Phong Hoa Garden Party 08/24/2024
-          </h2>
+          </h1>
           <h5>
             <a href="https://docs.google.com/spreadsheets/d/1M9sBjuMmlRUDmrWD133cxP5NkiS7gM5ElYuyKjvOXGE/edit?gid=0#gid=0" target="sheet">Phong Hoa&#39;s Residence  - 08/24/2024</a>
           </h5>
@@ -319,20 +321,19 @@
                 <th>
                   Note
                 </th>
-                <th></th>
                 <th class="hiddenCol">
                   S-Title
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr id="row_0">
                 <td>
                   2
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 0, false)" style="background-color:#7cd" title="Lyric for: Tinh Vong, tempo: 66"><b>Bm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_0&#39;, false)" style="background-color:#7cd" title="Lyric for: Tinh Vong, tempo: 66"><b>Bm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -354,22 +355,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    0
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tinh vong
                 </td>
               </tr>
-              <tr>
+              <tr id="row_1">
                 <td>
                   3
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 1, false)" style="background-color:#bc9" title="Lyric for: Tombe La Neige, tempo: 112"><b>Bm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_1&#39;, false)" style="background-color:#bc9" title="Lyric for: Tombe La Neige, tempo: 112"><b>Bm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -387,22 +383,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    1
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tombe la neige
                 </td>
               </tr>
-              <tr>
+              <tr id="row_2">
                 <td>
                   4
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 2, false)" style="background-color:#9cb" title="Lyric for: Love me with all of your heart, tempo: 86"><b>F</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_2&#39;, false)" style="background-color:#9cb" title="Lyric for: Love me with all of your heart, tempo: 86"><b>F</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -424,22 +415,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    2
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   love me with all of your heart
                 </td>
               </tr>
-              <tr>
+              <tr id="row_3">
                 <td>
                   5
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 3, false)" style="background-color:#9cb" title="Lyric for: Nếu Em Được Chọn Lựa, tempo: 84"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_3&#39;, false)" style="background-color:#9cb" title="Lyric for: Nếu Em Được Chọn Lựa, tempo: 84"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -461,22 +447,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    3
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   neu em duoc chon lua
                 </td>
               </tr>
-              <tr>
+              <tr id="row_4">
                 <td>
                   6
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 4, false)" style="background-color:#7cd" title="Lyric for: crazy, tempo: 72"><b>C</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_4&#39;, false)" style="background-color:#7cd" title="Lyric for: crazy, tempo: 72"><b>C</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -498,22 +479,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    4
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   crazy
                 </td>
               </tr>
-              <tr>
+              <tr id="row_5">
                 <td>
                   7
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 5, false)" style="background-color:#5cf" title="Lyric for: Khac Khoai, tempo: 60"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_5&#39;, false)" style="background-color:#5cf" title="Lyric for: Khac Khoai, tempo: 60"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -543,22 +519,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    5
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   khac khoai
                 </td>
               </tr>
-              <tr>
+              <tr id="row_6">
                 <td>
                   8
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 6, false)" style="background-color:#7cd" title="Lyric for: Yeu em giua doi quen lang, tempo: 66"><b>Bm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_6&#39;, false)" style="background-color:#7cd" title="Lyric for: Yeu em giua doi quen lang, tempo: 66"><b>Bm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -588,22 +559,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    6
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   yeu em giua doi quen lang
                 </td>
               </tr>
-              <tr>
+              <tr id="row_7">
                 <td>
                   9
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 7, false)" style="background-color:#7cd" title="Lyric for: Vùng lá me bay, tempo: 78"><b>Gm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_7&#39;, false)" style="background-color:#7cd" title="Lyric for: Vùng lá me bay, tempo: 78"><b>Gm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -625,22 +591,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    7
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   vung la me bay
                 </td>
               </tr>
-              <tr>
+              <tr id="row_8">
                 <td>
                   10
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 8, false)" style="background-color:#5cf" title="Lyric for: Gian Hon, tempo: 54"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_8&#39;, false)" style="background-color:#5cf" title="Lyric for: Gian Hon, tempo: 54"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -662,22 +623,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    8
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   gian hon
                 </td>
               </tr>
-              <tr>
+              <tr id="row_9">
                 <td>
                   11
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 9, false)" style="background-color:#7cd" title="Lyric for: Niềm đau chôn dấu, tempo: 80"><b>C</b><span class="transpose" title="Transpose">1</span><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_9&#39;, false)" style="background-color:#7cd" title="Lyric for: Niềm đau chôn dấu, tempo: 80"><b>C</b><span class="transpose" title="Transpose">1</span><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -699,22 +655,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    9
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   niem dau chon dau
                 </td>
               </tr>
-              <tr>
+              <tr id="row_10">
                 <td>
                   12
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 10, false)" style="background-color:#dc7" title="Lyric for: Chỉ  Có Em, tempo: 128"><b>D</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_10&#39;, false)" style="background-color:#dc7" title="Lyric for: Chỉ  Có Em, tempo: 128"><b>D</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -736,22 +687,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    10
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   chi co em
                 </td>
               </tr>
-              <tr>
+              <tr id="row_11">
                 <td>
                   13
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 11, false)" style="background-color:#9cb" title="Lyric for: Gui về em, tempo: 90"><b>E</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_11&#39;, false)" style="background-color:#9cb" title="Lyric for: Gui về em, tempo: 90"><b>E</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -773,22 +719,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    11
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   gui ve em
                 </td>
               </tr>
-              <tr>
+              <tr id="row_12">
                 <td>
                   14
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 12, false)" style="background-color:#bc9" title="Lyric for: Qui sait Qui sait, tempo: 120"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_12&#39;, false)" style="background-color:#bc9" title="Lyric for: Qui sait Qui sait, tempo: 120"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -810,22 +751,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    12
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   qui sait qui sait
                 </td>
               </tr>
-              <tr>
+              <tr id="row_13">
                 <td>
                   15
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 13, false)" style="background-color:#9cb" title="Lyric for: Viens m&#39;embrasser, tempo: 84"><b>Gm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_13&#39;, false)" style="background-color:#9cb" title="Lyric for: Viens m&#39;embrasser, tempo: 84"><b>Gm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -847,22 +783,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    13
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   viens membrasser
                 </td>
               </tr>
-              <tr>
+              <tr id="row_14">
                 <td>
                   16
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 14, false)" style="background-color:#bc9" title="Lyric for: Proud Mary, tempo: 115"><b>C &amp; Fm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_14&#39;, false)" style="background-color:#bc9" title="Lyric for: Proud Mary, tempo: 115"><b>C &amp; Fm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -884,22 +815,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    14
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   proud mary
                 </td>
               </tr>
-              <tr>
+              <tr id="row_15">
                 <td>
                   17
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 15, false)" style="background-color:#bc9" title="Lyric for: Hot Stuff, tempo: 120"><b>C &amp; Fm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_15&#39;, false)" style="background-color:#bc9" title="Lyric for: Hot Stuff, tempo: 120"><b>C &amp; Fm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -921,22 +847,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    15
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   hot stuff
                 </td>
               </tr>
-              <tr>
+              <tr id="row_16">
                 <td>
                   18
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 16, false)" style="background-color:#bc9" title="Lyric for: Cho, tempo: 120"><b>Bm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_16&#39;, false)" style="background-color:#bc9" title="Lyric for: Cho, tempo: 120"><b>Bm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -958,22 +879,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    16
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   cho
                 </td>
               </tr>
-              <tr>
+              <tr id="row_17">
                 <td>
                   19
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 17, false)" style="background-color:#9cb" title="Lyric for: Bây giờ tháng mấy, tempo: 100"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_17&#39;, false)" style="background-color:#9cb" title="Lyric for: Bây giờ tháng mấy, tempo: 100"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -995,22 +911,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    17
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   bay gio thang may
                 </td>
               </tr>
-              <tr>
+              <tr id="row_18">
                 <td>
                   20
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 18, false)" style="background-color:#bc9" title="Lyric for: Senorita, tempo: 118"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_18&#39;, false)" style="background-color:#bc9" title="Lyric for: Senorita, tempo: 118"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1032,22 +943,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    18
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   senorita
                 </td>
               </tr>
-              <tr>
+              <tr id="row_19">
                 <td>
                   21
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 19, false)" style="background-color:#fff" title="Lyric for: Elle, tempo: "><b>C</b><span class="transpose" title="Transpose">-1</span><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_19&#39;, false)" style="background-color:#fff" title="Lyric for: Elle, tempo: "><b>C</b><span class="transpose" title="Transpose">-1</span><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1064,22 +970,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    19
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   elle
                 </td>
               </tr>
-              <tr>
+              <tr id="row_20">
                 <td>
                   22
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 20, false)" style="background-color:#fc5" title="Lyric for: let&#39;s twist again, tempo: 168"><b>C</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_20&#39;, false)" style="background-color:#fc5" title="Lyric for: let&#39;s twist again, tempo: 168"><b>C</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1101,22 +1002,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    20
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   lets twist again
                 </td>
               </tr>
-              <tr>
+              <tr id="row_21">
                 <td>
                   23
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 21, false)" style="background-color:#fc5" title="Lyric for: neu co yeu toi, tempo: 145"><b>C</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_21&#39;, false)" style="background-color:#fc5" title="Lyric for: neu co yeu toi, tempo: 145"><b>C</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1138,22 +1034,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    21
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   neu co yeu toi
                 </td>
               </tr>
-              <tr>
+              <tr id="row_22">
                 <td>
                   24
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 22, false)" style="background-color:#9cb" title="Lyric for: Tình khúc chiều mưa, tempo: 88"><b>Cm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_22&#39;, false)" style="background-color:#9cb" title="Lyric for: Tình khúc chiều mưa, tempo: 88"><b>Cm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1171,22 +1062,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    22
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   tinh khuc chieu mua
                 </td>
               </tr>
-              <tr>
+              <tr id="row_23">
                 <td>
                   25
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 23, false)" style="background-color:#dc7" title="Lyric for: Fly me to the moon, tempo: 132"><b>Dm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_23&#39;, false)" style="background-color:#dc7" title="Lyric for: Fly me to the moon, tempo: 132"><b>Dm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1204,22 +1090,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    23
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   fly me to the moon
                 </td>
               </tr>
-              <tr>
+              <tr id="row_24">
                 <td>
                   26
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 24, false)" style="background-color:#dc7" title="Lyric for: Hay Cho Toi, tempo: 130"><b>Em</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_24&#39;, false)" style="background-color:#dc7" title="Lyric for: Hay Cho Toi, tempo: 130"><b>Em</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1245,22 +1126,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    24
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   hay cho toi
                 </td>
               </tr>
-              <tr>
+              <tr id="row_25">
                 <td>
                   27
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 25, false)" style="background-color:#7cd" title="Lyric for: Chut Huong Cho Doi, tempo: 65"><b>Em</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_25&#39;, false)" style="background-color:#7cd" title="Lyric for: Chut Huong Cho Doi, tempo: 65"><b>Em</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1282,22 +1158,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    25
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   chut huong cho doi
                 </td>
               </tr>
-              <tr>
+              <tr id="row_26">
                 <td>
                   28
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 26, false)" style="background-color:#9cb" title="Lyric for: Xin Hay Roi Xa, tempo: 83"><b>Em</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_26&#39;, false)" style="background-color:#9cb" title="Lyric for: Xin Hay Roi Xa, tempo: 83"><b>Em</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1327,22 +1198,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    26
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   xin hay roi xa
                 </td>
               </tr>
-              <tr>
+              <tr id="row_27">
                 <td>
                   29
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 27, false)" style="background-color:#7cd" title="Lyric for: Con chut gi de nho, tempo: 62"><b>C</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_27&#39;, false)" style="background-color:#7cd" title="Lyric for: Con chut gi de nho, tempo: 62"><b>C</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1364,22 +1230,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    27
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   con chut gi de nho
                 </td>
               </tr>
-              <tr>
+              <tr id="row_28">
                 <td>
                   30
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 28, false)" style="background-color:#7cd" title="Lyric for: Bài không tên số 4, tempo: 63"><b>Am</b><span class="transpose" title="Transpose">1</span><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_28&#39;, false)" style="background-color:#7cd" title="Lyric for: Bài không tên số 4, tempo: 63"><b>Am</b><span class="transpose" title="Transpose">1</span><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1401,22 +1262,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    28
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   bai khong ten so 4
                 </td>
               </tr>
-              <tr>
+              <tr id="row_29">
                 <td>
                   31
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 29, false)" style="background-color:#dc7" title="Lyric for: Black is Black, tempo: 125"><b>D</b><span class="transpose" title="Transpose">1</span><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_29&#39;, false)" style="background-color:#dc7" title="Lyric for: Black is Black, tempo: 125"><b>D</b><span class="transpose" title="Transpose">1</span><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1438,22 +1294,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    29
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   black is black
                 </td>
               </tr>
-              <tr>
+              <tr id="row_30">
                 <td>
                   32
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 30, false)" style="background-color:#bc9" title="Lyric for: Gimme Gimme, tempo: 118"><b>D</b><span class="transpose" title="Transpose">1</span><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_30&#39;, false)" style="background-color:#bc9" title="Lyric for: Gimme Gimme, tempo: 118"><b>D</b><span class="transpose" title="Transpose">1</span><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1475,22 +1326,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    30
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   gimme gimme
                 </td>
               </tr>
-              <tr>
+              <tr id="row_31">
                 <td>
                   33
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 31, false)" style="background-color:#7cd" title="Lyric for: Chiều Mot minh qua phố, tempo: 62"><b>Em</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_31&#39;, false)" style="background-color:#7cd" title="Lyric for: Chiều Mot minh qua phố, tempo: 62"><b>Em</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1512,22 +1358,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    31
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   chieu mot minh qua pho
                 </td>
               </tr>
-              <tr>
+              <tr id="row_32">
                 <td>
                   34
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 32, false)" style="background-color:#dc7" title="Lyric for: Khuc Tinh Nong, tempo: 137"><b>Em</b><span class="transpose" title="Transpose">2</span><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_32&#39;, false)" style="background-color:#dc7" title="Lyric for: Khuc Tinh Nong, tempo: 137"><b>Em</b><span class="transpose" title="Transpose">2</span><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1549,22 +1390,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    32
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   khuc tinh nong
                 </td>
               </tr>
-              <tr>
+              <tr id="row_33">
                 <td>
                   35
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 33, false)" style="background-color:#bc9" title="Lyric for: Nhớ, tempo: 110"><b>Dm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_33&#39;, false)" style="background-color:#bc9" title="Lyric for: Nhớ, tempo: 110"><b>Dm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1586,22 +1422,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    33
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   nho
                 </td>
               </tr>
-              <tr>
+              <tr id="row_34">
                 <td>
                   36
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 34, false)" style="background-color:#dc7" title="Lyric for: Mười ngón tay tình yêu, tempo: 140"><b>Dm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_34&#39;, false)" style="background-color:#dc7" title="Lyric for: Mười ngón tay tình yêu, tempo: 140"><b>Dm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1623,22 +1454,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    34
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   muoi ngon tay tinh yeu
                 </td>
               </tr>
-              <tr>
+              <tr id="row_35">
                 <td>
                   37
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 35, false)" style="background-color:#5cf" title="Lyric for: Cho em quen tuoi Ngoc, tempo: 60"><b>C</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_35&#39;, false)" style="background-color:#5cf" title="Lyric for: Cho em quen tuoi Ngoc, tempo: 60"><b>C</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1660,22 +1486,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    35
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   cho em quen tuoi ngoc
                 </td>
               </tr>
-              <tr>
+              <tr id="row_36">
                 <td>
                   38
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 36, false)" style="background-color:#fc5" title="Lyric for: Luan Vu Ngay Mua, tempo: 160"><b>Gm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_36&#39;, false)" style="background-color:#fc5" title="Lyric for: Luan Vu Ngay Mua, tempo: 160"><b>Gm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1697,22 +1518,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    36
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   luan vu ngay mua
                 </td>
               </tr>
-              <tr>
+              <tr id="row_37">
                 <td>
                   39
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 37, false)" style="background-color:#fc5" title="Lyric for: Ghen, tempo: 162"><b>Dm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_37&#39;, false)" style="background-color:#fc5" title="Lyric for: Ghen, tempo: 162"><b>Dm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1734,22 +1550,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    37
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   ghen
                 </td>
               </tr>
-              <tr>
+              <tr id="row_38">
                 <td>
                   40
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 38, false)" style="background-color:#7cd" title="Lyric for: Đoan khúc cuối cho em, tempo: 68"><b>Cm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_38&#39;, false)" style="background-color:#7cd" title="Lyric for: Đoan khúc cuối cho em, tempo: 68"><b>Cm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1771,22 +1582,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    38
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   doan khuc cuoi cho em
                 </td>
               </tr>
-              <tr>
+              <tr id="row_39">
                 <td>
                   41
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 39, false)" style="background-color:#bc9" title="Lyric for: Cho Lan Cuoi, tempo: 110"><b>D</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_39&#39;, false)" style="background-color:#bc9" title="Lyric for: Cho Lan Cuoi, tempo: 110"><b>D</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1808,22 +1614,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    39
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   cho lan cuoi
                 </td>
               </tr>
-              <tr>
+              <tr id="row_40">
                 <td>
                   42
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 40, false)" style="background-color:#9cb" title="Lyric for: Besame Mucho, tempo: 97"><b>Cm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_40&#39;, false)" style="background-color:#9cb" title="Lyric for: Besame Mucho, tempo: 97"><b>Cm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1853,22 +1654,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    40
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   besame mucho
                 </td>
               </tr>
-              <tr>
+              <tr id="row_41">
                 <td>
                   43
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 41, false)" style="background-color:#dc7" title="Lyric for: Chân tình, tempo: 136"><b>Gm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_41&#39;, false)" style="background-color:#dc7" title="Lyric for: Chân tình, tempo: 136"><b>Gm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1886,22 +1682,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    41
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   chan tinh
                 </td>
               </tr>
-              <tr>
+              <tr id="row_42">
                 <td>
                   44
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 42, false)" style="background-color:#5cf" title="Lyric for: Nổi đâu muộn màng, tempo: 60"><b>Em</b><span class="transpose" title="Transpose">1</span><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_42&#39;, false)" style="background-color:#5cf" title="Lyric for: Nổi đâu muộn màng, tempo: 60"><b>Em</b><span class="transpose" title="Transpose">1</span><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1923,22 +1714,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    42
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   noi dau muon mang
                 </td>
               </tr>
-              <tr>
+              <tr id="row_43">
                 <td>
                   45
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 43, false)" style="background-color:#bc9" title="Lyric for: Pepito, tempo: 118"><b>D</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_43&#39;, false)" style="background-color:#bc9" title="Lyric for: Pepito, tempo: 118"><b>D</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1960,22 +1746,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    43
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   pepito
                 </td>
               </tr>
-              <tr>
+              <tr id="row_44">
                 <td>
                   46
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 44, false)" style="background-color:#bc9" title="Lyric for: Tôi muốn, tempo: 120"><b>C</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_44&#39;, false)" style="background-color:#bc9" title="Lyric for: Tôi muốn, tempo: 120"><b>C</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -1997,22 +1778,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    44
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   toi muon
                 </td>
               </tr>
-              <tr>
+              <tr id="row_45">
                 <td>
                   47
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 45, false)" style="background-color:#bc9" title="Lyric for: Le Temps De L&#39;Amour, tempo: 118"><b>Bm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_45&#39;, false)" style="background-color:#bc9" title="Lyric for: Le Temps De L&#39;Amour, tempo: 118"><b>Bm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -2034,22 +1810,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    45
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   le temps de lamour
                 </td>
               </tr>
-              <tr>
+              <tr id="row_46">
                 <td>
                   48
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 46, false)" style="background-color:#7cd" title="Lyric for: Thương Hoài ngàn nam, tempo: 65"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_46&#39;, false)" style="background-color:#7cd" title="Lyric for: Thương Hoài ngàn nam, tempo: 65"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -2071,22 +1842,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    46
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   thuong hoai ngan nam
                 </td>
               </tr>
-              <tr>
+              <tr id="row_47">
                 <td>
                   49
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 47, false)" style="background-color:#dc7" title="Lyric for: Thien Dang Ai An, tempo: 135"><b>D</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_47&#39;, false)" style="background-color:#dc7" title="Lyric for: Thien Dang Ai An, tempo: 135"><b>D</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -2108,22 +1874,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    47
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   thien dang ai an
                 </td>
               </tr>
-              <tr>
+              <tr id="row_48">
                 <td>
                   50
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 48, false)" style="background-color:#5cf" title="Lyric for: Doi Khi, tempo: 60"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_48&#39;, false)" style="background-color:#5cf" title="Lyric for: Doi Khi, tempo: 60"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -2145,22 +1906,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    48
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   doi khi
                 </td>
               </tr>
-              <tr>
+              <tr id="row_49">
                 <td>
                   51
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 49, false)" style="background-color:#bc9" title="Lyric for: You&#39;re A Woman, tempo: 118"><b>Cm</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_49&#39;, false)" style="background-color:#bc9" title="Lyric for: You&#39;re A Woman, tempo: 118"><b>Cm</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -2182,22 +1938,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    49
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   youre a woman
                 </td>
               </tr>
-              <tr>
+              <tr id="row_50">
                 <td>
                   52
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 50, false)" style="background-color:#7cd" title="Lyric for: Dung Hoi Em, tempo: 73"><b>Am</b><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_50&#39;, false)" style="background-color:#7cd" title="Lyric for: Dung Hoi Em, tempo: 73"><b>Am</b><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -2219,22 +1970,17 @@
                 <td>
                   
                 </td>
-                <td>
-                  <div class="hidden">
-                    50
-                  </div>
-                </td>
                 <td class="hiddenCol">
                   dung hoi em
                 </td>
               </tr>
-              <tr>
+              <tr id="row_51">
                 <td>
                   53
                 </td>
                 <td>
                   <div class="d-grid gap-2">
-                    <button class="btn btn-sm btn-outline-secondary mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, 51, false)" style="background-color:#7cd" title="Lyric for: Con Yeu Em Mai, tempo: 62"><b>A</b><span class="transpose" title="Transpose">1</span><span></span></button>
+                    <button class="btn btn-sm btn-outline-secondary chorder mtooltip" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_51&#39;, false)" style="background-color:#7cd" title="Lyric for: Con Yeu Em Mai, tempo: 62"><b>A</b><span class="transpose" title="Transpose">1</span><span></span></button>
                   </div>
                 </td>
                 <td>
@@ -2255,11 +2001,6 @@
                 </td>
                 <td>
                   
-                </td>
-                <td>
-                  <div class="hidden">
-                    51
-                  </div>
                 </td>
                 <td class="hiddenCol">
                   con yeu em mai
@@ -2294,7 +2035,7 @@
       
       // This function will be called when the API is ready
       function onYouTubeIframeAPIReady() {
-        console.log("Frame API ready")
+        console.log(`_pl_player.slim:37 Frame API ready`)
         player = new YT.Player('youtube-player', {
           videoId: '',
           playerVars: {
@@ -2386,14 +2127,13 @@
           responsive: true,
           paging:     false,
           columns: [{data: 'id'}, null, {data: 'title'},
-                    null, null, null, null, null],
+                    null, null, null, null],
           order:  [[ 0, "asc" ]],
           columnDefs: [
             { target: 1, visible: true,  searchable: false },
             { target: 2, width: "40%" },
             { target: 6, visible: false, searchable: true },
-            { target: 7, visible: true,  searchable: false },
-            { target: 8, visible: false, searchable: true },
+            { target: 7, visible: false, searchable: true },
           ],
           rowReorder: {
             dataSrc: 'id',
@@ -2404,8 +2144,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-08-PH')
-            // console.log(`2024-08-PH curkey: ${curkey}`)
-            // console.log(`2024-08-PH newkey: ${newkey}`)
+            console.log(`program.slim:228 2024-08-PH curkey: ${curkey}`)
+            console.log(`program.slim:229 2024-08-PH newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-08-PH", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -2428,7 +2168,8 @@
       function current_order() {
         var olist = []
         for (value of $('#main_table tbody tr')) {
-          olist.push(value.childNodes[15].innerText)
+          // console.log('rowid', value.id)
+          olist.push(value.id)
         }
         return olist
       }
@@ -2436,7 +2177,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log('new_list: ', olist)
+        console.log(`program.slim:261 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-08-PH", JSON.stringify(olist))
       }
       
@@ -2456,14 +2197,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-08-PH")
         if (item == null) {
-          console.log("No order to restore")
+          console.log(`program.slim:281 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`Restore olist: ${olist}`)
+        console.log(`program.slim:288 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)
