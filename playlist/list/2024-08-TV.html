@@ -163,24 +163,6 @@
       </div>
       <script>
         let startX;
-        const popup = document.getElementById('lybox')
-        
-        popup.addEventListener('touchstart', (event) => {
-            startX = event.touches[0].clientX;
-        });
-        
-        popup.addEventListener('touchend', (event) => {
-            const endX = event.changedTouches[0].clientX;
-            const deltaX = endX - startX;
-        
-            if (deltaX > 50) {
-                console.log('Swiped right');
-                load_lyric(false, 1)
-            } else if (deltaX < -50) {
-                console.log('Swiped left');
-                load_lyric(false, 1)
-            }
-        });
         
         function singer_toggle() {
           $('.chord').toggle()
@@ -190,10 +172,10 @@
         function load_lyric(async = true, offset = 0) {
           var olist = current_order()
         
-          // console.log(`_lyric_box.slim:91 olist: ${olist}`)
+          // console.log(`_lyric_box.slim:73 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
-          console.log(`_lyric_box.slim:94 cur:${cur_ofs}, new: ${new_ofs}`)
+          console.log(`_lyric_box.slim:76 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -218,7 +200,7 @@
           myModal.program = program
           myModal.item    = item
         
-          console.log(`_lyric_box.slim:119 Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:101 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=list`
@@ -237,7 +219,7 @@
           }
         }
         function show_lyric(content) {
-          // console.log(`_lyric_box.slim:138`, content)
+          // console.log(`_lyric_box.slim:120`, content)
           var lvideo = $('#lybox-vctl')
         
           // If vintro exist - create button for play/stop intro
@@ -364,7 +346,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_0&#39;, false)">Yeu Het Con Tim</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_0&#39;, false)" title="Lyric for: Yeu Het Con Tim, tempo: 125"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -396,7 +378,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_1&#39;, false)">Coi Chung Gai Dep</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_1&#39;, false)" title="Lyric for: Coi Chung Gai Dep, tempo: 170"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -424,7 +406,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_2&#39;, false)">Nhung Loi Me Hoac</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_2&#39;, false)" title="Lyric for: Nhung Loi Me Hoac, tempo: 120"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -456,7 +438,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_3&#39;, false)">Luan Vu Ngay Mua</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_3&#39;, false)" title="Lyric for: Luan Vu Ngay Mua, tempo: 160"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -488,7 +470,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_4&#39;, false)">Tango Tinh</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_4&#39;, false)" title="Lyric for: Tango Tinh, tempo: 124"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -520,7 +502,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_5&#39;, false)">Anh Van Biet</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_5&#39;, false)" title="Lyric for: Anh Van Biet, tempo: 76"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -552,7 +534,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_6&#39;, false)">Neu Vang Nang</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-08-TV&#39;, &#39;row_6&#39;, false)" title="Lyric for: Neu Vang Nang, tempo: 118"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -712,8 +694,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-08-TV')
-            console.log(`program.slim:224 2024-08-TV curkey: ${curkey}`)
-            console.log(`program.slim:225 2024-08-TV newkey: ${newkey}`)
+            console.log(`program.slim:227 2024-08-TV curkey: ${curkey}`)
+            console.log(`program.slim:228 2024-08-TV newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-08-TV", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -745,7 +727,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:257 new_list: ${olist}`)
+        console.log(`program.slim:260 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-08-TV", JSON.stringify(olist))
       }
       
@@ -765,14 +747,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-08-TV")
         if (item == null) {
-          console.log(`program.slim:277 No order to restore`)
+          console.log(`program.slim:280 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:284 Restore olist: ${olist}`)
+        console.log(`program.slim:287 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)

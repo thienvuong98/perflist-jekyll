@@ -163,24 +163,6 @@
       </div>
       <script>
         let startX;
-        const popup = document.getElementById('lybox')
-        
-        popup.addEventListener('touchstart', (event) => {
-            startX = event.touches[0].clientX;
-        });
-        
-        popup.addEventListener('touchend', (event) => {
-            const endX = event.changedTouches[0].clientX;
-            const deltaX = endX - startX;
-        
-            if (deltaX > 50) {
-                console.log('Swiped right');
-                load_lyric(false, 1)
-            } else if (deltaX < -50) {
-                console.log('Swiped left');
-                load_lyric(false, 1)
-            }
-        });
         
         function singer_toggle() {
           $('.chord').toggle()
@@ -190,10 +172,10 @@
         function load_lyric(async = true, offset = 0) {
           var olist = current_order()
         
-          // console.log(`_lyric_box.slim:91 olist: ${olist}`)
+          // console.log(`_lyric_box.slim:73 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
-          console.log(`_lyric_box.slim:94 cur:${cur_ofs}, new: ${new_ofs}`)
+          console.log(`_lyric_box.slim:76 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -218,7 +200,7 @@
           myModal.program = program
           myModal.item    = item
         
-          console.log(`_lyric_box.slim:119 Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:101 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=list`
@@ -237,7 +219,7 @@
           }
         }
         function show_lyric(content) {
-          // console.log(`_lyric_box.slim:138`, content)
+          // console.log(`_lyric_box.slim:120`, content)
           var lvideo = $('#lybox-vctl')
         
           // If vintro exist - create button for play/stop intro
@@ -364,7 +346,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_0&#39;, false)">Brother Louie</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_0&#39;, false)" title="Lyric for: Brother Louie, tempo: "></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
@@ -391,7 +373,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_1&#39;, false)">++You can win</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_1&#39;, false)" title="Lyric for: You can win, tempo: 114"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
@@ -423,7 +405,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_2&#39;, false)">++Cheri Cheri Lady</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_2&#39;, false)" title="Lyric for: Cheri Cheri Lady, tempo: 115"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
@@ -455,7 +437,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_3&#39;, false)">Caravan</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_3&#39;, false)" title="Lyric for: Caravan, tempo: 72"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Vinh&#39;)">Vinh</button>
@@ -487,7 +469,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_4&#39;, false)">Stumbling in</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_4&#39;, false)" title="Lyric for: Stumbling in, tempo: 130"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Van Vinh&#39;)">Van Vinh</button>
@@ -515,7 +497,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_5&#39;, false)">The End Of The World</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_5&#39;, false)" title="Lyric for: The End Of The World, tempo: 72"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Toan&#39;)">Toan</button>
@@ -547,7 +529,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_6&#39;, false)">Pretty Woman</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_6&#39;, false)" title="Lyric for: Pretty Woman, tempo: 130"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -579,7 +561,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_7&#39;, false)">Hot Stuff</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_7&#39;, false)" title="Lyric for: Hot Stuff, tempo: 120"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
@@ -611,7 +593,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_8&#39;, false)">++Tragedy</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_8&#39;, false)" title="Lyric for: Tragedy, tempo: 118"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
@@ -643,7 +625,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_9&#39;, false)">Diana</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_9&#39;, false)" title="Lyric for: Diana, tempo: 140"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Toan&#39;)">Toan</button>
@@ -675,7 +657,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_10&#39;, false)">Voulez Vous</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_10&#39;, false)" title="Lyric for: Voulez Vous, tempo: 126"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
@@ -707,7 +689,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_11&#39;, false)">++Gimme Gimme</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_11&#39;, false)" title="Lyric for: Gimme Gimme, tempo: 118"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Van&#39;)">Van</button>
@@ -739,7 +721,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_12&#39;, false)">Khong Con Mua Thu</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_12&#39;, false)" title="Lyric for: Khong Con Mua Thu, tempo: 102"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Phong&#39;)">Phong</button>
@@ -771,7 +753,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_13&#39;, false)">Nguoi Tinh Mua Dong</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_13&#39;, false)" title="Lyric for: Nguoi Tinh Mua Dong, tempo: 134"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thanh&#39;)">Thanh</button>
@@ -803,7 +785,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_14&#39;, false)">Con Chut Gi De Nho</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_14&#39;, false)" title="Lyric for: Con Chut Gi De Nho, tempo: 62"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Frank&#39;)">Frank</button>
@@ -835,7 +817,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_15&#39;, false)">Vet Thu Tren Lung Ngua Hoang</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_15&#39;, false)" title="Lyric for: Vet Thu Tren Lung Ngua Hoang, tempo: 71"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Tam&#39;)">Tam</button>
@@ -867,7 +849,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_16&#39;, false)">Uoc Gi</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_16&#39;, false)" title="Lyric for: Uoc Gi, tempo: 63"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Mai&#39;)">Mai</button>
@@ -899,7 +881,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_17&#39;, false)">Hay Cho Toi</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_17&#39;, false)" title="Lyric for: Hay Cho Toi, tempo: 130"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Ai Hoa&#39;)">Ai Hoa</button>
@@ -935,7 +917,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_18&#39;, false)">Mua Hong</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_18&#39;, false)" title="Lyric for: Mua Hong, tempo: 72"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Lan&#39;)">Lan</button>
@@ -967,7 +949,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_19&#39;, false)">10 Ngon Tay</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_19&#39;, false)" title="Lyric for: 10 Ngon Tay, tempo: 140"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thanh&#39;)">Thanh</button>
@@ -999,7 +981,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_20&#39;, false)">Se Hon Bao Gio Het</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_20&#39;, false)" title="Lyric for: Se Hon Bao Gio Het, tempo: 160"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Phong&#39;)">Phong</button>
@@ -1031,7 +1013,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_21&#39;, false)">De Nho Mot Thoi Ta Da Yeu</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_21&#39;, false)" title="Lyric for: De Nho Mot Thoi Ta Da Yeu, tempo: "></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Tam&#39;)">Tam</button>
@@ -1058,7 +1040,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_22&#39;, false)">Yeu Em Giua Doi Quen Lang</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_22&#39;, false)" title="Lyric for: Yeu Em Giua Doi Quen Lang, tempo: 66"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Vinh&#39;)">Vinh</button>
@@ -1098,7 +1080,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_23&#39;, false)">Chi Co Em</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_23&#39;, false)" title="Lyric for: Chi Co Em, tempo: 128"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Lan&#39;)">Lan</button>
@@ -1130,7 +1112,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_24&#39;, false)">Rieng Mot Goc Troi</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_24&#39;, false)" title="Lyric for: Rieng Mot Goc Troi, tempo: 73"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Phong&#39;)">Phong</button>
@@ -1162,7 +1144,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_25&#39;, false)">Tinh Don Phuong</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_25&#39;, false)" title="Lyric for: Tinh Don Phuong, tempo: 128"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Toan&#39;)">Toan</button>
@@ -1194,7 +1176,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_26&#39;, false)">Ngo</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_26&#39;, false)" title="Lyric for: Ngo, tempo: 145"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -1226,7 +1208,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_27&#39;, false)">++Nho Ve Em</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_27&#39;, false)" title="Lyric for: Nho Ve Em, tempo: 130"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -1258,7 +1240,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_28&#39;, false)">Ao Moi Ca Mau</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_28&#39;, false)" title="Lyric for: Ao Moi Ca Mau, tempo: 140"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thanh&#39;)">Thanh</button>
@@ -1290,7 +1272,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_29&#39;, false)">Buon Lam Chi Em Oi</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_29&#39;, false)" title="Lyric for: Buon Lam Chi Em Oi, tempo: 140"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Tam&#39;)">Tam</button>
@@ -1318,7 +1300,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_30&#39;, false)">Rung Rung Le</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_30&#39;, false)" title="Lyric for: Rung Rung Le, tempo: 150"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -1358,7 +1340,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_31&#39;, false)">Lai Gan Hon Em</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_31&#39;, false)" title="Lyric for: Lai Gan Hon Em, tempo: 88"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Mai&#39;)">Mai</button>
@@ -1390,7 +1372,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_32&#39;, false)">Uoc Gi</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_32&#39;, false)" title="Lyric for: Uoc Gi, tempo: 63"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Mai&#39;)">Mai</button>
@@ -1422,7 +1404,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_33&#39;, false)">Mua Hong</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_33&#39;, false)" title="Lyric for: Mua Hong, tempo: 72"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Lan&#39;)">Lan</button>
@@ -1453,7 +1435,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_34&#39;, false)">Lai Gan Hon Em</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_34&#39;, false)" title="Lyric for: Lai Gan Hon Em, tempo: "></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Mai&#39;)">Mai</button>
@@ -1480,7 +1462,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_35&#39;, false)">Magic Boulevard</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_35&#39;, false)" title="Lyric for: Magic Boulevard, tempo: 78"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Thien&#39;)">Thien</button>
@@ -1512,7 +1494,7 @@
                   </div>
                 </td>
                 <td>
-                  <a class="btn lsource" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_36&#39;, false)">How Deep Is Your Love</a>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2024-06-US&#39;, &#39;row_36&#39;, false)" title="Lyric for: How Deep Is Your Love, tempo: 104"></a>
                 </td>
                 <td>
                   <button class="btn" onClick="return dt_search(&#39;Ngon&#39;)">Ngon</button>
@@ -1672,8 +1654,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-06-US')
-            console.log(`program.slim:224 2024-06-US curkey: ${curkey}`)
-            console.log(`program.slim:225 2024-06-US newkey: ${newkey}`)
+            console.log(`program.slim:227 2024-06-US curkey: ${curkey}`)
+            console.log(`program.slim:228 2024-06-US newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-06-US", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -1705,7 +1687,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:257 new_list: ${olist}`)
+        console.log(`program.slim:260 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-06-US", JSON.stringify(olist))
       }
       
@@ -1725,14 +1707,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-06-US")
         if (item == null) {
-          console.log(`program.slim:277 No order to restore`)
+          console.log(`program.slim:280 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:284 Restore olist: ${olist}`)
+        console.log(`program.slim:287 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)
