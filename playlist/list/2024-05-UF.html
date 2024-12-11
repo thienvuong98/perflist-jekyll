@@ -82,7 +82,6 @@
         font-family:      monospace;
         font-weight:      800;
         padding:          2px;
-        border-left:      1px solid #888;
         border-bottom:    1px solid #888;
         font-size:        80%;
         background-color: #ffc;
@@ -162,8 +161,6 @@
         </div>
       </div>
       <script>
-        let startX;
-        
         function singer_toggle() {
           $('.chord').toggle()
           $('#lybox .modal-header').toggle()
@@ -172,10 +169,10 @@
         function load_lyric(async = true, offset = 0) {
           var olist = current_order()
         
-          // console.log(`_lyric_box.slim:73 olist: ${olist}`)
+          // console.log(`_lyric_box.slim:70 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
-          console.log(`_lyric_box.slim:76 cur:${cur_ofs}, new: ${new_ofs}`)
+          console.log(`_lyric_box.slim:73 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -200,7 +197,7 @@
           myModal.program = program
           myModal.item    = item
         
-          console.log(`_lyric_box.slim:101 Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:98 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=list`
@@ -219,7 +216,7 @@
           }
         }
         function show_lyric(content) {
-          // console.log(`_lyric_box.slim:120`, content)
+          // console.log(`_lyric_box.slim:117`, content)
           var lvideo = $('#lybox-vctl')
         
           // If vintro exist - create button for play/stop intro
@@ -319,7 +316,7 @@
                   Title
                 </th>
                 <th>
-                  Singer [Backup]
+                  Singer [Backing]
                 </th>
                 <th>
                   Beat [Tempo]
