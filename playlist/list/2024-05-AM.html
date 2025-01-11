@@ -246,7 +246,7 @@
           </h5>
         </div>
         <div class="col-md-4">
-          <select class="form-select" id="list-select" onchange="window.location.href = &#39;../list/&#39; + this.options[this.selectedIndex].value">
+          <a class="btn btn-secondary" href="http://localhost:5001/playlist/singer">Singer List</a><select class="form-select" id="list-select" onchange="window.location.href = &#39;../list/&#39; + this.options[this.selectedIndex].value">
             <option value="2024-03-TH">
               2024-03-TH
             </option>
@@ -767,8 +767,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-05-AM')
-            console.log(`program.slim:228 2024-05-AM curkey: ${curkey}`)
-            console.log(`program.slim:229 2024-05-AM newkey: ${newkey}`)
+            console.log(`program.slim:230 2024-05-AM curkey: ${curkey}`)
+            console.log(`program.slim:231 2024-05-AM newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-05-AM", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -800,7 +800,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:261 new_list: ${olist}`)
+        console.log(`program.slim:263 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-05-AM", JSON.stringify(olist))
       }
       
@@ -820,14 +820,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-05-AM")
         if (item == null) {
-          console.log(`program.slim:281 No order to restore`)
+          console.log(`program.slim:283 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:288 Restore olist: ${olist}`)
+        console.log(`program.slim:290 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)

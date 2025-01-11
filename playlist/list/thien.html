@@ -246,31 +246,7 @@
           </h5>
         </div>
         <div class="col-md-4">
-          <select class="form-select" id="list-select" onchange="window.location.href = &#39;../singer/&#39; + this.options[this.selectedIndex].value">
-            <option value="">
-              
-            </option>
-            <option value="a binh">
-              a binh
-            </option>
-            <option value="a calvin">
-              a calvin
-            </option>
-            <option value="a minh">
-              a minh
-            </option>
-            <option value="a tam">
-              a tam
-            </option>
-            <option value="a thanh">
-              a thanh
-            </option>
-            <option value="a toan">
-              a toan
-            </option>
-            <option value="a vinh">
-              a vinh
-            </option>
+          <a class="btn btn-secondary" href="http://localhost:5001/playlist/list">Performance List</a><select class="form-select" id="list-select" onchange="window.location.href = &#39;../singer/&#39; + this.options[this.selectedIndex].value">
             <option value="ai hoa">
               ai hoa
             </option>
@@ -282,24 +258,6 @@
             </option>
             <option value="angelina mytien">
               angelina mytien
-            </option>
-            <option value="anh hai">
-              anh hai
-            </option>
-            <option value="anh hailily">
-              anh hailily
-            </option>
-            <option value="anh loc">
-              anh loc
-            </option>
-            <option value="anh phong">
-              anh phong
-            </option>
-            <option value="anh tabolero">
-              anh tabolero
-            </option>
-            <option value="anh tam">
-              anh tam
             </option>
             <option value="anne">
               anne
@@ -316,35 +274,17 @@
             <option value="bich hien">
               bich hien
             </option>
+            <option value="binh">
+              binh
+            </option>
             <option value="brittany">
               brittany
             </option>
-            <option value="c minh dung">
-              c minh dung
-            </option>
-            <option value="c phuong">
-              c phuong
-            </option>
-            <option value="c quynh mai">
-              c quynh mai
-            </option>
-            <option value="c thanh">
-              c thanh
-            </option>
-            <option value="c van">
-              c van
+            <option value="calvin">
+              calvin
             </option>
             <option value="chi">
               chi
-            </option>
-            <option value="chi hai">
-              chi hai
-            </option>
-            <option value="chi linh">
-              chi linh
-            </option>
-            <option value="christina">
-              christina
             </option>
             <option value="chrystine">
               chrystine
@@ -385,6 +325,9 @@
             <option value="hai chi">
               hai chi
             </option>
+            <option value="hailily">
+              hailily
+            </option>
             <option value="hang">
               hang
             </option>
@@ -399,6 +342,9 @@
             </option>
             <option value="hop ca">
               hop ca
+            </option>
+            <option value="hop ca nu">
+              hop ca nu
             </option>
             <option value="hue">
               hue
@@ -421,9 +367,6 @@
             <option value="huyen thanh">
               huyen thanh
             </option>
-            <option value="joan phan">
-              joan phan
-            </option>
             <option value="kayla">
               kayla
             </option>
@@ -438,6 +381,9 @@
             </option>
             <option value="lily">
               lily
+            </option>
+            <option value="linh">
+              linh
             </option>
             <option value="loc">
               loc
@@ -532,6 +478,9 @@
             <option value="phuongmai nguyen">
               phuongmai nguyen
             </option>
+            <option value="quynh mai">
+              quynh mai
+            </option>
             <option value="rachel">
               rachel
             </option>
@@ -540,6 +489,9 @@
             </option>
             <option value="suong">
               suong
+            </option>
+            <option value="tabolero">
+              tabolero
             </option>
             <option value="tam">
               tam
@@ -2989,8 +2941,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.thien')
-            console.log(`program.slim:228 thien curkey: ${curkey}`)
-            console.log(`program.slim:229 thien newkey: ${newkey}`)
+            console.log(`program.slim:230 thien curkey: ${curkey}`)
+            console.log(`program.slim:231 thien newkey: ${newkey}`)
             localStorage.setItem("pagekey.thien", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -3022,7 +2974,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:261 new_list: ${olist}`)
+        console.log(`program.slim:263 new_list: ${olist}`)
         localStorage.setItem("pageorder.thien", JSON.stringify(olist))
       }
       
@@ -3042,14 +2994,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.thien")
         if (item == null) {
-          console.log(`program.slim:281 No order to restore`)
+          console.log(`program.slim:283 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:288 Restore olist: ${olist}`)
+        console.log(`program.slim:290 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)

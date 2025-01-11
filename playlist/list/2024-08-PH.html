@@ -246,7 +246,7 @@
           </h5>
         </div>
         <div class="col-md-4">
-          <select class="form-select" id="list-select" onchange="window.location.href = &#39;../list/&#39; + this.options[this.selectedIndex].value">
+          <a class="btn btn-secondary" href="http://localhost:5001/playlist/singer">Singer List</a><select class="form-select" id="list-select" onchange="window.location.href = &#39;../list/&#39; + this.options[this.selectedIndex].value">
             <option value="2024-03-TH">
               2024-03-TH
             </option>
@@ -1738,7 +1738,7 @@
                   <a class="msource" href="#" onClick="get_lyric(&#39;2024-08-PH&#39;, &#39;row_43&#39;, false)" title="Lyric for: Pepito, tempo: 118">Pepito</a>
                 </td>
                 <td>
-                  <button class="btn" onClick="return dt_search(&#39;Christina&#39;)">Christina</button>
+                  <button class="btn" onClick="return dt_search(&#39;Chrystine&#39;)">Chrystine</button>
                 </td>
                 <td class="dt-right">
                   <button class="btn" onClick="return dt_search(&#39;Chacha&#39;)">Chacha</button><span class="transpose text-right" title="Tempo">118</span>
@@ -2154,8 +2154,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-08-PH')
-            console.log(`program.slim:228 2024-08-PH curkey: ${curkey}`)
-            console.log(`program.slim:229 2024-08-PH newkey: ${newkey}`)
+            console.log(`program.slim:230 2024-08-PH curkey: ${curkey}`)
+            console.log(`program.slim:231 2024-08-PH newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-08-PH", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -2187,7 +2187,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:261 new_list: ${olist}`)
+        console.log(`program.slim:263 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-08-PH", JSON.stringify(olist))
       }
       
@@ -2207,14 +2207,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-08-PH")
         if (item == null) {
-          console.log(`program.slim:281 No order to restore`)
+          console.log(`program.slim:283 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:288 Restore olist: ${olist}`)
+        console.log(`program.slim:290 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)
