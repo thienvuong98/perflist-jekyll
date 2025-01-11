@@ -61,6 +61,14 @@
       th.hiddenCol, td.hiddenCol {
         display: none
       }
+    </style>
+    <style>
+      body {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.80), rgba(255, 255, 255, 0.80)), url("/images/2024-12-BH.jpg");
+        background-size: auto;
+        background-position: center; /* Centers the image */
+        background-repeat: repeat; /* Prevents the image from repeating */
+      }
     </style><style>
       #youtube-player {
         width:    250;
@@ -291,6 +299,9 @@
             </option>
             <option selected="" value="2024-12-BH">
               2024-12-BH
+            </option>
+            <option value="2025-01-VV">
+              2025-01-VV
             </option>
             <option value="thien">
               thien
@@ -1484,8 +1495,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-12-BH')
-            console.log(`program.slim:234 2024-12-BH curkey: ${curkey}`)
-            console.log(`program.slim:235 2024-12-BH newkey: ${newkey}`)
+            console.log(`program.slim:228 2024-12-BH curkey: ${curkey}`)
+            console.log(`program.slim:229 2024-12-BH newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-12-BH", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -1517,7 +1528,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:267 new_list: ${olist}`)
+        console.log(`program.slim:261 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-12-BH", JSON.stringify(olist))
       }
       
@@ -1537,14 +1548,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-12-BH")
         if (item == null) {
-          console.log(`program.slim:287 No order to restore`)
+          console.log(`program.slim:281 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:294 Restore olist: ${olist}`)
+        console.log(`program.slim:288 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)
