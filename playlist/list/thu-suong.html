@@ -1178,8 +1178,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.thu suong')
-            console.log(`program.slim:238 thu suong curkey: ${curkey}`)
-            console.log(`program.slim:239 thu suong newkey: ${newkey}`)
+            console.log(`program.slim:239 thu suong curkey: ${curkey}`)
+            console.log(`program.slim:240 thu suong newkey: ${newkey}`)
             localStorage.setItem("pagekey.thu suong", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -1211,7 +1211,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:271 new_list: ${olist}`)
+        console.log(`program.slim:272 new_list: ${olist}`)
         localStorage.setItem("pageorder.thu suong", JSON.stringify(olist))
       }
       
@@ -1231,14 +1231,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.thu suong")
         if (item == null) {
-          console.log(`program.slim:291 No order to restore`)
+          console.log(`program.slim:292 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:298 Restore olist: ${olist}`)
+        console.log(`program.slim:299 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)

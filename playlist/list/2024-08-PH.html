@@ -1969,7 +1969,7 @@
               </tr>
             </tbody>
           </table>
-          <button class="btn btn-sm btn-outline-secondary" onClick="reset_order()">Reset Order </button>
+          <button class="btn btn-sm btn-outline-secondary" onClick="reset_order()">Reset Order </button> Updated on 2025-01-11
         </div>
       </div>
       <div class="qrcode">
@@ -2108,8 +2108,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-08-PH')
-            console.log(`program.slim:238 2024-08-PH curkey: ${curkey}`)
-            console.log(`program.slim:239 2024-08-PH newkey: ${newkey}`)
+            console.log(`program.slim:239 2024-08-PH curkey: ${curkey}`)
+            console.log(`program.slim:240 2024-08-PH newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-08-PH", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -2141,7 +2141,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:271 new_list: ${olist}`)
+        console.log(`program.slim:272 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-08-PH", JSON.stringify(olist))
       }
       
@@ -2161,14 +2161,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-08-PH")
         if (item == null) {
-          console.log(`program.slim:291 No order to restore`)
+          console.log(`program.slim:292 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:298 Restore olist: ${olist}`)
+        console.log(`program.slim:299 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)
