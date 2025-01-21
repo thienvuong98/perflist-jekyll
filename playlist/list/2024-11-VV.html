@@ -249,9 +249,11 @@
           myModal.show()
         }
         $('#lyric-box').on('shown.bs.modal', function () {
-          $(this).css('display', 'none'); // Hide temporarily
-          $(this).offset(); // Trigger a reflow
-          $(this).css('display', 'block'); // Show it again
+          var viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+          $('.modal-dialog').css({
+            width: viewportWidth + 'px',
+            marginLeft: '0',  // Reset any unintended margins
+          });
         });
       </script>
       <div class="row program-info">
