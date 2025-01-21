@@ -246,6 +246,9 @@
             width: viewportWidth + 'px',
             marginLeft: '0',  // Reset any unintended margins
           });
+          $(this).hide();
+          $(this).offset();
+          $(this).show();
         });
       </script>
       <div class="row program-info">
