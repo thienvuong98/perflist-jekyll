@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    <meta content="PlayList" name="Playlist - Program" />
+    <link href="/smulelist.png?version=0" rel="shortcut icon" type="image/x-icon" />
+    <title>Music Program: 2025-02-PH</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/rowreorder/1.5.0/css/rowReorder.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://www.smule.com" rel="preconnect" />
+    <link href="https://c-cl.cdn.smule.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&amp;family=Edu+SA+Beginner" rel="stylesheet" />
+    <style>
+      .lsource {
+        text-decoration: underline;
+      }
+      .chorder {
+        margin-right: 10px;
+      }
+      .loopstyle {
+        font-size: 70%;
+      }
+      .transpose {
+        font-size:        90%;
+        background-color: #ccc;
+        padding-left:     4px;
+        padding-right:    4px;
+      }
+      #list-select {
+        position: absolute;
+        top:      10px;
+        right:    10px;
+        width:    150px;
+      }
+      #youtube {
+        border:   1px solid #222;
+        display:  none;
+        z-index:  9999;
+        position: fixed;
+        top:      0;
+        left:     0;
+        width:    350px;
+        height:   200px;
+      }
+      #youtube iframe {
+        position: absolute;
+        top:      0;
+        left:     0;
+        width:    100%;
+        height:   100%;
+      }
+      .hidden {
+        color:     #fff;
+        font-size: 10%;
+      }
+      th.hiddenCol, td.hiddenCol {
+        display: none
+      }
+      .dbutton {
+          display: flex ;
+          justify-content: space-between;
+          align-items: center;
+        }
+    </style><style>
+      #youtube-player {
+        width:    700;
+        height:   400;
+        opacity:  1.0;
+      }
+      #youtube-closer {
+        position: absolute;
+        top:      0;
+        right:    0;
+        z-index:  99;
+      }
+    </style><style>
+      .chord {
+        color:            #aa5;
+        vertical-align:   12px;
+        font-family:      monospace;
+        font-weight:      800;
+        padding:          2px;
+        border-bottom:    1px solid #888;
+        font-size:        80%;
+        background-color: #ffc;
+      }
+      #lybox-title {
+        font-size: 80%;
+      }
+      #lybox-content {
+        font-size: 150%;
+      }
+      #lybox-debug {
+        font-size: 50%;
+      }
+    </style>
+    <style>
+      html {
+        font-size: 100%; /* Sets the base font size to the browser default */
+      }
+      .vsmall {
+        font-size: 60%;
+      }
+      .notice {
+        width: 50%;
+        text-align: center;
+        border: 4px solid #ccc;
+        background-color: hsl(20,50%,85%)
+      }
+      .srow td {
+        font-size: small;
+      }
+      tr:nth-child(even) td {
+        background-color: #eee;
+        border-top: 1px solid;
+      }
+      .player {
+        border:     5px #888;
+        width:      200px;
+        z-index:    9;
+        opacity:    1;
+        padding:    3px;
+        background: #fff;
+        position:   fixed;
+        bottom:     0;
+        right:      0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <!--============================================================ --><!--Generates program / practice content page--><!--============================================================ -->
+      <!--Select different playlist--><!--Video player - hidden until brought up-->
+      <div id="youtube">
+        <div>
+          <a href="#" id="youtube-closer" onClick="cancel_play(); return false"><i class="fa fa-2x fa-window-close"></i></a><span id="youtube-title" style="font-size:60%"></span>
+        </div>
+        <div id="youtube-player"></div>
+      </div><!--Allow language accent, etc -->
+      <!--Lyric modal - hidden until brought up-->
+      <div class="modal fade" id="lybox" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" id="lyric-box" style="width: 100vw; margin:0px; max-width:100%; max-height:100%">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="small" id="lybox-header"></div>
+              <div class="small" id="lybox-debug"></div>
+              <div id="lybox-vctl">
+                <button class="btn btn-secondary" onClick="play_song()" title="Play full video" type="button"><i class="fa-solid fa-headphones"></i></button><button class="btn btn-secondary" onClick="play_intro()" title="Play intro" type="button"><i class="fa-solid fa-undo"></i></button><button class="btn btn-secondary" onClick="cancel_play()" title="Stop plauing" type="button"><i class="fa-solid fa-stop"></i></button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div id="lybox-content"></div>
+            </div>
+            <div class="modal-footer">
+              <div id="lybox-title"></div>
+              <button class="btn btn-secondary" onClick="load_lyric(false, -1)" title="Previous Page" type="button"><i class="fa fa-backward"></i></button><button class="btn btn-secondary" onClick="singer_toggle()" title="Toogle chord" type="button"><i class="fa fa-music"></i></button><button class="btn btn-secondary" onClick="load_lyric(false, 1)" title="Next Page" type="button"><i class="fa fa-forward"></i></button><button class="btn btn-warning" data-bs-dismiss="modal" title="Close" type="button"><i class="fa fa-sign-out"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        function singer_toggle() {
+          $('.chord').toggle()
+          $('#lybox .modal-header').toggle()
+        }
+        
+        function load_lyric(async = true, offset = 0) {
+          var olist = current_order()
+        
+          // console.log(`_lyric_box.slim:70 olist: ${olist}`)
+          var cur_ofs = olist.indexOf(myModal.item.toString())
+          var new_ofs = cur_ofs + offset
+          console.log(`_lyric_box.slim:73 cur:${cur_ofs}, new: ${new_ofs}`)
+        
+          if ((new_ofs < 0) || (new_ofs >= olist.length)) {
+            return
+          }
+          get_lyric(myModal.program, olist[new_ofs], async)
+        }
+        function play_intro() {
+          var lvideo = $('#lybox-vctl')
+          var video  = lvideo.attr('my_video')
+          var stime  = parseInt(lvideo.attr('my_vstart'))
+          var etime  = parseInt(lvideo.attr('my_vend'))
+          var title  = lvideo.attr('my_title')
+          play_on_youtube(video, title, stime, etime)
+        }
+        function play_song() {
+          var lvideo = $('#lybox-vctl')
+          var video = lvideo.attr('my_video')
+          var title = lvideo.attr('my_title')
+          play_on_youtube(video, title, 0, 0)
+        }
+        function get_lyric(program, item, async = true) {
+          myModal.program = program
+          myModal.item    = item
+        
+          console.log(`_lyric_box.slim:98 Getting item # ${myModal.item}`)
+        
+          if (async) {
+            var url = `../lyric/${program}/${item}?type=list`
+            jQuery.ajax({
+              url:      url,
+              async:    true,
+              dataType: 'json',
+              success:  show_lyric,
+            });
+          } else {
+            var iitem = parseInt(item.substring(4), 10)
+            var content  = extra[iitem]
+            if (content != null) {
+              show_lyric(content)
+            }
+          }
+        }
+        function show_lyric(content) {
+          // console.log(`_lyric_box.slim:117`, content)
+          var lvideo = $('#lybox-vctl')
+        
+          // If vintro exist - create button for play/stop intro
+          lvideo.attr('my_video',  content['video'])
+          lvideo.attr('my_title',  content['title'])
+          lvideo.attr('my_item',   content['item_no'])
+        
+          if (content['vintro'] != null) {
+            lvideo.attr('my_vstart', content['vintro'][0])
+            lvideo.attr('my_vend',   content['vintro'][1])
+          }
+          lvideo.show()
+        
+          var lyric = content['lyric'].replaceAll('\n', '<br>')
+          $('#lybox-content').html('<center><b>' + lyric)
+          $('#lybox-header').html(`${content['beat']}: ${content['tokey']}.${content['transpose']}#${content['tempo']} - ${content['singer']} - Intro: ${content['intro']}`)
+          $('#lybox-title').html(`${content['item_no']} <a href=${content['source']}>${content['title'].substring(0, 19)}</a>`)
+          $('.modal-header').show()
+          myModal.show()
+        }
+        $('#lyric-box').on('shown.bs.modal', function () {
+          var viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+          $('.modal-dialog').css({
+            width: viewportWidth + 'px',
+            marginLeft: '0',  // Reset any unintended margins
+          });
+          $(this).hide();
+          $(this).offset();
+          $(this).show();
+        });
+      </script>
+      <div class="row program-info">
+        <div class="col-md-8">
+          <h1>
+            
+          </h1>
+          <h5>
+            <a href="https://docs.google.com/spreadsheets/d/1sOgaV6jZbQfVIrpYi3-8ORaYN2aG0yNLMlnTpVx_M18/edit?gid=1961086765#gid=1961086765" target="sheet">  - </a>
+          </h5>
+        </div>
+        <div class="col-md-4">
+          <a class="btn btn-secondary" href="../singer">Singer List</a><select class="form-select" id="list-select" onchange="window.location.href = &#39;../list/&#39; + this.options[this.selectedIndex].value">
+            <option selected="" value="2025-02-PH">
+              2025-02-PH
+            </option>
+            <option value="2025-01-NM">
+              2025-01-NM
+            </option>
+            <option value="2025-01-VV">
+              2025-01-VV
+            </option>
+            <option value="2024-08-PH">
+              2024-08-PH
+            </option>
+            <option value="2024-12-BH">
+              2024-12-BH
+            </option>
+            <option value="2024-11-VV">
+              2024-11-VV
+            </option>
+            <option value="thu-suong">
+              thu-suong
+            </option>
+            <option value="2024-11-UF">
+              2024-11-UF
+            </option>
+            <option value="2024-09-TU">
+              2024-09-TU
+            </option>
+            <option value="2024-08-MI">
+              2024-08-MI
+            </option>
+            <option value="2024-05-TS">
+              2024-05-TS
+            </option>
+            <option value="2024-06-VH">
+              2024-06-VH
+            </option>
+            <option value="2024-05-UF">
+              2024-05-UF
+            </option>
+            <option value="2024-03-TH">
+              2024-03-TH
+            </option>
+            <option value="2024-04-TH">
+              2024-04-TH
+            </option>
+            <option value="2024-05-TH">
+              2024-05-TH
+            </option>
+            <option value="thien">
+              thien
+            </option>
+            <option value="2024-06-US">
+              2024-06-US
+            </option>
+            <option value="2024-08-TV">
+              2024-08-TV
+            </option>
+            <option value="2024-05-AM">
+              2024-05-AM
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <table class="cell-border compact display dt-responsive" id="main_table" width="100%">
+            <thead>
+              <tr>
+                <th></th>
+                <th>
+                  Key(Lead)
+                </th>
+                <th>
+                  Title
+                </th>
+                <th>
+                  Singer [Backing]
+                </th>
+                <th>
+                  Beat [Tempo]
+                </th>
+                <th>
+                  Perf Video/Loops
+                </th>
+                <th>
+                  Note
+                </th>
+                <th class="hiddenCol">
+                  S-Title
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr id="row_0">
+                <td>
+                  2
+                </td>
+                <td>
+                  <div class="d-grid gap-2"><button class="btn btn-sm btn-outline-secondary chorder mtooltip dbutton" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_0&#39;, false)" style="color:white; background-color:#666646" title="Lyric for: Tombe La Neige, tempo: 100"><span><i class="fa-solid fa-music">&nbsp;</i><b>Cm</b></span><span></span></button>
+                  </div>
+                </td>
+                <td>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_0&#39;, false)" title="Lyric for: Tombe La Neige, tempo: 100">Tombe La Neige</a>
+                </td>
+                <td>
+                  <button class="btn" onClick="return dt_search(&#39;Dat Vu&#39;)">Dat Vu</button>
+                </td>
+                <td class="dt-right">
+                  <button class="btn" onClick="return dt_search(&#39;Rhumba&#39;)">Rhumba</button><span class="transpose text-right" title="Tempo">100</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;vlfPuk94Uzs&#39;, &#39;Tombe La Neige&#39;, 0, 0)" title="Play vlfPuk94Uzs"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;vlfPuk94Uzs&#39;, &#39;Tombe La Neige&#39;, 0, 21)" title="Play loops"><i class="fa-solid fa-undo"></i>
+                    <div class="loopstyle">
+                      0.21
+                    </div>
+                  </button>
+                </td>
+                <td>
+                  
+                </td>
+                <td class="hiddenCol">
+                  tombe la neige
+                </td>
+              </tr>
+              <tr id="row_1">
+                <td>
+                  3
+                </td>
+                <td>
+                  <div class="d-grid gap-2"><button class="btn btn-sm btn-outline-secondary chorder mtooltip dbutton" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_1&#39;, false)" style="color:black; background-color:#d9d94d" title="Lyric for: Bup Be không tình yêu, tempo: 145"><span><i class="fa-solid fa-music">&nbsp;</i><b>Gm</b></span><span></span></button>
+                  </div>
+                </td>
+                <td>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_1&#39;, false)" title="Lyric for: Bup Be không tình yêu, tempo: 145">Bup Be không tình yêu</a>
+                </td>
+                <td>
+                  <button class="btn" onClick="return dt_search(&#39;Tien&#39;)">Tien</button>
+                </td>
+                <td class="dt-right">
+                  <button class="btn" onClick="return dt_search(&#39;Remix&#39;)">Remix</button><span class="transpose text-right" title="Tempo">145</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;XeTWz99WxDU&#39;, &#39;Bup Be không tình yêu&#39;, 0, 0)" title="Play XeTWz99WxDU"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;XeTWz99WxDU&#39;, &#39;Bup Be không tình yêu&#39;, 0, 20)" title="Play loops"><i class="fa-solid fa-undo"></i>
+                    <div class="loopstyle">
+                      0.20
+                    </div>
+                  </button>
+                </td>
+                <td>
+                  
+                </td>
+                <td class="hiddenCol">
+                  bup be khong tinh yeu
+                </td>
+              </tr>
+              <tr id="row_2">
+                <td>
+                  4
+                </td>
+                <td>
+                  <div class="d-grid gap-2"><button class="btn btn-sm btn-outline-secondary chorder mtooltip dbutton" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_2&#39;, false)" style="color:white; background-color:#666646" title="Lyric for: Et Si Tu N&#39;existais Pas, tempo: 100"><span><i class="fa-solid fa-music">&nbsp;</i><b>?</b></span><span></span></button>
+                  </div>
+                </td>
+                <td>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_2&#39;, false)" title="Lyric for: Et Si Tu N&#39;existais Pas, tempo: 100">Et Si Tu N&#39;existais Pas</a>
+                </td>
+                <td>
+                  <button class="btn" onClick="return dt_search(&#39;Kieu Lien&#39;)">Kieu Lien</button>
+                </td>
+                <td class="dt-right">
+                  <button class="btn" onClick="return dt_search(&#39;&#39;)"></button><span class="transpose text-right" title="Tempo">100</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;uvFPiRUJhbs&#39;, &#39;Et Si Tu Nexistais Pas&#39;, 0, 0)" title="Play uvFPiRUJhbs"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;uvFPiRUJhbs&#39;, &#39;Et Si Tu Nexistais Pas&#39;, 8, 28)" title="Play loops"><i class="fa-solid fa-undo"></i>
+                    <div class="loopstyle">
+                      8.20
+                    </div>
+                  </button>
+                </td>
+                <td>
+                  
+                </td>
+                <td class="hiddenCol">
+                  et si tu nexistais pas
+                </td>
+              </tr>
+              <tr id="row_3">
+                <td>
+                  5
+                </td>
+                <td>
+                  <div class="d-grid gap-2"><button class="btn btn-sm btn-outline-secondary chorder mtooltip dbutton" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_3&#39;, false)" style="color:white; background-color:#616145" title="Lyric for: Chuyện tình yêu, tempo: 98"><span><i class="fa-solid fa-music">&nbsp;</i><b>Bm/Am</b></span><span></span></button>
+                  </div>
+                </td>
+                <td>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_3&#39;, false)" title="Lyric for: Chuyện tình yêu, tempo: 98">Chuyện tình yêu</a>
+                </td>
+                <td>
+                  <button class="btn" onClick="return dt_search(&#39;Doan Trang&#39;)">Doan Trang</button>
+                </td>
+                <td class="dt-right">
+                  <button class="btn" onClick="return dt_search(&#39;Rhumba&#39;)">Rhumba</button><span class="transpose text-right" title="Tempo">98</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;LToOzkvEzWo&#39;, &#39;Chuyện tình yêu&#39;, 0, 0)" title="Play LToOzkvEzWo"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;LToOzkvEzWo&#39;, &#39;Chuyện tình yêu&#39;, 0, 20)" title="Play loops"><i class="fa-solid fa-undo"></i>
+                    <div class="loopstyle">
+                      0.20
+                    </div>
+                  </button>
+                </td>
+                <td>
+                  
+                </td>
+                <td class="hiddenCol">
+                  chuyen tinh yeu
+                </td>
+              </tr>
+              <tr id="row_4">
+                <td>
+                  6
+                </td>
+                <td>
+                  <div class="d-grid gap-2"><button class="btn btn-sm btn-outline-secondary chorder mtooltip dbutton" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_4&#39;, false)" style="color:white; background-color:#05053f" title="Lyric for: Tinh khúc cho em, tempo: 62"><span><i class="fa-solid fa-music">&nbsp;</i><b>Sol</b></span><span></span></button>
+                  </div>
+                </td>
+                <td>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_4&#39;, false)" title="Lyric for: Tinh khúc cho em, tempo: 62">Tinh khúc cho em</a>
+                </td>
+                <td>
+                  <button class="btn" onClick="return dt_search(&#39;Thuy Dung&#39;)">Thuy Dung</button>
+                </td>
+                <td class="dt-right">
+                  <button class="btn" onClick="return dt_search(&#39;Bossa&#39;)">Bossa</button><span class="transpose text-right" title="Tempo">62</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;aOtYsfu7Nvk&#39;, &#39;Tinh khúc cho em&#39;, 0, 0)" title="Play aOtYsfu7Nvk"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;aOtYsfu7Nvk&#39;, &#39;Tinh khúc cho em&#39;, 0, 15)" title="Play loops"><i class="fa-solid fa-undo"></i>
+                    <div class="loopstyle">
+                      0.15
+                    </div>
+                  </button>
+                </td>
+                <td>
+                  
+                </td>
+                <td class="hiddenCol">
+                  tinh khuc cho em
+                </td>
+              </tr>
+              <tr id="row_5">
+                <td>
+                  7
+                </td>
+                <td>
+                  <div class="d-grid gap-2"><button class="btn btn-sm btn-outline-secondary chorder mtooltip dbutton" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_5&#39;, false)" style="color:white; background-color:#787847" title="Lyric for: To Sau, tempo: 107"><span><i class="fa-solid fa-music">&nbsp;</i><b>?</b></span><span></span></button>
+                  </div>
+                </td>
+                <td>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_5&#39;, false)" title="Lyric for: To Sau, tempo: 107">To Sau</a>
+                </td>
+                <td>
+                  <button class="btn" onClick="return dt_search(&#39;Hoang Thuy&#39;)">Hoang Thuy</button>
+                </td>
+                <td class="dt-right">
+                  <button class="btn" onClick="return dt_search(&#39;Tango&#39;)">Tango</button><span class="transpose text-right" title="Tempo">107</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;gZb3Tey6ItQ&#39;, &#39;To Sau&#39;, 0, 0)" title="Play gZb3Tey6ItQ"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;gZb3Tey6ItQ&#39;, &#39;To Sau&#39;, 0, 18)" title="Play loops"><i class="fa-solid fa-undo"></i>
+                    <div class="loopstyle">
+                      0.18
+                    </div>
+                  </button>
+                </td>
+                <td>
+                  
+                </td>
+                <td class="hiddenCol">
+                  to sau
+                </td>
+              </tr>
+              <tr id="row_6">
+                <td>
+                  8
+                </td>
+                <td>
+                  <div class="d-grid gap-2"><button class="btn btn-sm btn-outline-secondary chorder mtooltip dbutton" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_6&#39;, false)" style="color:black; background-color:#ffff50" title="Lyric for: Se Hơn bao giờ hết, tempo: 160"><span><i class="fa-solid fa-music">&nbsp;</i><b>Em</b></span><span></span></button>
+                  </div>
+                </td>
+                <td>
+                  <a class="msource" href="#" onClick="get_lyric(&#39;2025-02-PH&#39;, &#39;row_6&#39;, false)" title="Lyric for: Se Hơn bao giờ hết, tempo: 160">Se Hơn bao giờ hết</a>
+                </td>
+                <td>
+                  <button class="btn" onClick="return dt_search(&#39;Ai Hoa&#39;)">Ai Hoa</button>
+                </td>
+                <td class="dt-right">
+                  <button class="btn" onClick="return dt_search(&#39;Cha Cha Cha&#39;)">Cha Cha Cha</button><span class="transpose text-right" title="Tempo">160</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;HI8QF39zxn4&#39;, &#39;Se Hơn bao giờ hết&#39;, 0, 0)" title="Play HI8QF39zxn4"><i class="fa-solid fa-video"></i></button><button class="btn btn-sm mtooltip" onClick="return play_on_youtube(&#39;HI8QF39zxn4&#39;, &#39;Se Hơn bao giờ hết&#39;, 0, 8)" title="Play loops"><i class="fa-solid fa-undo"></i>
+                    <div class="loopstyle">
+                      0.8
+                    </div>
+                  </button>
+                </td>
+                <td>
+                  
+                </td>
+                <td class="hiddenCol">
+                  se hon bao gio het
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn btn-sm btn-outline-secondary" onClick="reset_order()">Reset Order </button> Updated on 2025-02-02
+        </div>
+      </div>
+      <div class="qrcode">
+        <?xml version="1.0" standalone="yes"?><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" width="135" height="135" shape-rendering="crispEdges"><rect width="3" height="3" x="0" y="0" fill="#040"/><rect width="3" height="3" x="3" y="0" fill="#040"/><rect width="3" height="3" x="6" y="0" fill="#040"/><rect width="3" height="3" x="9" y="0" fill="#040"/><rect width="3" height="3" x="12" y="0" fill="#040"/><rect width="3" height="3" x="15" y="0" fill="#040"/><rect width="3" height="3" x="18" y="0" fill="#040"/><rect width="3" height="3" x="24" y="0" fill="#040"/><rect width="3" height="3" x="27" y="0" fill="#040"/><rect width="3" height="3" x="33" y="0" fill="#040"/><rect width="3" height="3" x="45" y="0" fill="#040"/><rect width="3" height="3" x="51" y="0" fill="#040"/><rect width="3" height="3" x="57" y="0" fill="#040"/><rect width="3" height="3" x="63" y="0" fill="#040"/><rect width="3" height="3" x="75" y="0" fill="#040"/><rect width="3" height="3" x="81" y="0" fill="#040"/><rect width="3" height="3" x="87" y="0" fill="#040"/><rect width="3" height="3" x="90" y="0" fill="#040"/><rect width="3" height="3" x="93" y="0" fill="#040"/><rect width="3" height="3" x="96" y="0" fill="#040"/><rect width="3" height="3" x="108" y="0" fill="#040"/><rect width="3" height="3" x="114" y="0" fill="#040"/><rect width="3" height="3" x="117" y="0" fill="#040"/><rect width="3" height="3" x="120" y="0" fill="#040"/><rect width="3" height="3" x="123" y="0" fill="#040"/><rect width="3" height="3" x="126" y="0" fill="#040"/><rect width="3" height="3" x="129" y="0" fill="#040"/><rect width="3" height="3" x="132" y="0" fill="#040"/><rect width="3" height="3" x="0" y="3" fill="#040"/><rect width="3" height="3" x="18" y="3" fill="#040"/><rect width="3" height="3" x="24" y="3" fill="#040"/><rect width="3" height="3" x="30" y="3" fill="#040"/><rect width="3" height="3" x="39" y="3" fill="#040"/><rect width="3" height="3" x="48" y="3" fill="#040"/><rect width="3" height="3" x="54" y="3" fill="#040"/><rect width="3" height="3" x="57" y="3" fill="#040"/><rect width="3" height="3" x="75" y="3" fill="#040"/><rect width="3" height="3" x="81" y="3" fill="#040"/><rect width="3" height="3" x="87" y="3" fill="#040"/><rect width="3" height="3" x="90" y="3" fill="#040"/><rect width="3" height="3" x="96" y="3" fill="#040"/><rect width="3" height="3" x="99" y="3" fill="#040"/><rect width="3" height="3" x="105" y="3" fill="#040"/><rect width="3" height="3" x="114" y="3" fill="#040"/><rect width="3" height="3" x="132" y="3" fill="#040"/><rect width="3" height="3" x="0" y="6" fill="#040"/><rect width="3" height="3" x="6" y="6" fill="#040"/><rect width="3" height="3" x="9" y="6" fill="#040"/><rect width="3" height="3" x="12" y="6" fill="#040"/><rect width="3" height="3" x="18" y="6" fill="#040"/><rect width="3" height="3" x="27" y="6" fill="#040"/><rect width="3" height="3" x="33" y="6" fill="#040"/><rect width="3" height="3" x="36" y="6" fill="#040"/><rect width="3" height="3" x="42" y="6" fill="#040"/><rect width="3" height="3" x="51" y="6" fill="#040"/><rect width="3" height="3" x="63" y="6" fill="#040"/><rect width="3" height="3" x="66" y="6" fill="#040"/><rect width="3" height="3" x="81" y="6" fill="#040"/><rect width="3" height="3" x="84" y="6" fill="#040"/><rect width="3" height="3" x="105" y="6" fill="#040"/><rect width="3" height="3" x="114" y="6" fill="#040"/><rect width="3" height="3" x="120" y="6" fill="#040"/><rect width="3" height="3" x="123" y="6" fill="#040"/><rect width="3" height="3" x="126" y="6" fill="#040"/><rect width="3" height="3" x="132" y="6" fill="#040"/><rect width="3" height="3" x="0" y="9" fill="#040"/><rect width="3" height="3" x="6" y="9" fill="#040"/><rect width="3" height="3" x="9" y="9" fill="#040"/><rect width="3" height="3" x="12" y="9" fill="#040"/><rect width="3" height="3" x="18" y="9" fill="#040"/><rect width="3" height="3" x="24" y="9" fill="#040"/><rect width="3" height="3" x="27" y="9" fill="#040"/><rect width="3" height="3" x="30" y="9" fill="#040"/><rect width="3" height="3" x="36" y="9" fill="#040"/><rect width="3" height="3" x="39" y="9" fill="#040"/><rect width="3" height="3" x="42" y="9" fill="#040"/><rect width="3" height="3" x="45" y="9" fill="#040"/><rect width="3" height="3" x="54" y="9" fill="#040"/><rect width="3" height="3" x="63" y="9" fill="#040"/><rect width="3" height="3" x="72" y="9" fill="#040"/><rect width="3" height="3" x="87" y="9" fill="#040"/><rect width="3" height="3" x="90" y="9" fill="#040"/><rect width="3" height="3" x="96" y="9" fill="#040"/><rect width="3" height="3" x="105" y="9" fill="#040"/><rect width="3" height="3" x="108" y="9" fill="#040"/><rect width="3" height="3" x="114" y="9" fill="#040"/><rect width="3" height="3" x="120" y="9" fill="#040"/><rect width="3" height="3" x="123" y="9" fill="#040"/><rect width="3" height="3" x="126" y="9" fill="#040"/><rect width="3" height="3" x="132" y="9" fill="#040"/><rect width="3" height="3" x="0" y="12" fill="#040"/><rect width="3" height="3" x="6" y="12" fill="#040"/><rect width="3" height="3" x="9" y="12" fill="#040"/><rect width="3" height="3" x="12" y="12" fill="#040"/><rect width="3" height="3" x="18" y="12" fill="#040"/><rect width="3" height="3" x="24" y="12" fill="#040"/><rect width="3" height="3" x="27" y="12" fill="#040"/><rect width="3" height="3" x="30" y="12" fill="#040"/><rect width="3" height="3" x="39" y="12" fill="#040"/><rect width="3" height="3" x="51" y="12" fill="#040"/><rect width="3" height="3" x="60" y="12" fill="#040"/><rect width="3" height="3" x="63" y="12" fill="#040"/><rect width="3" height="3" x="66" y="12" fill="#040"/><rect width="3" height="3" x="69" y="12" fill="#040"/><rect width="3" height="3" x="72" y="12" fill="#040"/><rect width="3" height="3" x="78" y="12" fill="#040"/><rect width="3" height="3" x="81" y="12" fill="#040"/><rect width="3" height="3" x="87" y="12" fill="#040"/><rect width="3" height="3" x="90" y="12" fill="#040"/><rect width="3" height="3" x="93" y="12" fill="#040"/><rect width="3" height="3" x="102" y="12" fill="#040"/><rect width="3" height="3" x="105" y="12" fill="#040"/><rect width="3" height="3" x="108" y="12" fill="#040"/><rect width="3" height="3" x="114" y="12" fill="#040"/><rect width="3" height="3" x="120" y="12" fill="#040"/><rect width="3" height="3" x="123" y="12" fill="#040"/><rect width="3" height="3" x="126" y="12" fill="#040"/><rect width="3" height="3" x="132" y="12" fill="#040"/><rect width="3" height="3" x="0" y="15" fill="#040"/><rect width="3" height="3" x="18" y="15" fill="#040"/><rect width="3" height="3" x="24" y="15" fill="#040"/><rect width="3" height="3" x="30" y="15" fill="#040"/><rect width="3" height="3" x="36" y="15" fill="#040"/><rect width="3" height="3" x="39" y="15" fill="#040"/><rect width="3" height="3" x="42" y="15" fill="#040"/><rect width="3" height="3" x="51" y="15" fill="#040"/><rect width="3" height="3" x="60" y="15" fill="#040"/><rect width="3" height="3" x="72" y="15" fill="#040"/><rect width="3" height="3" x="75" y="15" fill="#040"/><rect width="3" height="3" x="78" y="15" fill="#040"/><rect width="3" height="3" x="81" y="15" fill="#040"/><rect width="3" height="3" x="90" y="15" fill="#040"/><rect width="3" height="3" x="99" y="15" fill="#040"/><rect width="3" height="3" x="114" y="15" fill="#040"/><rect width="3" height="3" x="132" y="15" fill="#040"/><rect width="3" height="3" x="0" y="18" fill="#040"/><rect width="3" height="3" x="3" y="18" fill="#040"/><rect width="3" height="3" x="6" y="18" fill="#040"/><rect width="3" height="3" x="9" y="18" fill="#040"/><rect width="3" height="3" x="12" y="18" fill="#040"/><rect width="3" height="3" x="15" y="18" fill="#040"/><rect width="3" height="3" x="18" y="18" fill="#040"/><rect width="3" height="3" x="24" y="18" fill="#040"/><rect width="3" height="3" x="30" y="18" fill="#040"/><rect width="3" height="3" x="36" y="18" fill="#040"/><rect width="3" height="3" x="42" y="18" fill="#040"/><rect width="3" height="3" x="48" y="18" fill="#040"/><rect width="3" height="3" x="54" y="18" fill="#040"/><rect width="3" height="3" x="60" y="18" fill="#040"/><rect width="3" height="3" x="66" y="18" fill="#040"/><rect width="3" height="3" x="72" y="18" fill="#040"/><rect width="3" height="3" x="78" y="18" fill="#040"/><rect width="3" height="3" x="84" y="18" fill="#040"/><rect width="3" height="3" x="90" y="18" fill="#040"/><rect width="3" height="3" x="96" y="18" fill="#040"/><rect width="3" height="3" x="102" y="18" fill="#040"/><rect width="3" height="3" x="108" y="18" fill="#040"/><rect width="3" height="3" x="114" y="18" fill="#040"/><rect width="3" height="3" x="117" y="18" fill="#040"/><rect width="3" height="3" x="120" y="18" fill="#040"/><rect width="3" height="3" x="123" y="18" fill="#040"/><rect width="3" height="3" x="126" y="18" fill="#040"/><rect width="3" height="3" x="129" y="18" fill="#040"/><rect width="3" height="3" x="132" y="18" fill="#040"/><rect width="3" height="3" x="27" y="21" fill="#040"/><rect width="3" height="3" x="30" y="21" fill="#040"/><rect width="3" height="3" x="42" y="21" fill="#040"/><rect width="3" height="3" x="60" y="21" fill="#040"/><rect width="3" height="3" x="72" y="21" fill="#040"/><rect width="3" height="3" x="75" y="21" fill="#040"/><rect width="3" height="3" x="78" y="21" fill="#040"/><rect width="3" height="3" x="84" y="21" fill="#040"/><rect width="3" height="3" x="90" y="21" fill="#040"/><rect width="3" height="3" x="93" y="21" fill="#040"/><rect width="3" height="3" x="96" y="21" fill="#040"/><rect width="3" height="3" x="105" y="21" fill="#040"/><rect width="3" height="3" x="9" y="24" fill="#040"/><rect width="3" height="3" x="18" y="24" fill="#040"/><rect width="3" height="3" x="27" y="24" fill="#040"/><rect width="3" height="3" x="30" y="24" fill="#040"/><rect width="3" height="3" x="33" y="24" fill="#040"/><rect width="3" height="3" x="36" y="24" fill="#040"/><rect width="3" height="3" x="51" y="24" fill="#040"/><rect width="3" height="3" x="60" y="24" fill="#040"/><rect width="3" height="3" x="63" y="24" fill="#040"/><rect width="3" height="3" x="66" y="24" fill="#040"/><rect width="3" height="3" x="69" y="24" fill="#040"/><rect width="3" height="3" x="72" y="24" fill="#040"/><rect width="3" height="3" x="84" y="24" fill="#040"/><rect width="3" height="3" x="87" y="24" fill="#040"/><rect width="3" height="3" x="90" y="24" fill="#040"/><rect width="3" height="3" x="99" y="24" fill="#040"/><rect width="3" height="3" x="105" y="24" fill="#040"/><rect width="3" height="3" x="117" y="24" fill="#040"/><rect width="3" height="3" x="120" y="24" fill="#040"/><rect width="3" height="3" x="123" y="24" fill="#040"/><rect width="3" height="3" x="129" y="24" fill="#040"/><rect width="3" height="3" x="132" y="24" fill="#040"/><rect width="3" height="3" x="0" y="27" fill="#040"/><rect width="3" height="3" x="12" y="27" fill="#040"/><rect width="3" height="3" x="33" y="27" fill="#040"/><rect width="3" height="3" x="39" y="27" fill="#040"/><rect width="3" height="3" x="45" y="27" fill="#040"/><rect width="3" height="3" x="54" y="27" fill="#040"/><rect width="3" height="3" x="66" y="27" fill="#040"/><rect width="3" height="3" x="75" y="27" fill="#040"/><rect width="3" height="3" x="81" y="27" fill="#040"/><rect width="3" height="3" x="84" y="27" fill="#040"/><rect width="3" height="3" x="96" y="27" fill="#040"/><rect width="3" height="3" x="99" y="27" fill="#040"/><rect width="3" height="3" x="111" y="27" fill="#040"/><rect width="3" height="3" x="117" y="27" fill="#040"/><rect width="3" height="3" x="123" y="27" fill="#040"/><rect width="3" height="3" x="129" y="27" fill="#040"/><rect width="3" height="3" x="132" y="27" fill="#040"/><rect width="3" height="3" x="0" y="30" fill="#040"/><rect width="3" height="3" x="3" y="30" fill="#040"/><rect width="3" height="3" x="9" y="30" fill="#040"/><rect width="3" height="3" x="12" y="30" fill="#040"/><rect width="3" height="3" x="15" y="30" fill="#040"/><rect width="3" height="3" x="18" y="30" fill="#040"/><rect width="3" height="3" x="27" y="30" fill="#040"/><rect width="3" height="3" x="30" y="30" fill="#040"/><rect width="3" height="3" x="39" y="30" fill="#040"/><rect width="3" height="3" x="45" y="30" fill="#040"/><rect width="3" height="3" x="48" y="30" fill="#040"/><rect width="3" height="3" x="51" y="30" fill="#040"/><rect width="3" height="3" x="54" y="30" fill="#040"/><rect width="3" height="3" x="72" y="30" fill="#040"/><rect width="3" height="3" x="75" y="30" fill="#040"/><rect width="3" height="3" x="81" y="30" fill="#040"/><rect width="3" height="3" x="84" y="30" fill="#040"/><rect width="3" height="3" x="102" y="30" fill="#040"/><rect width="3" height="3" x="108" y="30" fill="#040"/><rect width="3" height="3" x="132" y="30" fill="#040"/><rect width="3" height="3" x="0" y="33" fill="#040"/><rect width="3" height="3" x="3" y="33" fill="#040"/><rect width="3" height="3" x="21" y="33" fill="#040"/><rect width="3" height="3" x="24" y="33" fill="#040"/><rect width="3" height="3" x="27" y="33" fill="#040"/><rect width="3" height="3" x="30" y="33" fill="#040"/><rect width="3" height="3" x="33" y="33" fill="#040"/><rect width="3" height="3" x="39" y="33" fill="#040"/><rect width="3" height="3" x="42" y="33" fill="#040"/><rect width="3" height="3" x="45" y="33" fill="#040"/><rect width="3" height="3" x="54" y="33" fill="#040"/><rect width="3" height="3" x="60" y="33" fill="#040"/><rect width="3" height="3" x="69" y="33" fill="#040"/><rect width="3" height="3" x="75" y="33" fill="#040"/><rect width="3" height="3" x="81" y="33" fill="#040"/><rect width="3" height="3" x="93" y="33" fill="#040"/><rect width="3" height="3" x="99" y="33" fill="#040"/><rect width="3" height="3" x="102" y="33" fill="#040"/><rect width="3" height="3" x="105" y="33" fill="#040"/><rect width="3" height="3" x="108" y="33" fill="#040"/><rect width="3" height="3" x="111" y="33" fill="#040"/><rect width="3" height="3" x="114" y="33" fill="#040"/><rect width="3" height="3" x="120" y="33" fill="#040"/><rect width="3" height="3" x="132" y="33" fill="#040"/><rect width="3" height="3" x="0" y="36" fill="#040"/><rect width="3" height="3" x="6" y="36" fill="#040"/><rect width="3" height="3" x="12" y="36" fill="#040"/><rect width="3" height="3" x="18" y="36" fill="#040"/><rect width="3" height="3" x="21" y="36" fill="#040"/><rect width="3" height="3" x="24" y="36" fill="#040"/><rect width="3" height="3" x="27" y="36" fill="#040"/><rect width="3" height="3" x="33" y="36" fill="#040"/><rect width="3" height="3" x="60" y="36" fill="#040"/><rect width="3" height="3" x="63" y="36" fill="#040"/><rect width="3" height="3" x="69" y="36" fill="#040"/><rect width="3" height="3" x="93" y="36" fill="#040"/><rect width="3" height="3" x="96" y="36" fill="#040"/><rect width="3" height="3" x="99" y="36" fill="#040"/><rect width="3" height="3" x="102" y="36" fill="#040"/><rect width="3" height="3" x="105" y="36" fill="#040"/><rect width="3" height="3" x="114" y="36" fill="#040"/><rect width="3" height="3" x="117" y="36" fill="#040"/><rect width="3" height="3" x="120" y="36" fill="#040"/><rect width="3" height="3" x="123" y="36" fill="#040"/><rect width="3" height="3" x="3" y="39" fill="#040"/><rect width="3" height="3" x="9" y="39" fill="#040"/><rect width="3" height="3" x="27" y="39" fill="#040"/><rect width="3" height="3" x="30" y="39" fill="#040"/><rect width="3" height="3" x="42" y="39" fill="#040"/><rect width="3" height="3" x="57" y="39" fill="#040"/><rect width="3" height="3" x="63" y="39" fill="#040"/><rect width="3" height="3" x="66" y="39" fill="#040"/><rect width="3" height="3" x="69" y="39" fill="#040"/><rect width="3" height="3" x="72" y="39" fill="#040"/><rect width="3" height="3" x="75" y="39" fill="#040"/><rect width="3" height="3" x="81" y="39" fill="#040"/><rect width="3" height="3" x="84" y="39" fill="#040"/><rect width="3" height="3" x="87" y="39" fill="#040"/><rect width="3" height="3" x="102" y="39" fill="#040"/><rect width="3" height="3" x="111" y="39" fill="#040"/><rect width="3" height="3" x="123" y="39" fill="#040"/><rect width="3" height="3" x="126" y="39" fill="#040"/><rect width="3" height="3" x="132" y="39" fill="#040"/><rect width="3" height="3" x="0" y="42" fill="#040"/><rect width="3" height="3" x="3" y="42" fill="#040"/><rect width="3" height="3" x="18" y="42" fill="#040"/><rect width="3" height="3" x="21" y="42" fill="#040"/><rect width="3" height="3" x="24" y="42" fill="#040"/><rect width="3" height="3" x="27" y="42" fill="#040"/><rect width="3" height="3" x="30" y="42" fill="#040"/><rect width="3" height="3" x="33" y="42" fill="#040"/><rect width="3" height="3" x="36" y="42" fill="#040"/><rect width="3" height="3" x="39" y="42" fill="#040"/><rect width="3" height="3" x="45" y="42" fill="#040"/><rect width="3" height="3" x="48" y="42" fill="#040"/><rect width="3" height="3" x="51" y="42" fill="#040"/><rect width="3" height="3" x="54" y="42" fill="#040"/><rect width="3" height="3" x="66" y="42" fill="#040"/><rect width="3" height="3" x="78" y="42" fill="#040"/><rect width="3" height="3" x="99" y="42" fill="#040"/><rect width="3" height="3" x="108" y="42" fill="#040"/><rect width="3" height="3" x="111" y="42" fill="#040"/><rect width="3" height="3" x="114" y="42" fill="#040"/><rect width="3" height="3" x="120" y="42" fill="#040"/><rect width="3" height="3" x="123" y="42" fill="#040"/><rect width="3" height="3" x="126" y="42" fill="#040"/><rect width="3" height="3" x="129" y="42" fill="#040"/><rect width="3" height="3" x="0" y="45" fill="#040"/><rect width="3" height="3" x="3" y="45" fill="#040"/><rect width="3" height="3" x="12" y="45" fill="#040"/><rect width="3" height="3" x="15" y="45" fill="#040"/><rect width="3" height="3" x="30" y="45" fill="#040"/><rect width="3" height="3" x="42" y="45" fill="#040"/><rect width="3" height="3" x="45" y="45" fill="#040"/><rect width="3" height="3" x="63" y="45" fill="#040"/><rect width="3" height="3" x="69" y="45" fill="#040"/><rect width="3" height="3" x="72" y="45" fill="#040"/><rect width="3" height="3" x="75" y="45" fill="#040"/><rect width="3" height="3" x="87" y="45" fill="#040"/><rect width="3" height="3" x="93" y="45" fill="#040"/><rect width="3" height="3" x="96" y="45" fill="#040"/><rect width="3" height="3" x="99" y="45" fill="#040"/><rect width="3" height="3" x="105" y="45" fill="#040"/><rect width="3" height="3" x="111" y="45" fill="#040"/><rect width="3" height="3" x="120" y="45" fill="#040"/><rect width="3" height="3" x="129" y="45" fill="#040"/><rect width="3" height="3" x="0" y="48" fill="#040"/><rect width="3" height="3" x="3" y="48" fill="#040"/><rect width="3" height="3" x="6" y="48" fill="#040"/><rect width="3" height="3" x="15" y="48" fill="#040"/><rect width="3" height="3" x="18" y="48" fill="#040"/><rect width="3" height="3" x="21" y="48" fill="#040"/><rect width="3" height="3" x="24" y="48" fill="#040"/><rect width="3" height="3" x="36" y="48" fill="#040"/><rect width="3" height="3" x="39" y="48" fill="#040"/><rect width="3" height="3" x="45" y="48" fill="#040"/><rect width="3" height="3" x="51" y="48" fill="#040"/><rect width="3" height="3" x="54" y="48" fill="#040"/><rect width="3" height="3" x="60" y="48" fill="#040"/><rect width="3" height="3" x="63" y="48" fill="#040"/><rect width="3" height="3" x="66" y="48" fill="#040"/><rect width="3" height="3" x="69" y="48" fill="#040"/><rect width="3" height="3" x="84" y="48" fill="#040"/><rect width="3" height="3" x="87" y="48" fill="#040"/><rect width="3" height="3" x="90" y="48" fill="#040"/><rect width="3" height="3" x="96" y="48" fill="#040"/><rect width="3" height="3" x="114" y="48" fill="#040"/><rect width="3" height="3" x="117" y="48" fill="#040"/><rect width="3" height="3" x="123" y="48" fill="#040"/><rect width="3" height="3" x="132" y="48" fill="#040"/><rect width="3" height="3" x="3" y="51" fill="#040"/><rect width="3" height="3" x="9" y="51" fill="#040"/><rect width="3" height="3" x="15" y="51" fill="#040"/><rect width="3" height="3" x="30" y="51" fill="#040"/><rect width="3" height="3" x="39" y="51" fill="#040"/><rect width="3" height="3" x="48" y="51" fill="#040"/><rect width="3" height="3" x="51" y="51" fill="#040"/><rect width="3" height="3" x="54" y="51" fill="#040"/><rect width="3" height="3" x="69" y="51" fill="#040"/><rect width="3" height="3" x="75" y="51" fill="#040"/><rect width="3" height="3" x="84" y="51" fill="#040"/><rect width="3" height="3" x="93" y="51" fill="#040"/><rect width="3" height="3" x="105" y="51" fill="#040"/><rect width="3" height="3" x="114" y="51" fill="#040"/><rect width="3" height="3" x="117" y="51" fill="#040"/><rect width="3" height="3" x="120" y="51" fill="#040"/><rect width="3" height="3" x="123" y="51" fill="#040"/><rect width="3" height="3" x="126" y="51" fill="#040"/><rect width="3" height="3" x="129" y="51" fill="#040"/><rect width="3" height="3" x="9" y="54" fill="#040"/><rect width="3" height="3" x="18" y="54" fill="#040"/><rect width="3" height="3" x="24" y="54" fill="#040"/><rect width="3" height="3" x="27" y="54" fill="#040"/><rect width="3" height="3" x="33" y="54" fill="#040"/><rect width="3" height="3" x="36" y="54" fill="#040"/><rect width="3" height="3" x="39" y="54" fill="#040"/><rect width="3" height="3" x="48" y="54" fill="#040"/><rect width="3" height="3" x="60" y="54" fill="#040"/><rect width="3" height="3" x="63" y="54" fill="#040"/><rect width="3" height="3" x="69" y="54" fill="#040"/><rect width="3" height="3" x="72" y="54" fill="#040"/><rect width="3" height="3" x="78" y="54" fill="#040"/><rect width="3" height="3" x="81" y="54" fill="#040"/><rect width="3" height="3" x="87" y="54" fill="#040"/><rect width="3" height="3" x="90" y="54" fill="#040"/><rect width="3" height="3" x="93" y="54" fill="#040"/><rect width="3" height="3" x="99" y="54" fill="#040"/><rect width="3" height="3" x="108" y="54" fill="#040"/><rect width="3" height="3" x="111" y="54" fill="#040"/><rect width="3" height="3" x="117" y="54" fill="#040"/><rect width="3" height="3" x="120" y="54" fill="#040"/><rect width="3" height="3" x="123" y="54" fill="#040"/><rect width="3" height="3" x="126" y="54" fill="#040"/><rect width="3" height="3" x="132" y="54" fill="#040"/><rect width="3" height="3" x="0" y="57" fill="#040"/><rect width="3" height="3" x="3" y="57" fill="#040"/><rect width="3" height="3" x="6" y="57" fill="#040"/><rect width="3" height="3" x="9" y="57" fill="#040"/><rect width="3" height="3" x="15" y="57" fill="#040"/><rect width="3" height="3" x="21" y="57" fill="#040"/><rect width="3" height="3" x="27" y="57" fill="#040"/><rect width="3" height="3" x="30" y="57" fill="#040"/><rect width="3" height="3" x="45" y="57" fill="#040"/><rect width="3" height="3" x="48" y="57" fill="#040"/><rect width="3" height="3" x="54" y="57" fill="#040"/><rect width="3" height="3" x="57" y="57" fill="#040"/><rect width="3" height="3" x="60" y="57" fill="#040"/><rect width="3" height="3" x="75" y="57" fill="#040"/><rect width="3" height="3" x="78" y="57" fill="#040"/><rect width="3" height="3" x="90" y="57" fill="#040"/><rect width="3" height="3" x="96" y="57" fill="#040"/><rect width="3" height="3" x="99" y="57" fill="#040"/><rect width="3" height="3" x="108" y="57" fill="#040"/><rect width="3" height="3" x="114" y="57" fill="#040"/><rect width="3" height="3" x="117" y="57" fill="#040"/><rect width="3" height="3" x="132" y="57" fill="#040"/><rect width="3" height="3" x="0" y="60" fill="#040"/><rect width="3" height="3" x="3" y="60" fill="#040"/><rect width="3" height="3" x="6" y="60" fill="#040"/><rect width="3" height="3" x="9" y="60" fill="#040"/><rect width="3" height="3" x="12" y="60" fill="#040"/><rect width="3" height="3" x="15" y="60" fill="#040"/><rect width="3" height="3" x="18" y="60" fill="#040"/><rect width="3" height="3" x="21" y="60" fill="#040"/><rect width="3" height="3" x="24" y="60" fill="#040"/><rect width="3" height="3" x="30" y="60" fill="#040"/><rect width="3" height="3" x="33" y="60" fill="#040"/><rect width="3" height="3" x="36" y="60" fill="#040"/><rect width="3" height="3" x="39" y="60" fill="#040"/><rect width="3" height="3" x="42" y="60" fill="#040"/><rect width="3" height="3" x="45" y="60" fill="#040"/><rect width="3" height="3" x="48" y="60" fill="#040"/><rect width="3" height="3" x="54" y="60" fill="#040"/><rect width="3" height="3" x="57" y="60" fill="#040"/><rect width="3" height="3" x="60" y="60" fill="#040"/><rect width="3" height="3" x="63" y="60" fill="#040"/><rect width="3" height="3" x="66" y="60" fill="#040"/><rect width="3" height="3" x="69" y="60" fill="#040"/><rect width="3" height="3" x="72" y="60" fill="#040"/><rect width="3" height="3" x="78" y="60" fill="#040"/><rect width="3" height="3" x="81" y="60" fill="#040"/><rect width="3" height="3" x="87" y="60" fill="#040"/><rect width="3" height="3" x="93" y="60" fill="#040"/><rect width="3" height="3" x="99" y="60" fill="#040"/><rect width="3" height="3" x="102" y="60" fill="#040"/><rect width="3" height="3" x="105" y="60" fill="#040"/><rect width="3" height="3" x="108" y="60" fill="#040"/><rect width="3" height="3" x="111" y="60" fill="#040"/><rect width="3" height="3" x="114" y="60" fill="#040"/><rect width="3" height="3" x="117" y="60" fill="#040"/><rect width="3" height="3" x="120" y="60" fill="#040"/><rect width="3" height="3" x="129" y="60" fill="#040"/><rect width="3" height="3" x="132" y="60" fill="#040"/><rect width="3" height="3" x="3" y="63" fill="#040"/><rect width="3" height="3" x="9" y="63" fill="#040"/><rect width="3" height="3" x="12" y="63" fill="#040"/><rect width="3" height="3" x="24" y="63" fill="#040"/><rect width="3" height="3" x="33" y="63" fill="#040"/><rect width="3" height="3" x="36" y="63" fill="#040"/><rect width="3" height="3" x="39" y="63" fill="#040"/><rect width="3" height="3" x="54" y="63" fill="#040"/><rect width="3" height="3" x="60" y="63" fill="#040"/><rect width="3" height="3" x="72" y="63" fill="#040"/><rect width="3" height="3" x="84" y="63" fill="#040"/><rect width="3" height="3" x="90" y="63" fill="#040"/><rect width="3" height="3" x="93" y="63" fill="#040"/><rect width="3" height="3" x="108" y="63" fill="#040"/><rect width="3" height="3" x="120" y="63" fill="#040"/><rect width="3" height="3" x="126" y="63" fill="#040"/><rect width="3" height="3" x="129" y="63" fill="#040"/><rect width="3" height="3" x="132" y="63" fill="#040"/><rect width="3" height="3" x="0" y="66" fill="#040"/><rect width="3" height="3" x="6" y="66" fill="#040"/><rect width="3" height="3" x="12" y="66" fill="#040"/><rect width="3" height="3" x="18" y="66" fill="#040"/><rect width="3" height="3" x="24" y="66" fill="#040"/><rect width="3" height="3" x="27" y="66" fill="#040"/><rect width="3" height="3" x="30" y="66" fill="#040"/><rect width="3" height="3" x="33" y="66" fill="#040"/><rect width="3" height="3" x="36" y="66" fill="#040"/><rect width="3" height="3" x="54" y="66" fill="#040"/><rect width="3" height="3" x="60" y="66" fill="#040"/><rect width="3" height="3" x="66" y="66" fill="#040"/><rect width="3" height="3" x="72" y="66" fill="#040"/><rect width="3" height="3" x="81" y="66" fill="#040"/><rect width="3" height="3" x="90" y="66" fill="#040"/><rect width="3" height="3" x="93" y="66" fill="#040"/><rect width="3" height="3" x="99" y="66" fill="#040"/><rect width="3" height="3" x="102" y="66" fill="#040"/><rect width="3" height="3" x="108" y="66" fill="#040"/><rect width="3" height="3" x="114" y="66" fill="#040"/><rect width="3" height="3" x="120" y="66" fill="#040"/><rect width="3" height="3" x="126" y="66" fill="#040"/><rect width="3" height="3" x="132" y="66" fill="#040"/><rect width="3" height="3" x="6" y="69" fill="#040"/><rect width="3" height="3" x="12" y="69" fill="#040"/><rect width="3" height="3" x="24" y="69" fill="#040"/><rect width="3" height="3" x="30" y="69" fill="#040"/><rect width="3" height="3" x="33" y="69" fill="#040"/><rect width="3" height="3" x="39" y="69" fill="#040"/><rect width="3" height="3" x="48" y="69" fill="#040"/><rect width="3" height="3" x="51" y="69" fill="#040"/><rect width="3" height="3" x="57" y="69" fill="#040"/><rect width="3" height="3" x="60" y="69" fill="#040"/><rect width="3" height="3" x="72" y="69" fill="#040"/><rect width="3" height="3" x="75" y="69" fill="#040"/><rect width="3" height="3" x="81" y="69" fill="#040"/><rect width="3" height="3" x="87" y="69" fill="#040"/><rect width="3" height="3" x="96" y="69" fill="#040"/><rect width="3" height="3" x="99" y="69" fill="#040"/><rect width="3" height="3" x="102" y="69" fill="#040"/><rect width="3" height="3" x="108" y="69" fill="#040"/><rect width="3" height="3" x="120" y="69" fill="#040"/><rect width="3" height="3" x="123" y="69" fill="#040"/><rect width="3" height="3" x="12" y="72" fill="#040"/><rect width="3" height="3" x="15" y="72" fill="#040"/><rect width="3" height="3" x="18" y="72" fill="#040"/><rect width="3" height="3" x="21" y="72" fill="#040"/><rect width="3" height="3" x="24" y="72" fill="#040"/><rect width="3" height="3" x="27" y="72" fill="#040"/><rect width="3" height="3" x="39" y="72" fill="#040"/><rect width="3" height="3" x="42" y="72" fill="#040"/><rect width="3" height="3" x="51" y="72" fill="#040"/><rect width="3" height="3" x="54" y="72" fill="#040"/><rect width="3" height="3" x="57" y="72" fill="#040"/><rect width="3" height="3" x="60" y="72" fill="#040"/><rect width="3" height="3" x="63" y="72" fill="#040"/><rect width="3" height="3" x="66" y="72" fill="#040"/><rect width="3" height="3" x="69" y="72" fill="#040"/><rect width="3" height="3" x="72" y="72" fill="#040"/><rect width="3" height="3" x="78" y="72" fill="#040"/><rect width="3" height="3" x="81" y="72" fill="#040"/><rect width="3" height="3" x="84" y="72" fill="#040"/><rect width="3" height="3" x="87" y="72" fill="#040"/><rect width="3" height="3" x="96" y="72" fill="#040"/><rect width="3" height="3" x="102" y="72" fill="#040"/><rect width="3" height="3" x="108" y="72" fill="#040"/><rect width="3" height="3" x="111" y="72" fill="#040"/><rect width="3" height="3" x="114" y="72" fill="#040"/><rect width="3" height="3" x="117" y="72" fill="#040"/><rect width="3" height="3" x="120" y="72" fill="#040"/><rect width="3" height="3" x="0" y="75" fill="#040"/><rect width="3" height="3" x="3" y="75" fill="#040"/><rect width="3" height="3" x="6" y="75" fill="#040"/><rect width="3" height="3" x="9" y="75" fill="#040"/><rect width="3" height="3" x="15" y="75" fill="#040"/><rect width="3" height="3" x="24" y="75" fill="#040"/><rect width="3" height="3" x="30" y="75" fill="#040"/><rect width="3" height="3" x="39" y="75" fill="#040"/><rect width="3" height="3" x="42" y="75" fill="#040"/><rect width="3" height="3" x="45" y="75" fill="#040"/><rect width="3" height="3" x="48" y="75" fill="#040"/><rect width="3" height="3" x="51" y="75" fill="#040"/><rect width="3" height="3" x="60" y="75" fill="#040"/><rect width="3" height="3" x="63" y="75" fill="#040"/><rect width="3" height="3" x="66" y="75" fill="#040"/><rect width="3" height="3" x="78" y="75" fill="#040"/><rect width="3" height="3" x="81" y="75" fill="#040"/><rect width="3" height="3" x="84" y="75" fill="#040"/><rect width="3" height="3" x="93" y="75" fill="#040"/><rect width="3" height="3" x="99" y="75" fill="#040"/><rect width="3" height="3" x="102" y="75" fill="#040"/><rect width="3" height="3" x="111" y="75" fill="#040"/><rect width="3" height="3" x="120" y="75" fill="#040"/><rect width="3" height="3" x="126" y="75" fill="#040"/><rect width="3" height="3" x="129" y="75" fill="#040"/><rect width="3" height="3" x="132" y="75" fill="#040"/><rect width="3" height="3" x="6" y="78" fill="#040"/><rect width="3" height="3" x="9" y="78" fill="#040"/><rect width="3" height="3" x="18" y="78" fill="#040"/><rect width="3" height="3" x="21" y="78" fill="#040"/><rect width="3" height="3" x="33" y="78" fill="#040"/><rect width="3" height="3" x="39" y="78" fill="#040"/><rect width="3" height="3" x="45" y="78" fill="#040"/><rect width="3" height="3" x="48" y="78" fill="#040"/><rect width="3" height="3" x="54" y="78" fill="#040"/><rect width="3" height="3" x="60" y="78" fill="#040"/><rect width="3" height="3" x="69" y="78" fill="#040"/><rect width="3" height="3" x="75" y="78" fill="#040"/><rect width="3" height="3" x="78" y="78" fill="#040"/><rect width="3" height="3" x="81" y="78" fill="#040"/><rect width="3" height="3" x="102" y="78" fill="#040"/><rect width="3" height="3" x="120" y="78" fill="#040"/><rect width="3" height="3" x="123" y="78" fill="#040"/><rect width="3" height="3" x="126" y="78" fill="#040"/><rect width="3" height="3" x="9" y="81" fill="#040"/><rect width="3" height="3" x="30" y="81" fill="#040"/><rect width="3" height="3" x="36" y="81" fill="#040"/><rect width="3" height="3" x="39" y="81" fill="#040"/><rect width="3" height="3" x="51" y="81" fill="#040"/><rect width="3" height="3" x="54" y="81" fill="#040"/><rect width="3" height="3" x="57" y="81" fill="#040"/><rect width="3" height="3" x="69" y="81" fill="#040"/><rect width="3" height="3" x="78" y="81" fill="#040"/><rect width="3" height="3" x="84" y="81" fill="#040"/><rect width="3" height="3" x="87" y="81" fill="#040"/><rect width="3" height="3" x="93" y="81" fill="#040"/><rect width="3" height="3" x="96" y="81" fill="#040"/><rect width="3" height="3" x="102" y="81" fill="#040"/><rect width="3" height="3" x="105" y="81" fill="#040"/><rect width="3" height="3" x="108" y="81" fill="#040"/><rect width="3" height="3" x="111" y="81" fill="#040"/><rect width="3" height="3" x="114" y="81" fill="#040"/><rect width="3" height="3" x="120" y="81" fill="#040"/><rect width="3" height="3" x="129" y="81" fill="#040"/><rect width="3" height="3" x="3" y="84" fill="#040"/><rect width="3" height="3" x="9" y="84" fill="#040"/><rect width="3" height="3" x="12" y="84" fill="#040"/><rect width="3" height="3" x="15" y="84" fill="#040"/><rect width="3" height="3" x="18" y="84" fill="#040"/><rect width="3" height="3" x="21" y="84" fill="#040"/><rect width="3" height="3" x="24" y="84" fill="#040"/><rect width="3" height="3" x="36" y="84" fill="#040"/><rect width="3" height="3" x="39" y="84" fill="#040"/><rect width="3" height="3" x="51" y="84" fill="#040"/><rect width="3" height="3" x="63" y="84" fill="#040"/><rect width="3" height="3" x="66" y="84" fill="#040"/><rect width="3" height="3" x="72" y="84" fill="#040"/><rect width="3" height="3" x="78" y="84" fill="#040"/><rect width="3" height="3" x="84" y="84" fill="#040"/><rect width="3" height="3" x="93" y="84" fill="#040"/><rect width="3" height="3" x="96" y="84" fill="#040"/><rect width="3" height="3" x="99" y="84" fill="#040"/><rect width="3" height="3" x="102" y="84" fill="#040"/><rect width="3" height="3" x="114" y="84" fill="#040"/><rect width="3" height="3" x="117" y="84" fill="#040"/><rect width="3" height="3" x="120" y="84" fill="#040"/><rect width="3" height="3" x="129" y="84" fill="#040"/><rect width="3" height="3" x="132" y="84" fill="#040"/><rect width="3" height="3" x="6" y="87" fill="#040"/><rect width="3" height="3" x="9" y="87" fill="#040"/><rect width="3" height="3" x="12" y="87" fill="#040"/><rect width="3" height="3" x="24" y="87" fill="#040"/><rect width="3" height="3" x="36" y="87" fill="#040"/><rect width="3" height="3" x="48" y="87" fill="#040"/><rect width="3" height="3" x="51" y="87" fill="#040"/><rect width="3" height="3" x="57" y="87" fill="#040"/><rect width="3" height="3" x="66" y="87" fill="#040"/><rect width="3" height="3" x="72" y="87" fill="#040"/><rect width="3" height="3" x="78" y="87" fill="#040"/><rect width="3" height="3" x="87" y="87" fill="#040"/><rect width="3" height="3" x="90" y="87" fill="#040"/><rect width="3" height="3" x="93" y="87" fill="#040"/><rect width="3" height="3" x="96" y="87" fill="#040"/><rect width="3" height="3" x="108" y="87" fill="#040"/><rect width="3" height="3" x="111" y="87" fill="#040"/><rect width="3" height="3" x="114" y="87" fill="#040"/><rect width="3" height="3" x="123" y="87" fill="#040"/><rect width="3" height="3" x="3" y="90" fill="#040"/><rect width="3" height="3" x="6" y="90" fill="#040"/><rect width="3" height="3" x="9" y="90" fill="#040"/><rect width="3" height="3" x="12" y="90" fill="#040"/><rect width="3" height="3" x="18" y="90" fill="#040"/><rect width="3" height="3" x="30" y="90" fill="#040"/><rect width="3" height="3" x="42" y="90" fill="#040"/><rect width="3" height="3" x="51" y="90" fill="#040"/><rect width="3" height="3" x="54" y="90" fill="#040"/><rect width="3" height="3" x="57" y="90" fill="#040"/><rect width="3" height="3" x="69" y="90" fill="#040"/><rect width="3" height="3" x="84" y="90" fill="#040"/><rect width="3" height="3" x="93" y="90" fill="#040"/><rect width="3" height="3" x="96" y="90" fill="#040"/><rect width="3" height="3" x="99" y="90" fill="#040"/><rect width="3" height="3" x="105" y="90" fill="#040"/><rect width="3" height="3" x="108" y="90" fill="#040"/><rect width="3" height="3" x="114" y="90" fill="#040"/><rect width="3" height="3" x="120" y="90" fill="#040"/><rect width="3" height="3" x="123" y="90" fill="#040"/><rect width="3" height="3" x="126" y="90" fill="#040"/><rect width="3" height="3" x="129" y="90" fill="#040"/><rect width="3" height="3" x="132" y="90" fill="#040"/><rect width="3" height="3" x="0" y="93" fill="#040"/><rect width="3" height="3" x="3" y="93" fill="#040"/><rect width="3" height="3" x="9" y="93" fill="#040"/><rect width="3" height="3" x="12" y="93" fill="#040"/><rect width="3" height="3" x="21" y="93" fill="#040"/><rect width="3" height="3" x="39" y="93" fill="#040"/><rect width="3" height="3" x="42" y="93" fill="#040"/><rect width="3" height="3" x="45" y="93" fill="#040"/><rect width="3" height="3" x="48" y="93" fill="#040"/><rect width="3" height="3" x="54" y="93" fill="#040"/><rect width="3" height="3" x="69" y="93" fill="#040"/><rect width="3" height="3" x="75" y="93" fill="#040"/><rect width="3" height="3" x="81" y="93" fill="#040"/><rect width="3" height="3" x="84" y="93" fill="#040"/><rect width="3" height="3" x="90" y="93" fill="#040"/><rect width="3" height="3" x="93" y="93" fill="#040"/><rect width="3" height="3" x="96" y="93" fill="#040"/><rect width="3" height="3" x="99" y="93" fill="#040"/><rect width="3" height="3" x="102" y="93" fill="#040"/><rect width="3" height="3" x="108" y="93" fill="#040"/><rect width="3" height="3" x="114" y="93" fill="#040"/><rect width="3" height="3" x="120" y="93" fill="#040"/><rect width="3" height="3" x="123" y="93" fill="#040"/><rect width="3" height="3" x="129" y="93" fill="#040"/><rect width="3" height="3" x="6" y="96" fill="#040"/><rect width="3" height="3" x="12" y="96" fill="#040"/><rect width="3" height="3" x="15" y="96" fill="#040"/><rect width="3" height="3" x="18" y="96" fill="#040"/><rect width="3" height="3" x="27" y="96" fill="#040"/><rect width="3" height="3" x="42" y="96" fill="#040"/><rect width="3" height="3" x="48" y="96" fill="#040"/><rect width="3" height="3" x="54" y="96" fill="#040"/><rect width="3" height="3" x="60" y="96" fill="#040"/><rect width="3" height="3" x="72" y="96" fill="#040"/><rect width="3" height="3" x="75" y="96" fill="#040"/><rect width="3" height="3" x="78" y="96" fill="#040"/><rect width="3" height="3" x="81" y="96" fill="#040"/><rect width="3" height="3" x="84" y="96" fill="#040"/><rect width="3" height="3" x="90" y="96" fill="#040"/><rect width="3" height="3" x="93" y="96" fill="#040"/><rect width="3" height="3" x="99" y="96" fill="#040"/><rect width="3" height="3" x="105" y="96" fill="#040"/><rect width="3" height="3" x="117" y="96" fill="#040"/><rect width="3" height="3" x="123" y="96" fill="#040"/><rect width="3" height="3" x="0" y="99" fill="#040"/><rect width="3" height="3" x="6" y="99" fill="#040"/><rect width="3" height="3" x="12" y="99" fill="#040"/><rect width="3" height="3" x="15" y="99" fill="#040"/><rect width="3" height="3" x="21" y="99" fill="#040"/><rect width="3" height="3" x="33" y="99" fill="#040"/><rect width="3" height="3" x="39" y="99" fill="#040"/><rect width="3" height="3" x="42" y="99" fill="#040"/><rect width="3" height="3" x="60" y="99" fill="#040"/><rect width="3" height="3" x="63" y="99" fill="#040"/><rect width="3" height="3" x="72" y="99" fill="#040"/><rect width="3" height="3" x="90" y="99" fill="#040"/><rect width="3" height="3" x="96" y="99" fill="#040"/><rect width="3" height="3" x="108" y="99" fill="#040"/><rect width="3" height="3" x="111" y="99" fill="#040"/><rect width="3" height="3" x="114" y="99" fill="#040"/><rect width="3" height="3" x="117" y="99" fill="#040"/><rect width="3" height="3" x="132" y="99" fill="#040"/><rect width="3" height="3" x="12" y="102" fill="#040"/><rect width="3" height="3" x="18" y="102" fill="#040"/><rect width="3" height="3" x="24" y="102" fill="#040"/><rect width="3" height="3" x="27" y="102" fill="#040"/><rect width="3" height="3" x="30" y="102" fill="#040"/><rect width="3" height="3" x="36" y="102" fill="#040"/><rect width="3" height="3" x="45" y="102" fill="#040"/><rect width="3" height="3" x="51" y="102" fill="#040"/><rect width="3" height="3" x="54" y="102" fill="#040"/><rect width="3" height="3" x="60" y="102" fill="#040"/><rect width="3" height="3" x="72" y="102" fill="#040"/><rect width="3" height="3" x="75" y="102" fill="#040"/><rect width="3" height="3" x="78" y="102" fill="#040"/><rect width="3" height="3" x="87" y="102" fill="#040"/><rect width="3" height="3" x="90" y="102" fill="#040"/><rect width="3" height="3" x="99" y="102" fill="#040"/><rect width="3" height="3" x="102" y="102" fill="#040"/><rect width="3" height="3" x="105" y="102" fill="#040"/><rect width="3" height="3" x="108" y="102" fill="#040"/><rect width="3" height="3" x="111" y="102" fill="#040"/><rect width="3" height="3" x="114" y="102" fill="#040"/><rect width="3" height="3" x="117" y="102" fill="#040"/><rect width="3" height="3" x="126" y="102" fill="#040"/><rect width="3" height="3" x="132" y="102" fill="#040"/><rect width="3" height="3" x="3" y="105" fill="#040"/><rect width="3" height="3" x="6" y="105" fill="#040"/><rect width="3" height="3" x="9" y="105" fill="#040"/><rect width="3" height="3" x="12" y="105" fill="#040"/><rect width="3" height="3" x="24" y="105" fill="#040"/><rect width="3" height="3" x="30" y="105" fill="#040"/><rect width="3" height="3" x="69" y="105" fill="#040"/><rect width="3" height="3" x="78" y="105" fill="#040"/><rect width="3" height="3" x="87" y="105" fill="#040"/><rect width="3" height="3" x="93" y="105" fill="#040"/><rect width="3" height="3" x="99" y="105" fill="#040"/><rect width="3" height="3" x="105" y="105" fill="#040"/><rect width="3" height="3" x="108" y="105" fill="#040"/><rect width="3" height="3" x="111" y="105" fill="#040"/><rect width="3" height="3" x="120" y="105" fill="#040"/><rect width="3" height="3" x="123" y="105" fill="#040"/><rect width="3" height="3" x="132" y="105" fill="#040"/><rect width="3" height="3" x="0" y="108" fill="#040"/><rect width="3" height="3" x="9" y="108" fill="#040"/><rect width="3" height="3" x="12" y="108" fill="#040"/><rect width="3" height="3" x="18" y="108" fill="#040"/><rect width="3" height="3" x="24" y="108" fill="#040"/><rect width="3" height="3" x="30" y="108" fill="#040"/><rect width="3" height="3" x="33" y="108" fill="#040"/><rect width="3" height="3" x="39" y="108" fill="#040"/><rect width="3" height="3" x="45" y="108" fill="#040"/><rect width="3" height="3" x="48" y="108" fill="#040"/><rect width="3" height="3" x="57" y="108" fill="#040"/><rect width="3" height="3" x="60" y="108" fill="#040"/><rect width="3" height="3" x="63" y="108" fill="#040"/><rect width="3" height="3" x="66" y="108" fill="#040"/><rect width="3" height="3" x="69" y="108" fill="#040"/><rect width="3" height="3" x="72" y="108" fill="#040"/><rect width="3" height="3" x="75" y="108" fill="#040"/><rect width="3" height="3" x="81" y="108" fill="#040"/><rect width="3" height="3" x="84" y="108" fill="#040"/><rect width="3" height="3" x="87" y="108" fill="#040"/><rect width="3" height="3" x="96" y="108" fill="#040"/><rect width="3" height="3" x="102" y="108" fill="#040"/><rect width="3" height="3" x="108" y="108" fill="#040"/><rect width="3" height="3" x="111" y="108" fill="#040"/><rect width="3" height="3" x="114" y="108" fill="#040"/><rect width="3" height="3" x="117" y="108" fill="#040"/><rect width="3" height="3" x="120" y="108" fill="#040"/><rect width="3" height="3" x="123" y="108" fill="#040"/><rect width="3" height="3" x="129" y="108" fill="#040"/><rect width="3" height="3" x="132" y="108" fill="#040"/><rect width="3" height="3" x="24" y="111" fill="#040"/><rect width="3" height="3" x="33" y="111" fill="#040"/><rect width="3" height="3" x="36" y="111" fill="#040"/><rect width="3" height="3" x="45" y="111" fill="#040"/><rect width="3" height="3" x="54" y="111" fill="#040"/><rect width="3" height="3" x="57" y="111" fill="#040"/><rect width="3" height="3" x="60" y="111" fill="#040"/><rect width="3" height="3" x="72" y="111" fill="#040"/><rect width="3" height="3" x="75" y="111" fill="#040"/><rect width="3" height="3" x="81" y="111" fill="#040"/><rect width="3" height="3" x="87" y="111" fill="#040"/><rect width="3" height="3" x="99" y="111" fill="#040"/><rect width="3" height="3" x="102" y="111" fill="#040"/><rect width="3" height="3" x="105" y="111" fill="#040"/><rect width="3" height="3" x="108" y="111" fill="#040"/><rect width="3" height="3" x="120" y="111" fill="#040"/><rect width="3" height="3" x="123" y="111" fill="#040"/><rect width="3" height="3" x="132" y="111" fill="#040"/><rect width="3" height="3" x="0" y="114" fill="#040"/><rect width="3" height="3" x="3" y="114" fill="#040"/><rect width="3" height="3" x="6" y="114" fill="#040"/><rect width="3" height="3" x="9" y="114" fill="#040"/><rect width="3" height="3" x="12" y="114" fill="#040"/><rect width="3" height="3" x="15" y="114" fill="#040"/><rect width="3" height="3" x="18" y="114" fill="#040"/><rect width="3" height="3" x="33" y="114" fill="#040"/><rect width="3" height="3" x="39" y="114" fill="#040"/><rect width="3" height="3" x="57" y="114" fill="#040"/><rect width="3" height="3" x="60" y="114" fill="#040"/><rect width="3" height="3" x="66" y="114" fill="#040"/><rect width="3" height="3" x="72" y="114" fill="#040"/><rect width="3" height="3" x="75" y="114" fill="#040"/><rect width="3" height="3" x="78" y="114" fill="#040"/><rect width="3" height="3" x="81" y="114" fill="#040"/><rect width="3" height="3" x="84" y="114" fill="#040"/><rect width="3" height="3" x="90" y="114" fill="#040"/><rect width="3" height="3" x="93" y="114" fill="#040"/><rect width="3" height="3" x="108" y="114" fill="#040"/><rect width="3" height="3" x="114" y="114" fill="#040"/><rect width="3" height="3" x="120" y="114" fill="#040"/><rect width="3" height="3" x="123" y="114" fill="#040"/><rect width="3" height="3" x="126" y="114" fill="#040"/><rect width="3" height="3" x="129" y="114" fill="#040"/><rect width="3" height="3" x="0" y="117" fill="#040"/><rect width="3" height="3" x="18" y="117" fill="#040"/><rect width="3" height="3" x="27" y="117" fill="#040"/><rect width="3" height="3" x="30" y="117" fill="#040"/><rect width="3" height="3" x="33" y="117" fill="#040"/><rect width="3" height="3" x="42" y="117" fill="#040"/><rect width="3" height="3" x="57" y="117" fill="#040"/><rect width="3" height="3" x="60" y="117" fill="#040"/><rect width="3" height="3" x="72" y="117" fill="#040"/><rect width="3" height="3" x="75" y="117" fill="#040"/><rect width="3" height="3" x="81" y="117" fill="#040"/><rect width="3" height="3" x="90" y="117" fill="#040"/><rect width="3" height="3" x="93" y="117" fill="#040"/><rect width="3" height="3" x="96" y="117" fill="#040"/><rect width="3" height="3" x="99" y="117" fill="#040"/><rect width="3" height="3" x="108" y="117" fill="#040"/><rect width="3" height="3" x="120" y="117" fill="#040"/><rect width="3" height="3" x="0" y="120" fill="#040"/><rect width="3" height="3" x="6" y="120" fill="#040"/><rect width="3" height="3" x="9" y="120" fill="#040"/><rect width="3" height="3" x="12" y="120" fill="#040"/><rect width="3" height="3" x="18" y="120" fill="#040"/><rect width="3" height="3" x="36" y="120" fill="#040"/><rect width="3" height="3" x="42" y="120" fill="#040"/><rect width="3" height="3" x="45" y="120" fill="#040"/><rect width="3" height="3" x="48" y="120" fill="#040"/><rect width="3" height="3" x="51" y="120" fill="#040"/><rect width="3" height="3" x="60" y="120" fill="#040"/><rect width="3" height="3" x="63" y="120" fill="#040"/><rect width="3" height="3" x="66" y="120" fill="#040"/><rect width="3" height="3" x="69" y="120" fill="#040"/><rect width="3" height="3" x="72" y="120" fill="#040"/><rect width="3" height="3" x="78" y="120" fill="#040"/><rect width="3" height="3" x="84" y="120" fill="#040"/><rect width="3" height="3" x="87" y="120" fill="#040"/><rect width="3" height="3" x="90" y="120" fill="#040"/><rect width="3" height="3" x="96" y="120" fill="#040"/><rect width="3" height="3" x="99" y="120" fill="#040"/><rect width="3" height="3" x="102" y="120" fill="#040"/><rect width="3" height="3" x="105" y="120" fill="#040"/><rect width="3" height="3" x="108" y="120" fill="#040"/><rect width="3" height="3" x="111" y="120" fill="#040"/><rect width="3" height="3" x="114" y="120" fill="#040"/><rect width="3" height="3" x="117" y="120" fill="#040"/><rect width="3" height="3" x="120" y="120" fill="#040"/><rect width="3" height="3" x="132" y="120" fill="#040"/><rect width="3" height="3" x="0" y="123" fill="#040"/><rect width="3" height="3" x="6" y="123" fill="#040"/><rect width="3" height="3" x="9" y="123" fill="#040"/><rect width="3" height="3" x="12" y="123" fill="#040"/><rect width="3" height="3" x="18" y="123" fill="#040"/><rect width="3" height="3" x="24" y="123" fill="#040"/><rect width="3" height="3" x="33" y="123" fill="#040"/><rect width="3" height="3" x="36" y="123" fill="#040"/><rect width="3" height="3" x="39" y="123" fill="#040"/><rect width="3" height="3" x="45" y="123" fill="#040"/><rect width="3" height="3" x="54" y="123" fill="#040"/><rect width="3" height="3" x="57" y="123" fill="#040"/><rect width="3" height="3" x="63" y="123" fill="#040"/><rect width="3" height="3" x="66" y="123" fill="#040"/><rect width="3" height="3" x="69" y="123" fill="#040"/><rect width="3" height="3" x="72" y="123" fill="#040"/><rect width="3" height="3" x="78" y="123" fill="#040"/><rect width="3" height="3" x="84" y="123" fill="#040"/><rect width="3" height="3" x="90" y="123" fill="#040"/><rect width="3" height="3" x="93" y="123" fill="#040"/><rect width="3" height="3" x="96" y="123" fill="#040"/><rect width="3" height="3" x="108" y="123" fill="#040"/><rect width="3" height="3" x="111" y="123" fill="#040"/><rect width="3" height="3" x="114" y="123" fill="#040"/><rect width="3" height="3" x="120" y="123" fill="#040"/><rect width="3" height="3" x="126" y="123" fill="#040"/><rect width="3" height="3" x="0" y="126" fill="#040"/><rect width="3" height="3" x="6" y="126" fill="#040"/><rect width="3" height="3" x="9" y="126" fill="#040"/><rect width="3" height="3" x="12" y="126" fill="#040"/><rect width="3" height="3" x="18" y="126" fill="#040"/><rect width="3" height="3" x="27" y="126" fill="#040"/><rect width="3" height="3" x="30" y="126" fill="#040"/><rect width="3" height="3" x="39" y="126" fill="#040"/><rect width="3" height="3" x="51" y="126" fill="#040"/><rect width="3" height="3" x="54" y="126" fill="#040"/><rect width="3" height="3" x="57" y="126" fill="#040"/><rect width="3" height="3" x="72" y="126" fill="#040"/><rect width="3" height="3" x="75" y="126" fill="#040"/><rect width="3" height="3" x="81" y="126" fill="#040"/><rect width="3" height="3" x="84" y="126" fill="#040"/><rect width="3" height="3" x="90" y="126" fill="#040"/><rect width="3" height="3" x="93" y="126" fill="#040"/><rect width="3" height="3" x="96" y="126" fill="#040"/><rect width="3" height="3" x="99" y="126" fill="#040"/><rect width="3" height="3" x="105" y="126" fill="#040"/><rect width="3" height="3" x="108" y="126" fill="#040"/><rect width="3" height="3" x="111" y="126" fill="#040"/><rect width="3" height="3" x="117" y="126" fill="#040"/><rect width="3" height="3" x="120" y="126" fill="#040"/><rect width="3" height="3" x="123" y="126" fill="#040"/><rect width="3" height="3" x="126" y="126" fill="#040"/><rect width="3" height="3" x="132" y="126" fill="#040"/><rect width="3" height="3" x="0" y="129" fill="#040"/><rect width="3" height="3" x="18" y="129" fill="#040"/><rect width="3" height="3" x="27" y="129" fill="#040"/><rect width="3" height="3" x="30" y="129" fill="#040"/><rect width="3" height="3" x="45" y="129" fill="#040"/><rect width="3" height="3" x="48" y="129" fill="#040"/><rect width="3" height="3" x="57" y="129" fill="#040"/><rect width="3" height="3" x="60" y="129" fill="#040"/><rect width="3" height="3" x="66" y="129" fill="#040"/><rect width="3" height="3" x="69" y="129" fill="#040"/><rect width="3" height="3" x="72" y="129" fill="#040"/><rect width="3" height="3" x="75" y="129" fill="#040"/><rect width="3" height="3" x="81" y="129" fill="#040"/><rect width="3" height="3" x="87" y="129" fill="#040"/><rect width="3" height="3" x="90" y="129" fill="#040"/><rect width="3" height="3" x="120" y="129" fill="#040"/><rect width="3" height="3" x="0" y="132" fill="#040"/><rect width="3" height="3" x="3" y="132" fill="#040"/><rect width="3" height="3" x="6" y="132" fill="#040"/><rect width="3" height="3" x="9" y="132" fill="#040"/><rect width="3" height="3" x="12" y="132" fill="#040"/><rect width="3" height="3" x="15" y="132" fill="#040"/><rect width="3" height="3" x="18" y="132" fill="#040"/><rect width="3" height="3" x="30" y="132" fill="#040"/><rect width="3" height="3" x="39" y="132" fill="#040"/><rect width="3" height="3" x="45" y="132" fill="#040"/><rect width="3" height="3" x="51" y="132" fill="#040"/><rect width="3" height="3" x="63" y="132" fill="#040"/><rect width="3" height="3" x="69" y="132" fill="#040"/><rect width="3" height="3" x="78" y="132" fill="#040"/><rect width="3" height="3" x="87" y="132" fill="#040"/><rect width="3" height="3" x="90" y="132" fill="#040"/><rect width="3" height="3" x="93" y="132" fill="#040"/><rect width="3" height="3" x="96" y="132" fill="#040"/><rect width="3" height="3" x="105" y="132" fill="#040"/><rect width="3" height="3" x="111" y="132" fill="#040"/><rect width="3" height="3" x="114" y="132" fill="#040"/><rect width="3" height="3" x="123" y="132" fill="#040"/><rect width="3" height="3" x="129" y="132" fill="#040"/></svg>
+      </div>
+      <script>
+        extra = [{"item_no":0,"title":"Tombe La Neige","singer":"Đạt Vu","tokey":"Cm","transpose":0,"intro":"","lyric":"Ngoài kia tuyết <span class=\"chord\">Cm</span> rơi đầy\nAnh không đến bên em chiều <span class=\"chord\">Fm</span> nay\nNgoài kia tuyết <span class=\"chord\">G7</span> rơi rơi\nTrong băng giá tim em tả <span class=\"chord\">Cm</span> tơi <span class=\"chord\">C7</span>\n\nĐâu đây đám <span class=\"chord\">Fm</span> tang u buồn\nMắt ai vương lệ <span class=\"chord\">Cm</span> thẫn thờ\nLũ chim trên cành <span class=\"chord\">G7</span> ngu ngơ\nKhóc thương ai đời bơ <span class=\"chord\">Cm</span> vơ\n\nKhông có anh vuốt ve đêm <span class=\"chord\">Fm</span> này\nMôi mắt <span class=\"chord\">G7</span> em xanh xao hao <span class=\"chord\">Cm</span> gầy\nTuyết vẫn rơi đầy <span class=\"chord\">G7</span> trên cây\nGiông tố như vô tình qua <span class=\"chord\">Cm</span> đây <span class=\"chord\">C7</span>\n\n<span class=\"chord\">Fm</span> Lá là <span class=\"chord\">Eb</span> la la <span class=\"chord\">G7</span> la là la <span class=\"chord\">Cm</span> la\n<span class=\"chord\">Fm</span> Uhm ùhm <span class=\"chord\">Eb</span> uhm hum, ùhm uhm <span class=\"chord\">G7</span> huhm, ùhm uhm <span class=\"chord\">Cm</span>  uhm\n\n<span class=\"chord\">Fm</span> Tuyết vẫn rơi rơi\nChiều <span class=\"chord\">Eb</span> nay sao anh không đến bên em?\nTuyết rơi tuyết rơi <span class=\"chord\">G7</span>\nPhủ kín hồn em một màu tang trắng. <span class=\"chord\">Cm</span>\n\nBuồn ơi ta khóc thương thân <span class=\"chord\">Fm</span> mình\nVắng anh căn phòng <span class=\"chord\">Cm</span> giá lạnh\nNỗi cô đơn nào <span class=\"chord\">G7</span> không đau\nNhớ thương bao giờ qua <span class=\"chord\">Cm</span> mau\n\n-----------------------------------\nTombe La Neige lyric\n\nTombe la <span class=\"chord\">Cm</span> neige\nTu ne viendras pas ce <span class=\"chord\">Fm</span> soir\nTombe la <span class=\"chord\">G7</span> neige\nEt mon cœur s'habille de <span class=\"chord\">Cm</span> noir <span class=\"chord\">C7</span>\n\nCe soyeux <span class=\"chord\">Fm</span> cortège\nTout en larmes <span class=\"chord\">Cm</span> blanches\nL'oiseau sur la <span class=\"chord\">G7</span> branche\nPleure le <span class=\"chord\">Cm</span> sortilège\n\nTu ne viendras pas ce <span class=\"chord\">Fm</span> soir\nMe crie <span class=\"chord\">G7</span> mon déses <span class=\"chord\">Cm</span> poir\nMais tombe la <span class=\"chord\">G7</span> neige\nImpassible <span class=\"chord\">Cm</span> manège <span class=\"chord\">C7</span>\n\n<span class=\"chord\">Fm</span> Lá là <span class=\"chord\">Eb</span> la la <span class=\"chord\">G7</span> la là la <span class=\"chord\">Cm</span> la\n<span class=\"chord\">Fm</span> Uhm ùhm <span class=\"chord\">Eb</span> uhm hum, ùhm uhm <span class=\"chord\">G7</span> huhm, ùhm uhm <span class=\"chord\">Cm</span> uhm\n\n<span class=\"chord\">Fm</span> Tombe la <span class=\"chord\">Cm</span> neige\nTu ne <span class=\"chord\">Eb</span> viendras pas ce soir\nTombe la neige <span class=\"chord\">G7</span>\nTout est blanc de désespoir <span class=\"chord\">Cm</span>\n\nTriste certi <span class=\"chord\">Fm</span> tude\nLe froid et <span class=\"chord\">Cm</span> l'absence\nCet odieux <span class=\"chord\">G7</span> silence\nBlanche soli <span class=\"chord\">Cm</span> tude\n\nTu ne viendras pas ce <span class=\"chord\">Fm</span> soir\nMe crie <span class=\"chord\">G7</span> mon déses <span class=\"chord\">Cm</span> poir\nMais tombe la <span class=\"chord\">G7</span> neige\nImpassible <span class=\"chord\">Cm</span> manège <span class=\"chord\">C7</span><span class='none'></span>","video":"vlfPuk94Uzs","vintro":["0","21"],"tempo":100,"beat":"Rhumba","source":"https://hopamviet.vn/chord/song/tuyet-roi-cae-la-nieve-tombe-la-neige/W8IUIWEZ.html"},{"item_no":1,"title":"Bup Be không tình yêu","singer":"Tien","tokey":"Gm","transpose":0,"intro":"","lyric":"1. <span class=\"chord\">Gm</span> Tôi như con búp bê bằng nhựa\nMột <span class=\"chord\">Eb</span> thứ búp bê thật xinh <span class=\"chord\">Bb</span> xắn\n<span class=\"chord\">Ab</span> Đựng đầy trong trái tim nghìn <span class=\"chord\">Gm</span> muôn ca khúc\nBuồn vui nhớ <span class=\"chord\">A7</span> mong khóc thương mơ <span class=\"chord\">D7</span> mộng\n\n<span class=\"chord\">Gm</span> Sáng láng tươi vui như hàng ngàn\nVạn <span class=\"chord\">Eb</span> búp bê xinh lộng trong <span class=\"chord\">Bb</span> kính\n<span class=\"chord\">Ab</span> Nhìn đời mê đắm như kẹo <span class=\"chord\">Gm</span> thơm thơ ấu\nLòng như đóa <span class=\"chord\">A7</span> hoa trong <span class=\"chord\">D7</span> ngày đầu <span class=\"chord\">Gm</span> xuân\n\nĐK: <span class=\"chord\">Bb</span> Thơ ngây như hoa <span class=\"chord\">Eb</span> dưới nắng <span class=\"chord\">Bb</span> hồng\nTâm hồn dại khờ chẳng <span class=\"chord\">D7</span> dấu chút <span class=\"chord\">Gm</span> gì\n<span class=\"chord\">Bb</span> Rong chơi vui ca <span class=\"chord\">Eb</span> hát tháng <span class=\"chord\">Bb</span> ngày\nDâng đời và người hàng <span class=\"chord\">D7</span> ngàn điệu <span class=\"chord\">Gm</span> ca\n\n2. <span class=\"chord\">Gm</span> Bốn phía vây quanh tôi nghe giọng cười,\n<span class=\"chord\">Eb</span> những búp bê bằng bông <span class=\"chord\">Bb</span> noãn\n<span class=\"chord\">Ab</span> Hồn hậu reo múa theo tình <span class=\"chord\">Gm</span> ca tôi hát\nTựa như bướm <span class=\"chord\">A7</span> say bên hoa thơm <span class=\"chord\">D7</span> nồng\n\n<span class=\"chord\">Gm</span> Chúng thiết tha trao nhau ân tình\nThề <span class=\"chord\">Eb</span> hứa dấu yêu dài thiên <span class=\"chord\">Bb</span> thu\n<span class=\"chord\">Ab</span> Bỏ mặc tôi đó đi về <span class=\"chord\">Gm</span> nơi phương khác\nTình yêu dấu <span class=\"chord\">A7</span> kia không <span class=\"chord\">D7</span> là tình <span class=\"chord\">Gm</span> ca\n\n--------------------\n\n1. <span class=\"chord\">Gm</span> Je suis une pou pée de cire\nUne <span class=\"chord\">Eb</span> poupée de <span class=\"chord\">Bb</span> son\n<span class=\"chord\">Ab</span> Mon cœur est gravé dans <span class=\"chord\">Gm</span> mes chansons\nPoupée de <span class=\"chord\">A7</span> cire poupée de <span class=\"chord\">D7</span> son\n\n<span class=\"chord\">Gm</span> Suis-je meilleure suis-je pire\nQu'u-<span class=\"chord\">Eb</span> ne poupée de sa – <span class=\"chord\">Bb</span> lon\n<span class=\"chord\">Ab</span> Je vois la vie en <span class=\"chord\">Gm</span> rose bon bon\nPoupée de <span class=\"chord\">A7</span> cire pou- <span class=\"chord\">D7</span> pée de <span class=\"chord\">Gm</span> son\n\nPrefrain: <span class=\"chord\">Bb</span> Mes disques sont <span class=\"chord\">Eb</span> un mi- <span class=\"chord\">Bb</span> roir\nDans lequel chacun <span class=\"chord\">D7</span> peut me <span class=\"chord\">Gm</span> voir\n<span class=\"chord\">Bb</span> Je suis partout <span class=\"chord\">Eb</span> à la <span class=\"chord\">Gm</span> fois\nBrisée en mille é- <span class=\"chord\">D7</span> clats de <span class=\"chord\">Gm</span> voix\n\n2. <span class=\"chord\">Gm</span> Autour de moi j'entends rire\nLes <span class=\"chord\">Eb</span> poupées de chi- <span class=\"chord\">Bb</span> ffon\n<span class=\"chord\">Ab</span> Celles qui dansent sur <span class=\"chord\">Gm</span> mes chansons\nPoupée de - <span class=\"chord\">A7</span> cire poupée de <span class=\"chord\">D7</span> son\n\n<span class=\"chord\">Gm</span> Elles se laissent séduire\nPour <span class=\"chord\">Eb</span> un oui pour un <span class=\"chord\">Bb</span> nom\n<span class=\"chord\">Ab</span> L'amour n'est pas que dans <span class=\"chord\">Gm</span> les chansons\nPoupée de <span class=\"chord\">A7</span> cire pou-<span class=\"chord\">D7</span> pée de <span class=\"chord\">Gm</span><span class='none'> son</span>","video":"XeTWz99WxDU","vintro":["0","20"],"tempo":145,"beat":"Remix","source":"https://hopamviet.vn/chord/song/bup-be-khong-tinh-yeu-poupee-de-cire-poupee-de-son/W8IUI8EZ.html"},{"item_no":2,"title":"Et Si Tu N'existais Pas","singer":"Kieu Lien","tokey":"","transpose":0,"intro":"","lyric":"1. <span class=\"chord\">Am</span> Người yêu ơi nếu xuân chưa về\nThì em xin anh thôi <span class=\"chord\">Dm</span> chớ ưu phiền\nCòn riêng em và thương nhớ cùng năm <span class=\"chord\">E7</span> tháng\nSẽ cho em tâm <span class=\"chord\">Am</span> tư buồn chán\n\n<span class=\"chord\">Am</span> Ngày mai kia có anh trong đời\nThì đôi chim non tung <span class=\"chord\">Dm</span> cánh lưng trời\nMình bên nhau làn hơi ấm hòa duyên <span class=\"chord\">G</span> thắm\nSẽ cho ta câu <span class=\"chord\">C</span> ca trữ tình\nBài hát cho <span class=\"chord\">E7</span> đôi riêng mình\n\n2. <span class=\"chord\">Am</span> Người yêu ơi nếu xuân chưa về\nThì em xin anh quên <span class=\"chord\">Dm</span> hết kỷ niệm\nCòn đâu anh nhiều say đắm và mơ <span class=\"chord\">E7</span> ước\nĐã cho em bao <span class=\"chord\">Am</span> nhiêu hạnh phúc\n\n<span class=\"chord\">Am</span> Rồi đêm nay chỉ em một mình\nTình yêu kia sao như <span class=\"chord\">Dm</span> khói tan nhòa\nNhìn quanh em nghìn thương nhớ làm sao <span class=\"chord\">G</span> xóa\nHãy cho em quên <span class=\"chord\">C</span> đi tháng ngày\nVà giữ môi <span class=\"chord\">E7</span> tươi nụ cười\n\n--------------------\n\n1. <span class=\"chord\">Am</span> Et si tu n'existais pas\nDis-moi pourquoi j'e-<span class=\"chord\">Dm6</span> xisterais\nPour traî-<span class=\"chord\">E7</span> ner dans un monde sans toi\nSans espoir et <span class=\"chord\">Am</span> sans regrets\n\n<span class=\"chord\">Am</span> Et si tu n'existais pas\nJ'essaierais d'inven-<span class=\"chord\">Dm6</span> ter l'amour\nComme <span class=\"chord\">Dm</span> un peintre qui voit sous ses doigts\nNaître les cou-<span class=\"chord\">C</span> leurs du jour\nEt qui n'en <span class=\"chord\">E7</span> revient pas\n\n2. <span class=\"chord\">Am</span> Et si tu n'existais pas\nDis-moi pour qui j'e-<span class=\"chord\">Dm6</span> xisterais\nDes pas-<span class=\"chord\">E7</span> santes endormies dans mes bras\nQue je n'aime-<span class=\"chord\">Am</span> rais jamais\n\n<span class=\"chord\">Am</span> Et si tu n'existais pas\nJe ne serais qu'un <span class=\"chord\">Dm6</span> point de plus\nDans ce <span class=\"chord\">Dm</span> monde qui vient et qui va\nJe me senti-<span class=\"chord\">C</span> rais perdu\nJ'aurais be-<span class=\"chord\">E7</span> soin de toi\n\n3. <span class=\"chord\">Am</span> Et si tu n'existais pas\nDis-moi comment j'e-<span class=\"chord\">Dm6</span> xisterais.\nJe pour-<span class=\"chord\">E7</span> rais faire semblant d'être moi\nMais je ne se-<span class=\"chord\">Am</span> rais pas vra\n\n<span class=\"chord\">Am</span> Et si tu n'existais pas,\nJe crois que je l'au-<span class=\"chord\">Dm6</span> rais trouve\nLe se-<span class=\"chord\">Dm</span> cret de la vie, le pourquoi\nSimplement <span class=\"chord\">C</span> pour te créer\nEt pour te <span class=\"chord\">E7</span><span class='none'> regarder</span>","video":"uvFPiRUJhbs","vintro":["8","28"],"tempo":100,"beat":"","source":"https://hopamviet.vn/chord/song/khong-co-anh-trong-doi-et-si-tu-nexistais-pas/W8IU90ZU.html"},{"item_no":3,"title":"Chuyện tình yêu","singer":"Doan Trang","tokey":"Bm/Am","transpose":0,"intro":"","lyric":"1. Chuyện tình yêu đôi ta ngày <span class=\"chord\">Dm</span>ấy tuyệt như <span class=\"chord\">E</span>mơ\nChuyện tình yêu đôi ta ngày <span class=\"chord\">Am</span>ấy đẹp như <span class=\"chord\">Fmaj7</span>thơ...\nMình làm quen nhau trên đường <span class=\"chord\">G</span>vắng khuya\nDìu nhau qua bao nhiêu hè <span class=\"chord\">F</span>phố mưa\nNgồi ôm <span class=\"chord\">E</span>nhau công viên lạnh giá...\n\n2. Chuyện tình yêu đôi ta ngày <span class=\"chord\">Dm</span>ấy đầy mộng <span class=\"chord\">E</span>mơ\nChuyện tình yêu đôi ta ngày <span class=\"chord\">Am</span>ấy thật kiêu <span class=\"chord\">Fmaj7</span>sa\nVà trần gian thênh thang chỉ <span class=\"chord\">G</span>có ta\nMình cho nhau yêu thương rồi <span class=\"chord\">F</span>xót xa\nRồi chia <span class=\"chord\">E</span>ly <span class=\"chord\">Am</span>rồi đến phôi pha...\n\nDK: Đến bây giờ anh đã là <span class=\"chord\">Dm</span>cánh trắng chim bay sâu <span class=\"chord\">E</span>chân trời\nĐến bây giờ em đã là <span class=\"chord\">Am</span>bóng dáng cô liêu trong ngậm ngùi\nĐến bây <span class=\"chord\">A7</span>giờ em vẫn buồn <span class=\"chord\">Dm</span>nhớ... <span class=\"chord\">G</span>\nĐến bây giờ anh xóa tình <span class=\"chord\">Cmaj7</span>cũ... <span class=\"chord\">Fmaj7</span>\nĐến bây giờ em hóa tượng <span class=\"chord\">Bdim7</span>đá... <span class=\"chord\">E</span>\nĐứng thiên thu trong mong đợi <span class=\"chord\">E</span>chờ...\n\n3. Chuyện tình yêu đôi ta ngày <span class=\"chord\">Dm</span>ấy giờ còn <span class=\"chord\">E</span>đâu?\nChuyện tình yêu đôi ta ngày <span class=\"chord\">Am</span>ấy thành thương <span class=\"chord\">Fmaj7</span>đau\nMột mình em lang thang đường <span class=\"chord\">G</span>phố khuya\nTìm anh trong công viên đầy <span class=\"chord\">F</span>gió mưa\nKỷ niệm <span class=\"chord\">E</span>ơi <span class=\"chord\">Am</span>đừng chết trong ta\n\n(Giang Tau)\n\n(2) (DK) (3)\n\nOut: Một mình em lang thang đường <span class=\"chord\">G</span>phố khuya\nTìm anh trong công viên đầy <span class=\"chord\">F</span>gió mưa\nKỷ niệm <span class=\"chord\">E</span>ơi <span class=\"chord\">Am</span><span class='none'>đừng chết ... trong ta</span>","video":"LToOzkvEzWo","vintro":["0","20"],"tempo":98,"beat":"Rhumba","source":"https://hopamchuan.com/song/46/chuyen-tinh-yeu"},{"item_no":4,"title":"Tinh khúc cho em","singer":"Thuy Dung","tokey":"Sol","transpose":0,"intro":"All - Music - All - Out","lyric":"1 Như <span class=\"chord\">C</span>hoa đem tin ngày <span class=\"chord\">C</span>buồn, như <span class=\"chord\">F</span>chim đau quên mùa <span class=\"chord\">C</span>xuân\nCòn <span class=\"chord\">Am</span>trong hôn mê <span class=\"chord\">Dm</span>buồn tênh, lê mãi những bước <span class=\"chord\">G7</span>ê chề\nXin <span class=\"chord\">C</span>cho thương em thật <span class=\"chord\">Am</span>lòng, <span class=\"chord\">Dm</span>xin cho thương em <span class=\"chord\">G7</span>thật lòng\nCòn có <span class=\"chord\">C</span>khi lòng <span class=\"chord\">G</span>thôi giá <span class=\"chord\">G7</span>băng….\n\n2. Cho <span class=\"chord\">C</span>em môi hôn <span class=\"chord\">C</span>vội vàng, cho <span class=\"chord\">F</span>em quen ân tình <span class=\"chord\">C</span>sâu,\nDù <span class=\"chord\">Am</span>em không mong <span class=\"chord\">Dm</span>dài lâu, xin cất lấy ước <span class=\"chord\">G7</span>mơ đầu.\nXin <span class=\"chord\">C</span>cho yêu em nồng <span class=\"chord\">Am</span>nàn, <span class=\"chord\">Dm</span>xin cho yêu em <span class=\"chord\">G7</span>nồng nàn.\nDù tháng <span class=\"chord\">C</span>năm buồn <span class=\"chord\">G7</span>vui <span class=\"chord\">C</span>bàng hoàng…\n\nDK. Vì <span class=\"chord\">Am</span>đâu mê say phồn hoa <span class=\"chord\">F</span>như áo gấm sáng <span class=\"chord\">C</span>long lanh\nÔm <span class=\"chord\">G7</span>rách nát không <span class=\"chord\">C</span>tâm linh, ôm <span class=\"chord\">G7</span>tiếng hát không <span class=\"chord\">C</span>hơi run nghèo nàn\nCòn <span class=\"chord\">F</span>yêu chi hoa ngày xanh héo hon vì mong <span class=\"chord\">F</span>manh\nBỏ quên lại <span class=\"chord\">G</span>người sau ngỡ <span class=\"chord\">C</span>ngàng\n\n3. Thương <span class=\"chord\">C</span>em khi yêu lần <span class=\"chord\">C</span>đầu, thương <span class=\"chord\">F</span>em lo âu tình <span class=\"chord\">C</span>sau\nDù <span class=\"chord\">Am</span>gương xưa không được <span class=\"chord\">D</span>lau, soi lấy bóng mối <span class=\"chord\">G7</span>duyên sầu\nCho <span class=\"chord\">C</span>tôi yêu em nồng <span class=\"chord\">Am</span>nàn, cho <span class=\"chord\">Dm</span>tôi yêu em <span class=\"chord\">G7</span>nồng nàn.\nDù biết <span class=\"chord\">C</span>yêu tình <span class=\"chord\">G7</span>yêu <span class=\"chord\">C</span>muộn màng…\n\nOut: Cho <span class=\"chord\">C</span>tôi yêu em nồng <span class=\"chord\">Am</span>nàn, cho <span class=\"chord\">Dm</span>tôi yêu em <span class=\"chord\">G7</span>nồng nàn.\nDù biết <span class=\"chord\">C</span>yêu tình <span class=\"chord\">G7</span>yêu <span class=\"chord\">C</span><span class='none'>muộn màng…</span>","video":"aOtYsfu7Nvk","vintro":["0","15"],"tempo":62,"beat":"Bossa","source":"https://hopamchuan.com/song/1431/tinh-khuc-cho-em"},{"item_no":5,"title":"To Sau","singer":"Hoang Thuy","tokey":"","transpose":0,"intro":"","lyric":"(Intro) \n\n1. Với ánh tơ <span class=\"chord\">Am</span> sầu <span class=\"chord\">Dm7</span> sắc thắm muôn <span class=\"chord\">E7</span> màu <span class=\"chord\">F7</span>\nLàm cho tim <span class=\"chord\">G7</span> ta tê tái đau <span class=\"chord\">C</span> thương <span class=\"chord\">E7</span>\nVới ánh tơ <span class=\"chord\">Am</span> sầu <span class=\"chord\">Dm7</span> ném xuống nhân <span class=\"chord\">E7</span> loại\nLàm cho bao giống người sầu <span class=\"chord\">Am</span> đau\n\nĐK: Ngàn muôn nhạc <span class=\"chord\">A7</span> sĩ kia ơi\nBuồn <span class=\"chord\">Dm</span> thương tương tư chờ <span class=\"chord\">B7</span> ai\n<span class=\"chord\">D7</span> Đời người tươi <span class=\"chord\">G7</span> thắm sáng <span class=\"chord\">C</span> như ngàn <span class=\"chord\">E7</span> sao\nNguồn nhạc tinh <span class=\"chord\">Am</span> túy xướng trong hồn <span class=\"chord\">Dm</span> người\nKhông bao giờ <span class=\"chord\">B</span> phai <span class=\"chord\">E7</span> là suối rừng <span class=\"chord\">A</span> mai <span class=\"chord\">D7</span>\n\nTơ dáng như <span class=\"chord\">G</span> mây <span class=\"chord\">G7</span> chiều<span class=\"chord\">C7</span> tơ úa như lá <span class=\"chord\">F</span> vàng <span class=\"chord\">F7</span>\n<span class=\"chord\">A#</span> Tơ giống như trăng <span class=\"chord\">E7</span> ngà nhiều khi tơ giống tóc người <span class=\"chord\">Am</span> yêu.\n\n(Giang Tau - DK, Intro) \n\n2. Nhớ tới đêm <span class=\"chord\">Am</span> nào <span class=\"chord\">Dm7</span> gió khóc mưa <span class=\"chord\">E7</span> gào <span class=\"chord\">F7</span>\nHồn tim ta <span class=\"chord\">G7</span> say đôi mắt nhung <span class=\"chord\">C</span> êm <span class=\"chord\">E7</span>\nCố nắn tơ đồng <span class=\"chord\">Am</span> khóc <span class=\"chord\">Dm7</span> oán phong <span class=\"chord\">E7</span> trần\nHồn ta mưa gió lạnh lùng <span class=\"chord\">Am</span><span class='none'> đau\n\n(DK) (Out)</span>","video":"gZb3Tey6ItQ","vintro":["0","18"],"tempo":107,"beat":"Tango","source":"https://hopamviet.vn/chord/song/to-sau/W8IUW8BZ.html"},{"item_no":6,"title":"Se Hơn bao giờ hết","singer":"Ai Hoa","tokey":"Em","transpose":0,"intro":"","lyric":"<span class=\"chord\">Em</span> Đang có em chiều nay\nMà đã nhớ em ngày <span class=\"chord\">Am</span> mai\n<span class=\"chord\">D</span> Yêu em ngất ngây đêm nay\nTrọn kiếp sẽ không hề <span class=\"chord\">G</span> phai.\n\n<span class=\"chord\">B</span> Yêu em anh sẽ yêu <span class=\"chord\">Em</span> em\nDù mai đây tình có <span class=\"chord\">Am</span> chết\nYêu em anh mãi yêu em\nDù <span class=\"chord\">B</span> có cách xa một <span class=\"chord\">Em</span> đời.\n\n<span class=\"chord\">Em</span> Sẽ hơn bao giờ <span class=\"chord\">Am</span> hết\n<span class=\"chord\">D</span> Anh nhớ anh từng <span class=\"chord\">Em</span> phút\nSẽ hơn bao giờ <span class=\"chord\">Am</span> hết\nAnh cần em <span class=\"chord\">B</span> đến.\n\n<span class=\"chord\">Em</span> Sẽ hơn bao giờ <span class=\"chord\">Am</span> hết\n<span class=\"chord\">B</span> Anh yêu <span class=\"chord\">Em</span> em\nSẽ hơn bao giờ <span class=\"chord\">Am</span> hết\nHơn hết những <span class=\"chord\">B</span> gì\nAnh có trên đời <span class=\"chord\">Em</span><span class='none'> này.</span>","video":"HI8QF39zxn4","vintro":["0","8"],"tempo":160,"beat":"Cha Cha Cha","source":"https://hopamviet.vn/chord/song/se-hon-bao-gio-het/W8IUI6F7.html"}]
+      </script>
+      <footer style="font-size: 75%">
+        <div class="small text-muted">
+          <a href="/"><i class="fa fa-home">&nbsp;</i></a><span>Copyright (C) - 2023-2024.</span>
+        </div>
+        <div>
+          ...
+        </div>
+      </footer>
+    </div>
+    <script crossorigin="anonymous" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.13.4/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/dataTables.rowReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/rowReorder.bootstrap5.min.js"></script>
+    <script crossorigin="anonymous" src="https://kit.fontawesome.com/9f4e4b189d.js"></script>
+    <script src="/js/app.js?v=3" type="text/javascript"></script>
+    <script>
+      var player = null;
+      var play_timer = null;
+      
+      // This function will be called when the API is ready
+      function onYouTubeIframeAPIReady() {
+        console.log(`_pl_player.slim:37 Frame API ready`)
+        player = new YT.Player('youtube-player', {
+          videoId: '',
+          playerVars: {
+              autoplay:       1,
+              controls:       1,
+              showinfo:       0,
+              modestbranding: 1,
+          },
+        });
+      }
+      
+      function cancel_play() {
+        cancel_play_timer()
+        player.stopVideo();
+        $('#youtube').hide();
+      }
+      
+      function cancel_play_timer() {
+        if (play_timer) {
+          clearTimeout(play_timer);
+          play_timer = null
+        }
+      }
+      
+      function loopPlay(stime, etime) {
+        console.log(`Seeking to ${stime}. Play for ${etime - stime}`)
+      
+        // In case a loop play precede.  Must cancel any play timer
+        cancel_play_timer();
+        player.seekTo(stime, true)
+        if (etime <= stime) {
+          return
+        }
+      
+        // Looping play
+        var duration = etime - stime
+        play_timer = setTimeout(function() {
+          loopPlay(stime, etime);
+        }, duration*1000);
+        // console.log('Starting timer: ', play_timer, ' duration: ', duration)
+      }
+      
+      function play_on_youtube(video, title, stime, etime) {
+        if (player == null) {
+          alert("Youtube player is not ready")
+          return
+        }
+        var href = `https://www.youtube.com/embed/${video}?autoplay=1&playsinline=1`;
+        console.log(href, stime, etime)
+      
+        $('#youtube-title')[0].innerHTML = title
+        player.loadVideoById(video, stime)
+        player.seekTo(stime, true)
+      
+        /* Slow down player */
+        if (etime > 0) {
+          const prate = 1
+          player.setPlaybackRate(prate);
+          etime2 = stime + ((etime - stime)/prate);
+        }
+      
+        // 1st seek somehow have to wait a bit ...
+        setTimeout(function() {
+          player.unMute()
+          $('#youtube').show();
+          loopPlay(stime, etime);
+        }, 500)
+      }
+    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+      var main_table;
+      var myModal;
+      
+      $(function() {
+      
+        $('.mtooltip').tooltip()
+      
+        main_table = new DataTable('#main_table', {
+          layout: {
+            topStart:    'search',
+            bottomStart: 'info',
+          },
+          search: {
+            search: '',
+            caseInsensitive: true,
+          },
+          responsive: true,
+          paging:     false,
+          columns: [{data: 'id'}, null, {data: 'title'},
+                    null, null, null, null],
+          order:  [[ 0, "asc" ]],
+          columnDefs: [
+            { target: 1, visible: true,  searchable: false },
+            { target: 2, width: "40%" },
+            { target: 6, visible: false, searchable: true },
+            { target: 7, visible: false, searchable: true },
+          ],
+          rowReorder: {
+            dataSrc: 'id',
+          },
+          initComplete: function(settings, json) {
+            var newkey  = ''
+            for (let value of $('#main_table tbody tr')) {
+              newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
+            }
+            let curkey = localStorage.getItem('pagekey.2025-02-PH')
+            console.log(`program.slim:245 2025-02-PH curkey: ${curkey}`)
+            console.log(`program.slim:246 2025-02-PH newkey: ${newkey}`)
+            localStorage.setItem("pagekey.2025-02-PH", newkey)
+            if (curkey == newkey) {
+              restore_order()
+            }
+          }
+        });
+      
+        main_table.on('row-reorder', (e, diff, edit) => {
+          setTimeout(() => { save_order() }, 100)
+        })
+      
+        myModal  = new bootstrap.Modal(document.getElementById('lybox'))
+      });
+      
+      function reset_order() {
+        localStorage.removeItem("pageorder.2025-02-PH")
+        location.reload()
+      }
+      
+      function current_order() {
+        var olist = []
+        for (value of $('#main_table tbody tr')) {
+          // console.log('rowid', value.id)
+          olist.push(value.id)
+        }
+        return olist
+      }
+      
+      // Save order to localstore (per device only)
+      function save_order() {
+        var olist = current_order()
+        console.log(`program.slim:278 new_list: ${olist}`)
+        localStorage.setItem("pageorder.2025-02-PH", JSON.stringify(olist))
+      }
+      
+      // Save order to server (so it could be shared)
+      function sv_save_order() {
+        var olist = current_order()
+        var url = `../reorder/2025-02-PH/${olist.join(',')}`
+        jQuery.ajax({
+          url:      url,
+          method:   'POST',
+          async:    false,
+          dataType: 'json',
+          success:  location.reload(),
+        });
+      }
+      
+      function restore_order() {
+        let item = localStorage.getItem("pageorder.2025-02-PH")
+        if (item == null) {
+          console.log(`program.slim:298 No order to restore`)
+          return
+        }
+      
+        let olist   = JSON.parse(item)
+        let dt_rows = $('#main_table tbody tr')
+        var offset  = 2
+        console.log(`program.slim:305 Restore olist: ${olist}`)
+      
+        for (rowno of olist) {
+          // console.log('rowno: ', rowno)
+          // console.log('dtrow: ', dt_rows[rowno])
+      
+          if (dt_rows[rowno] == null) {
+            continue
+          }
+          let listno = dt_rows[rowno].childNodes[2].innerText
+          dt_rows[rowno].childNodes[2].innerText = offset
+          offset += 1
+        }
+      
+        setTimeout(() => {
+          main_table.rows().invalidate().draw()
+        }, 100)
+      }
+    </script>
+  </body>
+</html>
