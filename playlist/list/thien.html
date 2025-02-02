@@ -98,9 +98,6 @@
       #lybox-debug {
         font-size: 50%;
       }
-      #lybox-alt-videos {
-        font-size: 80%;
-      }
     </style>
     <style>
       html {
@@ -176,10 +173,10 @@
         function load_lyric(async = true, offset = 0) {
           var olist = current_order()
         
-          // console.log(`_lyric_box.slim:75 olist: ${olist}`)
+          // console.log(`_lyric_box.slim:72 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
-          console.log(`_lyric_box.slim:78 cur:${cur_ofs}, new: ${new_ofs}`)
+          console.log(`_lyric_box.slim:75 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -210,7 +207,7 @@
           myModal.program = program
           myModal.item    = item
         
-          console.log(`_lyric_box.slim:109 Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:106 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=singer`
@@ -229,7 +226,7 @@
           }
         }
         function show_lyric(content) {
-          console.log(`_lyric_box.slim:128`, content)
+          console.log(`_lyric_box.slim:125`, content)
           var lvideo = $('#lybox-vctl')
         
           lvideo.attr('content', JSON.stringify(content))
@@ -251,7 +248,7 @@
             } else {
               title = pl['video']
             }
-            var link = `<button onclick="play_alt_video(${i})">${title}</button>`
+            var link = `<button class="chord" onclick="play_alt_video(${i})">${title}</button>`
             links.push(link)
           }
           $('#lybox-alt-videos').html(links.join(' '))
