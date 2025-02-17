@@ -42,7 +42,7 @@
         display:  none;
         z-index:  9999;
         position: fixed;
-        top:      0;
+        top:      100px;
         left:     0;
         width:    350px;
         height:   200px;
@@ -76,6 +76,12 @@
         position: absolute;
         top:      0;
         right:    0;
+        z-index:  99;
+      }
+      #youtube-closer1 {
+        position: absolute;
+        top:      0px;
+        left:    0px;
         z-index:  99;
       }
     </style><style>
@@ -138,7 +144,7 @@
       <!--Select different playlist--><!--Video player - hidden until brought up-->
       <div id="youtube">
         <div>
-          <a href="#" id="youtube-closer" onClick="cancel_play(); return false"><i class="fa fa-2x fa-window-close"></i></a><span id="youtube-title" style="font-size:60%"></span>
+          <a href="#" id="youtube-closer" onClick="cancel_play(); return false" title="Close"><i class="fa fa-2x fa-window-close"></i></a><a id="youtube-closer1" title="Drag"><i class="fa fa-2x fa-heart"></i></a><span id="youtube-title" style="font-size:60%"></span>
         </div>
         <div id="youtube-player"></div>
       </div><!--Allow language accent, etc -->
@@ -159,7 +165,7 @@
             <div class="modal-footer">
               <div id="lybox-alt-videos"></div>
               <div id="lybox-title"></div>
-              <button class="btn btn-secondary" onClick="load_lyric(false, -1)" title="Previous Page" type="button"><i class="fa fa-backward"></i></button><button class="btn btn-secondary" onClick="singer_toggle()" title="Toogle chord" type="button"><i class="fa fa-music"></i></button><button class="btn btn-secondary" onClick="load_lyric(false, 1)" title="Next Page" type="button"><i class="fa fa-forward"></i></button><button class="btn btn-warning" data-bs-dismiss="modal" title="Close" type="button"><i class="fa fa-sign-out"></i></button>
+              <button class="btn btn-secondary" onClick="load_lyric(false, -1)" title="Previous Page" type="button"><i class="fa fa-backward"></i></button><button class="btn btn-secondary" onClick="singer_toggle()" title="Toogle chord" type="button"><i class="fa fa-music"></i></button><button class="btn btn-secondary" onClick="load_lyric(false, 1)" title="Next Page" type="button"><i class="fa fa-forward"></i></button><button class="btn btn-warning" data-bs-dismiss="modal" onClick="cancel_play()" title="Close" type="button"><i class="fa fa-sign-out"></i></button>
             </div>
           </div>
         </div>
@@ -171,12 +177,18 @@
         }
         
         function load_lyric(async = true, offset = 0) {
+        
+          // This is where I need react
+          if (offset != 0) {
+            cancel_play()
+          }
+        
           var olist = current_order()
         
-          // console.log(`_lyric_box.slim:72 olist: ${olist}`)
+          // console.log(`_lyric_box.slim:78 olist: ${olist}`)
           var cur_ofs = olist.indexOf(myModal.item.toString())
           var new_ofs = cur_ofs + offset
-          console.log(`_lyric_box.slim:75 cur:${cur_ofs}, new: ${new_ofs}`)
+          console.log(`_lyric_box.slim:81 cur:${cur_ofs}, new: ${new_ofs}`)
         
           if ((new_ofs < 0) || (new_ofs >= olist.length)) {
             return
@@ -207,7 +219,7 @@
           myModal.program = program
           myModal.item    = item
         
-          console.log(`_lyric_box.slim:106 Getting item # ${myModal.item}`)
+          console.log(`_lyric_box.slim:112 Getting item # ${myModal.item}`)
         
           if (async) {
             var url = `../lyric/${program}/${item}?type=list`
@@ -226,7 +238,7 @@
           }
         }
         function show_lyric(content) {
-          console.log(`_lyric_box.slim:125`, content)
+          console.log(`_lyric_box.slim:131`, content)
           var lvideo = $('#lybox-vctl')
         
           lvideo.attr('content', JSON.stringify(content))
@@ -267,6 +279,9 @@
         </div>
         <div class="col-md-4">
           <a class="btn btn-secondary" href="../singer">Singer List</a><select class="form-select" id="list-select" onchange="window.location.href = &#39;../list/&#39; + this.options[this.selectedIndex].value">
+            <option value="COMBINE">
+              COMBINE
+            </option>
             <option value="2025-02-PH">
               2025-02-PH
             </option>
@@ -603,9 +618,16 @@
       var player = null;
       var play_timer = null;
       
+      $(window).on('load', function() {
+        console.log("Drag now")
+        $("#youtube").draggable({
+          handle: "#youtube-closer1"
+        });
+      })
+      
       // This function will be called when the API is ready
       function onYouTubeIframeAPIReady() {
-        console.log(`_pl_player.slim:37 Frame API ready`)
+        console.log(`_pl_player.slim:52 Frame API ready`)
         player = new YT.Player('youtube-player', {
           videoId: '',
           playerVars: {
@@ -631,7 +653,7 @@
       }
       
       function loopPlay(stime, etime) {
-        console.log(`_pl_player.slim:63 Seeking to ${stime}. Play for ${etime - stime}`)
+        console.log(`_pl_player.slim:78 Seeking to ${stime}. Play for ${etime - stime}`)
       
         // In case a loop play precede.  Must cancel any play timer
         cancel_play_timer();
@@ -653,7 +675,7 @@
           return
         }
         var href = `https://www.youtube.com/embed/${video}?autoplay=1&playsinline=1`;
-        console.log(`_pl_player.slim:85 ${href}:${stime}-${etime}`)
+        console.log(`_pl_player.slim:100 ${href}:${stime}-${etime}`)
       
         $('#youtube-title')[0].innerHTML = title
         player.loadVideoById(video, stime)
@@ -691,6 +713,8 @@
         });
       });
     </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
       var main_table;
@@ -729,8 +753,8 @@
               newkey += value.childNodes[3].innerText.replace(/[\(\) ]/g, "")
             }
             let curkey = localStorage.getItem('pagekey.2024-08-TV')
-            console.log(`program.slim:245 2024-08-TV curkey: ${curkey}`)
-            console.log(`program.slim:246 2024-08-TV newkey: ${newkey}`)
+            console.log(`program.slim:247 2024-08-TV curkey: ${curkey}`)
+            console.log(`program.slim:248 2024-08-TV newkey: ${newkey}`)
             localStorage.setItem("pagekey.2024-08-TV", newkey)
             if (curkey == newkey) {
               restore_order()
@@ -762,7 +786,7 @@
       // Save order to localstore (per device only)
       function save_order() {
         var olist = current_order()
-        console.log(`program.slim:278 new_list: ${olist}`)
+        console.log(`program.slim:280 new_list: ${olist}`)
         localStorage.setItem("pageorder.2024-08-TV", JSON.stringify(olist))
       }
       
@@ -782,14 +806,14 @@
       function restore_order() {
         let item = localStorage.getItem("pageorder.2024-08-TV")
         if (item == null) {
-          console.log(`program.slim:298 No order to restore`)
+          console.log(`program.slim:300 No order to restore`)
           return
         }
       
         let olist   = JSON.parse(item)
         let dt_rows = $('#main_table tbody tr')
         var offset  = 2
-        console.log(`program.slim:305 Restore olist: ${olist}`)
+        console.log(`program.slim:307 Restore olist: ${olist}`)
       
         for (rowno of olist) {
           // console.log('rowno: ', rowno)
