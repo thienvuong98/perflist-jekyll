@@ -81,8 +81,12 @@
       #youtube-closer1 {
         position: absolute;
         top:      0px;
-        left:    0px;
+        left:     0px;
         z-index:  99;
+        touch-action: pan-y;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
       }
     </style><style>
       .chord {
@@ -274,7 +278,7 @@
             List for thien
           </h1>
           <h5>
-            <a target="sheet">Virtual  - 2025-02-17</a>
+            <a target="sheet">Virtual  - 2025-02-19</a>
           </h5>
         </div>
         <div class="col-md-4">
@@ -2997,11 +3001,14 @@
         $("#youtube").draggable({
           handle: "#youtube-closer1"
         });
+        $("#youtube-closer1").on("touchstart", function(e) {
+          e.preventDefault();
+        });
       })
       
       // This function will be called when the API is ready
       function onYouTubeIframeAPIReady() {
-        console.log(`_pl_player.slim:52 Frame API ready`)
+        console.log(`_pl_player.slim:59 Frame API ready`)
         player = new YT.Player('youtube-player', {
           videoId: '',
           playerVars: {
@@ -3027,7 +3034,7 @@
       }
       
       function loopPlay(stime, etime) {
-        console.log(`_pl_player.slim:78 Seeking to ${stime}. Play for ${etime - stime}`)
+        console.log(`_pl_player.slim:85 Seeking to ${stime}. Play for ${etime - stime}`)
       
         // In case a loop play precede.  Must cancel any play timer
         cancel_play_timer();
@@ -3049,7 +3056,7 @@
           return
         }
         var href = `https://www.youtube.com/embed/${video}?autoplay=1&playsinline=1`;
-        console.log(`_pl_player.slim:100 ${href}:${stime}-${etime}`)
+        console.log(`_pl_player.slim:107 ${href}:${stime}-${etime}`)
       
         $('#youtube-title')[0].innerHTML = title
         player.loadVideoById(video, stime)
